@@ -51,4 +51,19 @@ VRAM:
 * Bank 1: Sprites ($0000-$FFFF)
 
 ## Data Format
-(TBD)
+All game data is described in text files, starting with a main file. This file defines the top-level game data, providing references to all other source files. Its filename is the only input to the build utility. It is simply a set of key-value pairs. There are certain mandatory keys that are required for the game to be successfully built. Unrecognized keys are ignoredby the build utility, as are comments, which begin with a hash (#) symbol. Keys have no spaces and are not case-sensitive, but values may be case-sensitive and consist of all text after the first whitespace after the key up to the end of the line or the start of a comment. New lines can be part of a value by using the escape code \n. A value can contain a hash character by escaping it with a backslash (i.e. \#) The following is an example of a main file, showing all required keys.
+
+```
+# This is a comment
+title My Game
+Author John Doe
+Palette mygame_pal.txt
+Tiles mygame_tiles.txt
+Sprites mygame_sprites.txt
+Menu mygame_menu.xci
+Zone mygame_zone1.xci # the first zone defined will be loaded first, 
+                      # with its first level the start of the game
+Zone mygame_zone2.xci
+Zone mygame_zone3.xci
+```
+
