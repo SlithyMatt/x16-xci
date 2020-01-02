@@ -7,21 +7,21 @@ possible while still creating a rich experience, featuring a
 point-and-click interface, animated sprites, and detailed backgrounds.
 This is being designed specifically for the Commander X16
 retrocomputer, which has just over 37kB of base RAM, 512kB of
-extended RAM split into 8kB banks, and 128kB of VRAM.  It uses a
+extended RAM split into 8kB banks, and 128kB of VRAM. It uses a
 65C02 CPU, standard PS/2 mouse and keyboard, and an FPGA-based
 video adapter that can output 256 colors at a 640x480 resolution.
 Because of the memory restrictions, XCI will be using 16 colors
-per element at a 320x240 resolution.  The X16 allows elements
+per element at a 320x240 resolution. The X16 allows elements
 to have a palette offset to choose which "row" of 16 colors from
 the 256-color palette will be used.
 
 The elements of the game consist of three independent layers:
-* 320x200 Bitmap backgound, placed 8 pixels from the top of the screen, then end 32 pixels from the bottom.  The entire bitmap
+* 320x200 Bitmap backgound, placed 8 pixels from the top of the screen, then end 32 pixels from the bottom. The entire bitmap
 will comprise of only 16 colors, taken from a palette offset.
 * 40x30 map of 8x8 tiles. Each tile can have 16 colors, but also
-its own palette offset.  The tiles provide a menu at the top of the
+its own palette offset. The tiles provide a menu at the top of the
 screen, text display and controls at the bottom. Tiles may also
-act as static overlays on top of the background.  Up to 720 unique
+act as static overlays on top of the background. Up to 720 unique
 tiles can be defined.
 * 128 individual 16x16 sprites, including a dynamic mouse cursor.
 Each sprite can have 16 colors, from its own palette offset. Up to 512 unique sprite frames can be defined. All sprites except for the mouse cursor are confined to the bitmap area, and support collision
@@ -34,13 +34,13 @@ Main RAM ($0801-$9EFF): XCI engine code, top-level game data
 
 Banked RAM ($A000-$BFFF): 6 banks per level, up to 10 levels per currently loaded zone.
 * Bank 0: Kernal Use
-* Bank 1: Zone level 1 meta data
-* Banks 2-5: Zone level 1 background bitmap
-* Bank 6: Zone level 1 music and sound effects
-* Bank 7: Zone level 2 meta data
+* Bank 1: Zone level 0 configuration data
+* Banks 2-5: Zone level 0 background bitmap
+* Bank 6: Zone level 0 music and sound effects
+* Bank 7: Zone level 1 configuration data
 
 ...
-* Bank 60: Zone level 10 music and sound effects
+* Bank 60: Zone level 9 music and sound effects
 
 When transit from a level leads to a different zone, the new
 zone is loaded to banked RAM from the file system. Up to 256
@@ -51,21 +51,120 @@ VRAM:
 * Bank 1: Sprites ($0000-$FFFF)
 
 ## Data Format
-All game data is described in text files, starting with a main file. This file defines the top-level game data, providing references to all other source files. Its filename is the only input to the build utility. It is simply a set of key-value pairs. There are certain mandatory keys that are required for the game to be successfully built. Unrecognized keys are ignoredby the build utility, as are comments, which begin with a hash (#) symbol. Keys have no spaces and are not case-sensitive, but values may be case-sensitive and consist of all text after the first whitespace after the key up to the end of the line or the start of a comment. New lines can be part of a value by using the escape code \n. A value can contain a hash character by escaping it with a backslash (i.e. \\#) The following is an example of a main file, showing all required keys.
+All game data is described in text files, starting with a main file. This file defines the top-level game data, providing references to all other source files. Its filename is the only input to the build utility (**xci.exe**). It is simply a set of key-value pairs. There are certain mandatory keys that are required for the game to be successfully built. Unrecognized keys are ignored by the build utility, as are comments, which begin with a hash (```#```) symbol. Keys have no spaces and are not case-sensitive, but values may be case-sensitive and consist of all text after the first whitespace after the key up to the end of the line or the start of a comment. New lines can be part of a value by using the escape code ```\n```. A value can contain a hash character by escaping it with a backslash (i.e. ```\#```).
+
+### Main File
+The following is an example of a main file, showing all required keys.
 
 ```
 # This is a comment
 title My Game
-Author John Doe
-Palette mygame_pal.hex
-Tiles mygame_tiles.hex
-Sprites mygame_sprites.hex
-Menu mygame_menu.xci
-Title_screen mygame_start.hex
+author John Doe
+palette mygame_pal.hex
+tiles mygame_tiles.hex
+sprites mygame_sprites.hex
+menu mygame_menu.xci
+title_screen mygame_start.xci
 init_cursor 0 # sprite frame index
-Zone mygame_zone1.xci # the first zone defined will be loaded first, 
+zone mygame_zone0.xci # the first zone defined will be loaded first,
                       # with its first level the start of the game
-Zone mygame_zone2.xci
-Zone mygame_zone3.xci
+zone mygame_zone1.xci
+zone mygame_zone2.xci
 ```
 
+Let's say this file is named **mygame.xci**. The game can be built by passing it to the build utility, as follows:
+
+```
+$ /path/to/xci.exe mygame.xci
+```
+
+If it finishes without errors, the game is built! Let's assume that zone 0 has 2 levels, zone 1 has 3 levels, and zone 2 a full 10 levels. The following binaries will be generated:
+
+* **MAIN.BIN** - This is the compiled version of **mygame.xci**. This will be loaded into base RAM by the XCI program (**XCI.PRG**) at run time. This and all binaries generated by the build utility (in addition to **XCI.PRG**) need to be loaded into the X16 file system to run the game. It will contain information from **mygame.xci** and other files specified by the main file keys.
+* **PAL.BIN** - This is the binary version of **mygame_pal.hex**, which contains the initial palette for the game, as specified by the **palette** key. It will be loaded by the XCI program into VRAM (F:1000) prior to displaying the title screen. Note that the palette beyond index 15 will be modified as different parts of the game are loaded, including the title screen.
+* **TILES.BIN** - This is the binary version of **mygame_tiles.hex**, which contains the tile set for the game, as specified by the **tiles** key. It will be loaded by the XCI program into VRAM (0:A600) prior to displaying the title screen.
+* **SPRITES.BIN** - This is the binary version of **mygame_sprites.hex**, which contains the sprite frames for the game, as specified by the **sprites** key. It will be loaded by the XCI program into VRAM (1:0000) prior to displaying the title screen.
+* **TITLE.BIN** - This is the background bitmap for the title screen, specified by the contents of **mygame_start.xci**, which will be explained later. It will be loaded into VRAM (0:0000) once the palette, tiles and sprites are all loaded. Unlike the background bitmaps of the game levels, this bitmap can take up the full screen (320x240). This will remain in VRAM and on screen until the user starts a new game or loads a saved game. It is never stored in base or banked RAM.
+* **Z0.L0.1.BIN** - This is the configuration data for level 0 of zone 0. This is the first level that will be loaded after starting a new game. It is defined by the contents of **mygame_zone0.xci**, as specified by the first instance of the **zone** key. It will be loaded into bank 1 of banked RAM whenever the game enters level 0 (as it does when starting a new game, but a saved game may have also left off in level 0).
+* **Z0.L0.2.BIN** - This is the first 8kB of the background bitmap for level 0 of zone 0, specified by the contents of **mygame_zone0.xci**, which will be explained later. It will be loaded into bank 2 of banked RAM whenever the game enters zone 0, and into VRAM when the game enters level 0. Because of the in-game screen layout, this bitmap will start 8 pixels from the top, and therefore starting at VRAM address 0:0500. From 0:0000 to 0:04FF will be zero-filled, as it lies behind the menu bar.
+* **Z0.L0.3.BIN** - This is the next 8kB of the bitmap started in **Z0.L0.2.BIN**. It will be loaded to bank 3 when the game enters zone 0. When the game enters level 0, it will be loaded into VRAM starting at 0:2500.
+* **Z0.L0.4.BIN** - Another 8kB of that bitmap. It will be loaded to bank 4 when the game enters zone 0. When the game enters level 0, it will be loaded into VRAM starting at 0:4500.
+* **Z0.L0.5.BIN** - The last 5.5kB of that bitmap. It will be loaded to bank 5 when the game enters zone 0. When the game enters level 0, it will be loaded into VRAM starting at 0:6500. From 0:7D00 to 0:95FF will be zero-filled, as it lies behind the text field/toolbar.
+* **Z0.L0.6.BIN** - The music and sound effects for level 0 of zone 0. The length of the music and addresses for each sound effect are defined in the level configuration data. This file will be loaded into bank 6 when the game enters zone 0. They data will be played directly from banked RAM when the game enters level 0.
+* **Z0.L1.7.BIN** - This is the configuration data for level 1 of zone 0. It will be loaded to bank 7 when the game enters zone 0.
+* **Z0.L1.8.BIN, Z0.L1.9.BIN, Z0.L1.10.BIN, Z0.L1.11.BIN** - These files contain the background bitmap for level 1 of zone 0. They will be loaded into banks 8-11 when the game enters zone 0, and into VRAM starting at 0:0500 when the game enters level 1.
+* **Z0.L1.12.BIN** - The music and sound effects for level 1 of zone 0. It will be loaded to bank 12 when the game enters zone 0. It is also the last file to be loaded into banked RAM for zone 0, as it only contains two levels. When starting a new game, or loading a game that left off in zone 0, the rest of the files below will not be loaded from the file system at the beginning of game play.
+* **Z1.L0.1.BIN, Z1.L0.2.BIN, Z1.L0.3.BIN, Z1.L0.4.BIN, Z1.L0.5.BIN, Z1.L0.6.BIN** - All data for level 0 of zone 1. These will be loaded into banks 1-6 when the game enters zone 1.
+* **Z1.L1.7.BIN, Z1.L1.8.BIN, Z1.L1.9.BIN, Z1.L1.10.BIN, Z1.L1.11.BIN, Z1.L1.12.BIN** - All data for level 1 of zone 1. These will be loaded into banks 7-12 when the game enters zone 1.
+* **Z1.L2.13.BIN, Z1.L2.14.BIN, Z1.L2.15.BIN, Z1.L2.16.BIN, Z1.L2.17.BIN, Z1.L2.18.BIN** - All data for level 2 of zone 1. These will be loaded into banks 13-18 when the game enters zone 1. They are the last files to be loaded into banked RAM for zone 1.
+* **Z2.L0.1.BIN, Z2.L0.2.BIN, Z2.L0.3.BIN, Z2.L0.4.BIN, Z2.L0.5.BIN, Z2.L0.6.BIN** - Zone 2, level 0
+* **Z2.L1.7.BIN, Z2.L1.8.BIN, Z2.L1.9.BIN, Z2.L1.10.BIN, Z2.L1.11.BIN, Z2.L1.12.BIN** - Zone 2, level 1
+* **Z2.L2.13.BIN, Z2.L2.14.BIN, Z2.L2.15.BIN, Z2.L2.16.BIN, Z2.L2.17.BIN, Z2.L2.18.BIN** - Zone 2, level 2
+* **Z2.L3.19.BIN, Z2.L3.20.BIN, Z2.L3.21.BIN, Z2.L3.22.BIN, Z2.L3.23.BIN, Z2.L3.24.BIN** - Zone 2, level 3
+* **Z2.L4.25.BIN, Z2.L4.26.BIN, Z2.L4.27.BIN, Z2.L4.28.BIN, Z2.L4.29.BIN, Z2.L4.30.BIN** - Zone 2, level 4
+* **Z2.L5.31.BIN, Z2.L5.32.BIN, Z2.L5.33.BIN, Z2.L5.34.BIN, Z2.L5.35.BIN, Z2.L5.36.BIN** - Zone 2, level 5
+* **Z2.L6.37.BIN, Z2.L6.38.BIN, Z2.L6.39.BIN, Z2.L6.40.BIN, Z2.L6.41.BIN, Z2.L6.42.BIN** - Zone 2, level 6
+* **Z2.L7.43.BIN, Z2.L7.44.BIN, Z2.L7.45.BIN, Z2.L7.46.BIN, Z2.L7.47.BIN, Z2.L7.48.BIN** - Zone 2, level 7
+* **Z2.L8.49.BIN, Z2.L8.50.BIN, Z2.L8.51.BIN, Z2.L8.52.BIN, Z2.L8.53.BIN, Z2.L8.54.BIN** - Zone 2, level 8
+* **Z2.L9.55.BIN, Z2.L9.56.BIN, Z2.L9.57.BIN, Z2.L9.58.BIN, Z2.L9.59.BIN, Z2.L9.60.BIN** - Zone 2, level 9. These are loaded into banks 55-60, the highest RAM banks that can be populated by an XCI game, when the game enters zone 2.
+
+Wow, that's a lot of files! But most of them are 8kB or smaller. Each zone would easily fit on a single double-density 3.5" floppy, to put it in perspective. In this case, the whole game maxes out at 870kB (and that's assuming very complicated title screen and levels, and all available sprite frames and tiles defined), which would fit on a single high-density floppy, 2 double-density 3.5" floppies, or 3 double-density 5.25" floppies. The biggest XCI game possible would be 125MB, or 87 high-density 3.5" floppies. A CD-ROM could hold at least 5 XCI games. A 2GB SD Card could hold at least 16. Of course, it is highly unlikely that even the most prolific storyteller could come up with 2550 levels for a single game, so most games should clock in at around 5MB, which means that an X16 user could play hundreds of XCI games without changing their SD card.
+
+#### Required Keys
+
+* **title** - (TODO)
+* **author** - (TODO)
+* **palette** - (TODO)
+* **tiles** - (TODO)
+* **sprites** - (TODO)
+* **menu** - (TODO)
+* **title_screen** - (TODO)
+* **init_cursor** - (TODO)
+* **zone** - (TODO)
+
+### Hex Files
+(TODO)
+
+#### Palette Hex File
+(TODO)
+
+#### Tiles Hex File
+(TODO)
+
+#### Sprites Hex File
+(TODO)
+
+### Menu File
+(TODO)
+
+### Title Screen File
+(TODO)
+
+#### Raw Image Files
+(TODO)
+
+### Zone Files
+(TODO)
+
+#### Level Files
+(TODO)
+
+#### VGM Files
+(TODO)
+
+#### Sound Effects Files
+(TODO)
+
+## Building XCI Toolchain from Source
+(TODO)
+
+## Building XCI Game Binaries
+(TODO)
+
+## Deploying XCI Game
+(TODO)
+
+## Licensing
+(TODO)
+
+## Notes
