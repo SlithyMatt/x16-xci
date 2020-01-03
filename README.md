@@ -9,7 +9,7 @@ This is being designed specifically for the Commander X16
 retrocomputer, which has just over 37kB of base RAM, 512kB of
 extended RAM split into 8kB banks, and 128kB of VRAM. It uses a
 65C02 CPU, standard PS/2 mouse and keyboard, and an FPGA-based
-video adapter that can output 256 colors at a 640x480 resolution.
+video adapter (VERA) that can output 256 colors at a 640x480 resolution.
 Because of the memory restrictions, XCI will be using 16 colors
 per element at a 320x240 resolution. The X16 allows elements
 to have a palette offset to choose which "row" of 16 colors from
@@ -109,24 +109,125 @@ Wow, that's a lot of files! But most of them are 32kB or smaller. Each zone woul
 
 #### Required Keys
 
-* **title** - (TODO)
-* **author** - (TODO)
-* **palette** - (TODO)
-* **tiles** - (TODO)
-* **sprites** - (TODO)
-* **menu** - (TODO)
-* **title_screen** - (TODO)
-* **init_cursor** - (TODO)
-* **zone** - (TODO)
+The following are the required keys for the main file. Any keys outside of these will be ignored. If any of these are missing from the main file or have values that are formatted incorrectly, the game will fail to build. Please note that your development platform may have a case-sensitive file system (e.g. Linux, Mac), so the capitalization of filename values matters. Meanwhile all keys are not case-sensitive, but they must be spelled correctly and be immediately followed only by whitespace and then the value. This is the case for all XCI configuration files.
+
+* **title** - Title of the game, be printed to console when graphics data is loading. The maximum length is 255 characters, and it will be placed at the very beginning of **MAIN.BIN**.
+* **author** - Author of the game, which will also be printed to the console.  The maximum length is 255 characters, and it will be placed 256 bytes into **MAIN.BIN**, after the space reserved for the title. The title and author will also be the main meta data to discriminate between different instances of **MAIN.BIN**.
+* **palette** - Filename of the hex file containing the initial palette. The format of this file will be explained in the [Palette Hex File](#palette-hex-file) section. This file must be in the same directory as the main file, or the value must contain the path to the file. This applies to all filename values in XCI configuration source files.
+* **tiles** - Filename of the hex file containing the tile definitions. The format of this file will be explained in the [Tiles Hex File](#tiles-hex-file) section.
+* **sprites** - Filename of the hex file containing the sprite definitions. The format of this file will be explained in the [Sprites Hex File](#sprites-hex-file) section.
+* **menu** - Filename of the menu file, another XCI configuration file like the main file.  The format of this file will be explained in the [Menu File](#menu-file) section.
+* **title_screen** - Filename of the title screen file.  The format of this file will be explained in the [Title Screen File](#title-screen-file) section.
+* **init_cursor** - Sprite frame used as the initial mouse cursor.  The sprite frames start with index zero, which is the first 16x16 bitmap defined in **SPRITES.BIN**. This value must be between 0 and the highest sprite frame index, which could be as high as 511, depending on the size of **SPRITES.BIN**.
+* **zone** - This is the only key which can have more than one instance in the main file. The first instance will be for filename of the zone file that will be used for zone 0. The remaining instances will determine the index order for all zone files, from 1 up to 255. Any **zone** instances past the 256th will be ignored. The format for these files will be explained in the [Zone Files](#zone-files) section.
 
 ### Hex Files
-(TODO)
+Hex files are a human-friendly way of specifying binary data. Every four bits of data are represented by a single hexadecimal digit, represented as an ASCII character, ```0``` through ```9``` and ```A``` through ````F````, representing the binary values of 0000 through 1111, or 0 through 15 in decimal. The format of the binary data specified by hex files is determined by the X16's VERA video adapter, which is documented in the [VERA Programmer's Reference](https://github.com/commanderx16/x16-docs/blob/master/VERA%20Programmer's%20Reference.md). The binary files generated from the hex files will be loaded directly into VRAM and the contents are not verified in any way.
+
+Like XCI configuration files, hex files can contain comments starting with ```#```, which may be at the very beginning of a line, or after a line of hex characters.  If any non-hex or non-whitespace characters appear on a line before a ```#```, the game will fail to build.  Hex files are not case sensitive at all, so upper and lowercase letters are interchangeable for ```A``` through ```F```.
+
+Whitespace can be used however the developer sees fit, separating each byte with a space, or just having a whole block of hex characters uninterrupted. The only limitations are that each line may be no more than 1000 characters wide, and have an even number of hex characters (bytes may not be split across lines). The following is an example of a valid hex file.
+
+```
+# Header comment
+12 34 56 78       # Bytes
+9ABC DEF0         # Words
+13579BDF 02468ACE # double words
+```
+
+To be loadable by the X16, binary files require a two-byte header, which is effectively ingored, so the binaries build from hex files will always start with two null, or zero bytes. The following table shows byte-by-byte what will be written to a binary file that would be build from the above hex file. Note that the hex files have no concept of "endianness" based on the whitespace; each 4-bit nibble will be written out in binary in the order they are read from hex characters.
+
+| Hex | Binary | Decimal | Notes     |
+|-----|--------|---------|-----------|
+|   00|00000000|        0|Ignored, but required by X16|
+|   00|00000000|        0|Ignored    |
+|   12|00010010|       18|From line 1, this is the first actual byte that will be loaded to VRAM|
+|   34|00110100|       52|           |
+|   56|01010110|       86|           |
+|   78|01111000|      120|           |
+|   9A|10011010|      154|From line 2|
+|   BC|10111100|      188|           |
+|   DE|11011110|      222|           |
+|   F0|11110000|      240|           |
+|   13|00010011|       19|From line 3|
+|   57|01010111|       87|           |
+|   9B|10011011|      155|           |
+|   DF|11011111|      223|           |
+|   02|00000010|        2|           |
+|   46|01000110|       70|           |
+|   8A|10001010|      138|           |
+|   CE|11001110|      206|This is the last of 16 bytes that will be loaded to VRAM|
+
+Now, we will see what each of the hex files should contain.
 
 #### Palette Hex File
-(TODO)
+The initial palette hex file may contain all 256 colors, but for practical purposes it only needs to define the first 16 colors of the palette.  This is in the format specified by the VERA documentation: two bytes for each color, with 4 bits for each of red, green and blue and four unused bits.  This means that a single hex character represents each color component from 0 to F (15 decimal). In binary, the two-byte field is formatted as ```bbbbgggg 0000rrrr```. So, pure white would be ```11111111 00001111``` in binary, or ```FF 0F``` in hex. So, 16 colors would be simply 64 hex characters.
+
+The following example shows how a hex file would specify the first 16 colors of the default X16 palette.
+
+```
+# Default X16 palette, offset 0
+0000 FF0F 0008 FE0A 4C0C C500 0A00 E70E 850D 4006 770F 3303 7707 F60A 8F00 BB0B
+```
+
+When VERA elements are using 16 colors (as all elements in XCI game do), the color is specified by a four-bit value, or a single hex digit, representing 0 through 15. Despite how the palette may be configured, color 0 of every palette offset is transparent, so it might as well be black, as shown above. As we can see, the next color value is white, which is color index 1. So, a bitmap where each byte is hex ```01``` would have alternating transparent and white pixels. Looking down the palette, we can see that color index 2 is a medium red, as the blue and green values are set to zero, but the red value is set to 8, which is the middle intensity between 1 and 15. Making each byte of a bitmap hex ```12``` would have alternating white and red pixels, with no transparency. We will see more concrete examples of hex-encoded bitmaps in the next two sections, which will assume the default palette.
 
 #### Tiles Hex File
-(TODO)
+The tiles for XCI games are 8x8 pixels, with 4 bits per pixel. So, for the hex file, each hex character will represent a pixel of a tile, and 64 characters (32 bytes) are required to define one tile. XCI allows for up to 720 different tiles to be defined in this file, but at least 177 need to be defined. This is because tile indices 32 (space) through 176 (tilde) will be an ASCII character font. Included with the XCI development kit is an example tile set that defines a default character font and some other basic tiles that are needed for the menu and toolbar. But, you are completely free to redefine all of them, just remembter the usage of those ASCII character tiles for the menu and text field is fixed.
+
+Also note that while tiles being used for the menu, text field and tool will be using palette offset zero, as defined by the palette hex file, within the levels, any tile may be used with any of the palette offsets available in the current zone. This means that tiles (and sprites!) can be used as overlays on the level bitmap to add additional color depth. Tiles can also be flipped both horizontally and vertically.
+
+The following is an example of the beginning of a tile set. Comments describe what each tile is supposed to be.
+
+```
+# Tile 0: Solid white square
+11111111
+11111111
+11111111
+11111111
+11111111
+11111111
+11111111
+11111111
+
+# Tile 1: Small red circle with white outline, transparent background
+00000000
+00011000
+00122100
+01222210
+01222210
+00122100
+00011000
+00000000
+
+# Tile 2: White square with rounded corner. Can be flipped to round different
+#         different corners of a white box
+11100000
+11111000
+11111100
+11111110
+11111110
+11111111
+11111111
+11111111
+
+# Tile 3: Commander X16 "Butterfly"
+44000044
+0EE00EE0
+00333300
+00055000
+00777700
+08800880
+22000022
+00000000
+```
+
+Using these tiles, we can build a little tile map that defines a rounded white box with the red circle and butterfly inside. The first tile we need is the upper-left corner. Tile 2 has the corner in the upper-right corner, so it will need to be flipped horizontally. Then, we need two white squares (tile 0), and then the upper-right corner, where we can use tile 2 without any flipping. That's the entire first row, so
+onto the second row, where we start with a white square for the left side, then the circle (tile 2), the butterfly (tile 3) and another white square for the right side. Finally, the last row starts with tile 2 flipped both horizontally and vertically to make the lower-left corner, two more white squares, and then finishing with tile 2 flipped vertically to make the lower-right corner.
+
+And here's what you get: ![tile map example](example/tilebox.png)
+
+Later on, we'll see how tiles are used to define the menu and toolbar, and how they can be added to game levels.
 
 #### Sprites Hex File
 (TODO)
