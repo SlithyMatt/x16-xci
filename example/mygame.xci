@@ -1,0 +1,13 @@
+# This is a comment
+title My Game
+author John Doe
+palette mygame_pal.hex
+tiles mygame_tiles.hex
+sprites mygame_sprites.hex
+menu mygame_menu.xci
+title_screen mygame_start.xci
+init_cursor 0 # sprite frame index
+zone mygame_zone0.xci # the first zone defined will be loaded first,
+                      # with its first level the start of the game
+zone mygame_zone1.xci
+zone mygame_zone2.xci

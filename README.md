@@ -111,7 +111,7 @@ Wow, that's a lot of files! But most of them are 32kB or smaller. Each zone woul
 
 The following are the required keys for the main file. Any keys outside of these will be ignored. If any of these are missing from the main file or have values that are formatted incorrectly, the game will fail to build. Please note that your development platform may have a case-sensitive file system (e.g. Linux, Mac), so the capitalization of filename values matters. Meanwhile all keys are not case-sensitive, but they must be spelled correctly and be immediately followed only by whitespace and then the value. This is the case for all XCI configuration files.
 
-* **title** - Title of the game, be printed to console when graphics data is loading. The maximum length is 255 characters, and it will be placed at the very beginning of **MAIN.BIN**.
+* **title** - Title of the game, will be printed to console when graphics data is loading. The maximum length is 255 characters, and it will be placed at the very beginning of **MAIN.BIN**.
 * **author** - Author of the game, which will also be printed to the console.  The maximum length is 255 characters, and it will be placed 256 bytes into **MAIN.BIN**, after the space reserved for the title. The title and author will also be the main meta data to discriminate between different instances of **MAIN.BIN**.
 * **palette** - Filename of the hex file containing the initial palette. The format of this file will be explained in the [Palette Hex File](#palette-hex-file) section. This file must be in the same directory as the main file, or the value must contain the path to the file. This applies to all filename values in XCI configuration source files.
 * **tiles** - Filename of the hex file containing the tile definitions. The format of this file will be explained in the [Tiles Hex File](#tiles-hex-file) section.
@@ -173,7 +173,7 @@ The following example shows how a hex file would specify the first 16 colors of 
 When VERA elements are using 16 colors (as all elements in XCI game do), the color is specified by a four-bit value, or a single hex digit, representing 0 through 15. Despite how the palette may be configured, color 0 of every palette offset is transparent, so it might as well be black, as shown above. As we can see, the next color value is white, which is color index 1. So, a bitmap where each byte is hex ```01``` would have alternating transparent and white pixels. Looking down the palette, we can see that color index 2 is a medium red, as the blue and green values are set to zero, but the red value is set to 8, which is the middle intensity between 1 and 15. Making each byte of a bitmap hex ```12``` would have alternating white and red pixels, with no transparency. We will see more concrete examples of hex-encoded bitmaps in the next two sections, which will assume the default palette.
 
 #### Tiles Hex File
-The tiles for XCI games are 8x8 pixels, with 4 bits per pixel. So, for the hex file, each hex character will represent a pixel of a tile, and 64 characters (32 bytes) are required to define one tile. XCI allows for up to 720 different tiles to be defined in this file, but at least 177 need to be defined. This is because tile indices 32 (space) through 176 (tilde) will be an ASCII character font. Included with the XCI development kit is an example tile set that defines a default character font and some other basic tiles that are needed for the menu and toolbar. But, you are completely free to redefine all of them, just remembter the usage of those ASCII character tiles for the menu and text field is fixed.
+The tiles for XCI games are 8x8 pixels, with 4 bits per pixel. So, for the hex file, each hex character will represent a pixel of a tile, and 64 characters (32 bytes) are required to define one tile. XCI allows for up to 720 different tiles to be defined in this file, but at least 177 need to be defined. This is because tile indices 32 (space) through 176 (tilde) will be an ASCII character font. Included with the XCI development kit is an example tile set that defines a default character font and some other basic tiles that are needed for the menu and toolbar. But, you are completely free to redefine all of them, just remember the usage of those ASCII character tiles for the menu and text field is fixed.
 
 Also note that while tiles being used for the menu, text field and tool will be using palette offset zero, as defined by the palette hex file, within the levels, any tile may be used with any of the palette offsets available in the current zone. This means that tiles (and sprites!) can be used as overlays on the level bitmap to add additional color depth. Tiles can also be flipped both horizontally and vertically.
 
@@ -230,7 +230,117 @@ And here's what you get: ![tile map example](example/tilebox.png)
 Later on, we'll see how tiles are used to define the menu and toolbar, and how they can be added to game levels.
 
 #### Sprites Hex File
-(TODO)
+All sprites for XCI games are 16x16 pixels, but since there are up to 128 sprites available for rendering at any time, larger sprites can be accomplished by synchronizing the movements of adjacent sprites. Each sprite can have 16 colors, and use any palette offset at any time.  Like tiles, sprites can add to the color depth of an image, with the added capability of being able to be placed at any position on screen.  The only required sprite is the mouse cursor, which must be sprite index 0. However, any sprite frame may be used for the mouse cursor, but its initial frame is determined my the **init_cursor** key in the main file.  Generally this should be a simple pointer cursor, but during game play the cursor can be context-sensitive, changing its frame based on its position and game state. Many games have a player avatar sprite, but that is not required for XCI. Sprite movements may be pre-programmed to happen once or loop through a level, or they could respond to mouse actions. Each frame of each sprite's potential movement needs to be defined, but like tiles, sprite frames can change their appearance through changing the palette offset or flipping horizontally, vertically or both.
+
+Each sprite frame has an index, which is used to specify which frame any given sprite should be displaying according to the game configuration. Any sprite can use any of the frames, from index 0 through 511, or whatever the highest defined sprite index is in the hex file. The example below shows a very basic example of a sprite frame set. You may recognize the player avatar from [Chase Vault](https://github.com/SlithyMatt/x16-chasevault).
+
+```
+# frame 0: initial mouse cursor
+f000000000000000
+f100000000000000
+f110000000000000
+f111000000000000
+f111100000000000
+f111110000000000
+f111111000000000
+fff1100000000000
+000f110000000000
+000f100000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+0000000000000000
+# frame 1: player avatar standing, side
+0000000977000000
+0000007797700000
+0000079779977000
+0000077997700000
+0000999776a00000
+0000777aaaaa0000
+000070aaaaa00000
+0000000aaa000000
+0000009997700000
+0000095775500000
+0000995775500000
+00009959a5500000
+0000999555000000
+0000000990000000
+0000000990000000
+0000000bbb000000
+# frame 2: player avatar walking 1, side
+0000000977000000
+0000007797700000
+0000079779977000
+0000077997700000
+0000999776a00000
+0000777aaaaa0000
+000070aaaaa00000
+0000000aaa000000
+0000009997700000
+0000095777500000
+0000995577500000
+000099595a500000
+0000999555000000
+0000000999000000
+00000b99099b0000
+000000bb0bb00000
+# frame 3: player avatar walking 2, side
+0000000977000000
+0000007797700000
+0000079779977000
+0000077997700000
+0000999776a00000
+0000777aaaaa0000
+000070aaaaa00000
+0000000aaa000000
+0000009997700000
+00000957777a0000
+0000995597700000
+0000995955500000
+0000999555000000
+00000b99999b0000
+00000b90009b0000
+000000b000b00000
+# frame 4: player avatar walking 3, side
+0000000977000000
+0000007797700000
+0000079779977000
+0000077997700000
+0000999776a00000
+0000777aaaaa0000
+000070aaaaa00000
+0000000aaa000000
+0000009997700000
+0000097775500000
+0000997795500000
+0000995a55500000
+0000999555000000
+0000000999000000
+00000b99099b0000
+000000bb0bb00000
+# frame 5: player avatar walking 7, side
+0000000977000000
+0000007797700000
+0000079779977000
+0000077997700000
+0000999776a00000
+0000777aaaaa0000
+000070aaaaa00000
+0000000aaa000000
+0000009997700000
+0000077795500000
+0000a77795500000
+00009959a5500000
+0000999555000000
+00000b99999b0000
+00000b90009b0000
+000000b000b00000
+```
+
+These 6 sprite frames are enough to have a mouse cursor and a player avatar that can walk from side to side. Frames 1-5 have the avatar facing right, but they each can be flipped horizontally to walk to the left.  
+
 
 ### Menu File
 (TODO)
