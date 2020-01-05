@@ -343,10 +343,14 @@ These 6 sprite frames are enough to have a mouse cursor and a player avatar that
 
 With a [simple BASIC program](example/sprite.bas), we can test both the mouse sprite and do a little animation with the avatar: ![sprite demo GIF](example/sprite.gif)
 
-
+Notice that the mouse pointer has its point in the upper left corner of the frame. This is because that corner pixel is the actual mouse position. This goes for all sprites, where the position specified will be its upper-left corner, so make sure that there is room below and to the right of the position to display the portion of the sprite you want visible.  We'll see how to do this later when configuring game levels.
 
 ### Menu File
+The menu file is a key-value configuration text file, just like the main file.  This one defines the appearance and behavior of the menu bar, which occupies the top 8 pixel rows of the screen, as well as the toolbar, which can appear at the bottom of the screen. These elements are all rendered completely with tiles and using only palette offset 0 to maintain consistency throughout the game. The example menu file and tiles provide the basis for any game, but you can customize them however you want for your own game. The example menu file is shown below.
+
+```
 (TODO)
+```
 
 ### Title Screen File
 (TODO)
