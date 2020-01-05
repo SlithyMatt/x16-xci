@@ -341,6 +341,9 @@ fff1100000000000
 
 These 6 sprite frames are enough to have a mouse cursor and a player avatar that can walk from side to side. Frames 1-5 have the avatar facing right, but they each can be flipped horizontally to walk to the left.  
 
+With a [simple BASIC program](example/sprite.bas), we can test both the mouse sprite and do a little animation with the avatar: ![sprite demo GIF](example/sprite.gif)
+
+
 
 ### Menu File
 (TODO)
