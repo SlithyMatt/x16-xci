@@ -51,7 +51,7 @@ VRAM:
 * Bank 1: Sprites ($0000-$FFFF)
 
 ## Data Format
-All game data is described in text files, starting with a main file. This file defines the top-level game data, providing references to all other source files. Its filename is the only input to the build utility (**xci.exe**). It is simply a set of key-value pairs. There are certain mandatory keys that are required for the game to be successfully built. Unrecognized keys are ignored by the build utility, as are comments, which begin with a hash (```#```) symbol. Keys have no spaces and are not case-sensitive, but values may be case-sensitive and consist of all text after the first whitespace after the key up to the end of the line or the start of a comment. New lines can be part of a value by using the escape code ```\n```. A value can contain a hash character by escaping it with a backslash (i.e. ```\#```).
+All game data is described in text files, starting with a main file. This file defines the top-level game data, providing references to all other source files. Its filename is the only input to the build utility (**xci.exe**). It is simply a set of key-value pairs. There are certain mandatory keys that are required for the game to be successfully built. Unrecognized keys are ignored by the build utility, as are comments, which begin with a hash (```#```) symbol. Keys have no spaces and are not case-sensitive, but values may be case-sensitive and consist of all text after the first whitespace after the key up to the end of the line or the start of a comment. New lines can be part of a value by using the escape code ```\n```. A value can contain a hash character by escaping it with a backslash (i.e. ```\#```). And if a value contains a backslash character, that can be escaped with a double backslash (```\\```).
 
 ### Main File
 The following is an example of a main file, showing all required keys.
@@ -346,10 +346,61 @@ With a [simple BASIC program](example/sprite.bas), we can test both the mouse sp
 Notice that the mouse pointer has its point in the upper left corner of the frame. This is because that corner pixel is the actual mouse position. This goes for all sprites, where the position specified will be its upper-left corner, so make sure that there is room below and to the right of the position to display the portion of the sprite you want visible.  We'll see how to do this later when configuring game levels.
 
 ### Menu File
-The menu file is a key-value configuration text file, just like the main file.  This one defines the appearance and behavior of the menu bar, which occupies the top 8 pixel rows of the screen, as well as the toolbar, which can appear at the bottom of the screen. These elements are all rendered completely with tiles and using only palette offset 0 to maintain consistency throughout the game. The example menu file and tiles provide the basis for any game, but you can customize them however you want for your own game. The example menu file is shown below.
+The menu file is a key-value configuration text file, just like the main file.  This one defines the appearance and behavior of the menu bar, which occupies the top 8 pixel rows of the screen, as well as the toolbar, which can appear at the bottom of the screen. It is also used to define how text is rendered during the game. These elements are all rendered completely with tiles and using only palette offset 0 to maintain consistency throughout the game. The example menu file and tiles provide the basis for any game, but you can customize them however you want for your own game. The example menu file is shown below.
 
 ```
-(TODO)
+# Menu bar definition
+menu_bg 1 # background color = white
+menu_fg 0 # foreground color = black
+menu_div \4
+menu File
+item new
+item load
+item div
+item save
+item saveas
+item div
+item exit
+menu Sound
+item music
+item sfx
+menu Help
+item controls
+item div
+item about
+
+controls help.txt
+about about.txt
+
+# text styles
+text1_bg 0 # text style 1 background color = black
+text1_fg 1 # text style 1 foreground color = white
+text2_bg 0
+text2_fg 7 # yellow
+text3_bg 0
+text3_fg 14 # light blue
+text4_bg 0
+text4_fg 15 # light gray
+
+# Toolbar definition
+tb_height 4
+tb_width 32
+tool inventory
+tiles 5H 6 6 9 7 0 0 8H 7 0 0 8H 10 11 11 12H
+tool walk
+tiles
+tool run
+tiles
+tool look
+tiles
+tool use
+tiles
+tool talk
+tiles
+tool strike
+tiles
+tool pin
+tiles 9H 6 6 5 8 0 0 7H 8 0 0 7H 12 11 11 10H
 ```
 
 ### Title Screen File
