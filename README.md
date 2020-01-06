@@ -386,19 +386,19 @@ text4_fg 15 # light gray
 tb_height 4
 tb_width 32
 tool inventory
-tiles 5H 6 6 9 7 0 0 8H 7 0 0 8H 10 11 11 12H
+tiles 5H 6 6 9 7 20 20H 8H 7 21 21H 8H 10 11 11 12H
 tool walk
-tiles
+tiles 9H 6 6 5 8 13 14 8H 8 15 16 8H 12 11 11 12H
 tool run
-tiles
+tiles 9H 6 6 5 8 17 14 8H 8 18 19 8H 12 11 11 12H
 tool look
-tiles
+tiles 9H 6 6 5 8 22 22H 8H 8 22V 22HV 8H 12 11 11 12H
 tool use
-tiles
+tiles 9H 6 6 5 8 23 24 8H 8 25 26 8H 12 11 11 12H
 tool talk
-tiles
+tiles 9H 6 6 5 8 0 0 8H 8 0 0 8H 12 11 11 12H
 tool strike
-tiles
+tiles 9H 6 6 5 8 0 0 8H 8 0 0 8H 12 11 11 12H
 tool pin
 tiles 9H 6 6 5 8 0 0 7H 8 0 0 7H 12 11 11 10H
 ```
