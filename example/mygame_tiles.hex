@@ -1,3 +1,12 @@
+# Filename: mygame_tiles.hex
+# Author: Matt Heffernan
+# License: GPL 3
+#
+# This is an example tile hex file for the XCI game engine.
+# The example game configuration uses this for all tiles.
+# Tiles 32-126 are an ASCII character set and should still resemble the
+# characters they represent if modified.
+
 # Tile 0: Solid white square
 11111111
 11111111
@@ -18,8 +27,7 @@
 00011000
 00000000
 
-# Tile 2: White square with rounded corner. Can be flipped to round different
-#         different corners of a white box
+# Tile 2: White square with rounded corner. Can be flipped to round different corners of a white box
 11100000
 11111000
 11111100
@@ -39,285 +47,285 @@
 22000022
 00000000
 
-# Tile 4: TBD
-66666666
-66666666
-cccccccc
+# Tile 4: Menu divider
 11111111
 11111111
+ffffffff
 cccccccc
-66666666
-66666666
+ffffffff
+11111111
+11111111
+11111111
 
-# Tile 5: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 5: Toolbar exterior upper corner
+ccc00000
+fffcc000
+fffffc00
+ffffffc0
+bbbbffc0
+fffbfffc
+fffbfffc
+fffbfffc
 
-# Tile 6: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 6: Toolbar top
+cccccccc
+ffffffff
+ffffffff
+ffffffff
+bbbbbbbb
+ffffffff
+ffffffff
+ffffffff
 
-# Tile 7: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 7: Toolbar exterior side
+cfffbfff
+cfffbfff
+cfffbfff
+cfffbfff
+cfffbfff
+cfffbfff
+cfffbfff
+cfffbfff
 
-# Tile 8: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 8: Toolbar interior side
+ffffbfff
+ffffbfff
+ffffbfff
+ffffbfff
+ffffbfff
+ffffbfff
+ffffbfff
+ffffbfff
 
-# Tile 9: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 9: Toolbar interior upper corner
+cccccccc
+ffffffff
+ffffffff
+ffffffff
+bbbbffff
+fffbffff
+fffbffff
+fffbffff
 
-# Tile 10: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 10: Toolbar exterior lower corner
+cfffbfff
+cfffbfff
+cfffbfff
+cfffbbbb
+cfffffff
+cfffffff
+cfffffff
+cfffffff
 
-# Tile 11: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 11: Toolbar bottom
+ffffffff
+ffffffff
+ffffffff
+bbbbbbbb
+ffffffff
+ffffffff
+ffffffff
+ffffffff
 
-# Tile 12: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 12: Toolbar interior lower corner
+ffffbfff
+ffffbfff
+ffffbfff
+ffffbbbb
+ffffffff
+ffffffff
+ffffffff
+ffffffff
 
-# Tile 13: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 13: Walk, upper left
+ffffffff
+ffffffff
+ffffff98
+fffff988
+fffff988
+ffffff98
+ffffff98
+fffff988
 
-# Tile 14: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 14: Walk/Run, upper right
+ffffffff
+ffffffff
+8fffffff
+88ffffff
+88ffffff
+8fffffff
+8fffffff
+88ffffff
 
-# Tile 15: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 15: Walk, lower left
+ffff9898
+ffff9898
+ffffff98
+ffffff98
+ffffff98
+fffff98f
+fffff98f
+fffff988
 
-# Tile 16: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 16: Walk, lower right
+898fffff
+8f98ffff
+8fffffff
+8fffffff
+98ffffff
+9898ffff
+f98fffff
+ffffffff
 
-# Tile 17: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 17: Run, upper left
+ffffffff
+ffffffff
+ffffff98
+ff99f988
+fffff988
+ffffff98
+f99fff98
+fffff988
 
-# Tile 18: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 18: Run, lower left
+ffff9898
+99f98f98
+ffffff98
+ffffff98
+99fff98f
+ffff98ff
+fff98fff
+ffff98ff
 
-# Tile 19: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 19: Run, lower right
+8988ffff
+8fffffff
+8fffffff
+8fffffff
+98ffffff
+f9898fff
+ff98ffff
+ffffffff
 
-# Tile 20: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 20: Inventory, top
+ffffffff
+ffffffff
+fffffff9
+ffffff9f
+fffff9ff
+ff999999
+ff999999
+ff999997
 
-# Tile 21: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 21: Inventory, bottom
+ff999997
+ff889999
+ff998888
+ff999999
+ff999999
+ff999999
+ffffffff
+ffffffff
 
-# Tile 22: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 22: Look
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+fffffaaa
+fffaa1ee
+ffa11eee
+fa111ee0
 
-# Tile 23: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 23: Use, upper left
+ffffffff
+fffffff9
+ffffff89
+fffff989
+ffff8989
+fff98989
+fff98989
+fff98988
 
-# Tile 24: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 24: Use, upper right
+ffffffff
+8fffffff
+89ffffff
+898fffff
+898fffff
+898fffff
+898fffff
+888f98ff
 
-# Tile 25: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 25: Use, lower left
+fff98888
+fff98888
+fff98888
+fff98888
+ffff9888
+ffff9888
+ffff9888
+ffff9888
 
-# Tile 26: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 26: Use, lower right
+888f98ff
+888988ff
+88888fff
+88888fff
+8888ffff
+888fffff
+88ffffff
+88ffffff
 
-# Tile 27: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 27: Talk, upper left
+ffffffff
+ffffffff
+fffffff6
+ffffff61
+fffff610
+fffff611
+fffff611
+fffff611
 
-# Tile 28: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 28: Talk, upper right
+ffffffff
+6666ffff
+11116fff
+011016ff
+1010116f
+1010116f
+0110116f
+1111116f
 
-# Tile 29: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 29: Talk, lower left
+ffffff61
+fffffff6
+ffaaaaaa
+ffa11111
+ffa00006
+fffa0000
+ffffaaaa
+ffffffff
 
-# Tile 30: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 30: Talk, lower right
+011016ff
+11116fff
+6166ffff
+66afffff
+60afffff
+0affffff
+afffffff
+ffffffff
 
-# Tile 31: TBD
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
-00000000
+# Tile 31: Strike, upper left
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+fffffff9
+ff999998
+ff888888
 
 # Tile 32: ASCII Space
 66666666
@@ -1183,4 +1191,80 @@ cccccccc
 66666666
 66666666
 
-# Game-specific tiles begin here
+
+
+# End of ASCII characters
+
+
+
+# Tile 127: Strike, upper right
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+99999fff
+998889ff
+88999fff
+889889ff
+
+# Tile 128: Strike, lower left
+ff888889
+ff888888
+ff888888
+ff999998
+fffffff9
+ffffffff
+ffffffff
+ffffffff
+
+# Tile 129: Strike, lower right
+98999fff
+989889ff
+89999fff
+89889fff
+9999ffff
+ffffffff
+ffffffff
+ffffffff
+
+# Tile 130: Pin out, top
+fff22222
+ffff2222
+fffff222
+fffff222
+fffff222
+fffff222
+fffff222
+fffff222
+
+# Tile 131: Pin out, bottom
+ffff2222
+f2222222
+fffffffc
+fffffffc
+fffffffc
+fffffffc
+fffffffc
+fffffffc
+
+# Tile 132: Pin in, top
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+fff22222
+ffff2222
+
+# Tile 133: Pin in, bottom
+fffff222
+fffff222
+fffff222
+fffff222
+fffff222
+fffff222
+ffff2222
+f2222222
+
+# Tile 134:

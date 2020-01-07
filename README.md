@@ -346,7 +346,7 @@ With a [simple BASIC program](example/sprite.bas), we can test both the mouse sp
 Notice that the mouse pointer has its point in the upper left corner of the frame. This is because that corner pixel is the actual mouse position. This goes for all sprites, where the position specified will be its upper-left corner, so make sure that there is room below and to the right of the position to display the portion of the sprite you want visible.  We'll see how to do this later when configuring game levels.
 
 ### Menu File
-The menu file is a key-value configuration text file, just like the main file.  This one defines the appearance and behavior of the menu bar, which occupies the top 8 pixel rows of the screen, as well as the toolbar, which can appear at the bottom of the screen. It is also used to define how text is rendered during the game. These elements are all rendered completely with tiles and using only palette offset 0 to maintain consistency throughout the game. The example menu file and tiles provide the basis for any game, but you can customize them however you want for your own game. The example menu file is shown below.
+The menu file is a key-value configuration text file, just like the main file.  This one defines the appearance and behavior of the menu bar, which occupies the top 8 pixel rows of the screen, as well as the toolbar, which can appear at the bottom of the screen. It is also used to define how text is rendered during the game. These elements are all rendered completely with tiles and using only palette offset 0 to maintain consistency throughout the game. The example menu file and tiles provide the basis for any game, but you can customize them however you want for your own game. The example menu file (**mygame_menu.xci**) is shown below.
 
 ```
 # Menu bar definition
@@ -379,8 +379,6 @@ text2_bg 0
 text2_fg 7 # yellow
 text3_bg 0
 text3_fg 14 # light blue
-text4_bg 0
-text4_fg 15 # light gray
 
 # Toolbar definition
 tb_height 4
@@ -388,20 +386,28 @@ tb_width 32
 tool inventory
 tiles 5H 6 6 9 7 20 20H 8H 7 21 21H 8H 10 11 11 12H
 tool walk
-tiles 9H 6 6 5 8 13 14 8H 8 15 16 8H 12 11 11 12H
+tiles 9H 6 6 9 8 13 14 8H 8 15 16 8H 12 11 11 12H
 tool run
-tiles 9H 6 6 5 8 17 14 8H 8 18 19 8H 12 11 11 12H
+tiles 9H 6 6 9 8 17 14 8H 8 18 19 8H 12 11 11 12H
 tool look
-tiles 9H 6 6 5 8 22 22H 8H 8 22V 22HV 8H 12 11 11 12H
+tiles 9H 6 6 9 8 22 22H 8H 8 22V 22HV 8H 12 11 11 12H
 tool use
-tiles 9H 6 6 5 8 23 24 8H 8 25 26 8H 12 11 11 12H
+tiles 9H 6 6 9 8 23 24 8H 8 25 26 8H 12 11 11 12H
 tool talk
-tiles 9H 6 6 5 8 0 0 8H 8 0 0 8H 12 11 11 12H
+tiles 9H 6 6 9 8 27 28 8H 8 29 30 8H 12 11 11 12H
 tool strike
-tiles 9H 6 6 5 8 0 0 8H 8 0 0 8H 12 11 11 12H
+tiles 9H 6 6 9 8 31 127 8H 8 128 129 8H 12 11 11 12H
 tool pin
-tiles 9H 6 6 5 8 0 0 7H 8 0 0 7H 12 11 11 10H
+tiles 9H 6 6 5 8 130 130H 7H 8 131 131H 7H 12 11 11 10H # pin out
+tiles 9H 6 6 5 8 132 132H 7H 8 133 133H 7H 12 11 11 10H # pin in
 ```
+
+When the build utility loads this file (as it was referenced from the main file), it will add data to the main binary file (**MAIN.BIN**) to contain all of this configuration information, with the exception of the text color settings, which result in palette modifications.  The different key specifications will explain how all of the values are used.
+
+What this file gets you, with the complete example tile set (built from **mygame_tiles.hex**), is a menu and toolbar that look like this: ![menu screen](example/menu.png)
+
+#### Required Keys
+(TODO)
 
 ### Title Screen File
 (TODO)
