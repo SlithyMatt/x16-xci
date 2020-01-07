@@ -84,7 +84,7 @@ If it finishes without errors, the game is built! Let's assume that zone 0 has 2
 * **PAL.BIN** - This is the binary version of **mygame_pal.hex**, which contains the initial palette for the game, as specified by the **palette** key. It will be loaded by the XCI program into VRAM (F:1000) prior to displaying the title screen. Note that the palette beyond index 15 will be modified as different parts of the game are loaded, including the title screen.
 * **TILES.BIN** - This is the binary version of **mygame_tiles.hex**, which contains the tile set for the game, as specified by the **tiles** key. It will be loaded by the XCI program into VRAM (0:A600) prior to displaying the title screen.
 * **SPRITES.BIN** - This is the binary version of **mygame_sprites.hex**, which contains the sprite frames for the game, as specified by the **sprites** key. It will be loaded by the XCI program into VRAM (1:0000) prior to displaying the title screen.
-* **TITLE.BIN** - This is the background bitmap for the title screen, specified by the contents of **mygame_start.xci**, which will be explained later. It will be loaded into VRAM (0:0000) once the palette, tiles and sprites are all loaded. Unlike the background bitmaps of the game levels, this bitmap can take up the full screen (320x240). This will remain in VRAM and on screen until the user starts a new game or loads a saved game. It is never stored in base or banked RAM.
+* **TITLE.BIN** - This is the background bitmap for the title screen, specified by the contents of **mygame_start.xci**, which will be explained later. It will be loaded into VRAM (0:0000) once the palette, tiles and sprites are all loaded. Unlike the background bitmaps of the game levels, this bitmap can take up the full screen (320x240). This will remain in VRAM and on screen until the player starts a new game or loads a saved game. It is never stored in base or banked RAM.
 * **Z0.L0.1.BIN** - This is the configuration data for level 0 of zone 0. This is the first level that will be loaded after starting a new game. It is defined by the contents of **mygame_zone0.xci**, as specified by the first instance of the **zone** key. It will be loaded into bank 1 of banked RAM whenever the game enters level 0 (as it does when starting a new game, but a saved game may have also left off in level 0).
 * **Z0.L0.2.BIN** - This is the background bitmap for level 0 of zone 0, specified by the contents of **mygame_zone0.xci**, which will be explained later. It will be loaded into banks 2-5 of banked RAM whenever the game enters zone 0, and into VRAM when the game enters level 0. Because of the in-game screen layout, this bitmap will start 8 pixel9s from the top, and therefore starting at VRAM address 0:0500. From 0:0000 to 0:04FF will be zero-filled, as it lies behind the menu bar. From 0:7D00 to 0:95FF will be zero-filled, as it lies behind the text field/toolbar.
 * **Z0.L0.6.BIN** - The music and sound effects for level 0 of zone 0. The length of the music and addresses for each sound effect are defined in the level configuration data. This file will be loaded into bank 6 when the game enters zone 0. They data will be played directly from banked RAM when the game enters level 0.
@@ -107,7 +107,7 @@ If it finishes without errors, the game is built! Let's assume that zone 0 has 2
 
 Wow, that's a lot of files! But most of them are 32kB or smaller. Each zone would easily fit on a single double-density 3.5" floppy, to put it in perspective. In this case, the whole game maxes out at 870kB (and that's assuming very complicated title screen and levels, and all available sprite frames and tiles defined), which would fit on a single high-density floppy, 2 double-density 3.5" floppies, or 3 double-density 5.25" floppies. The biggest XCI game possible would be 125MB, or 87 high-density 3.5" floppies. A CD-ROM could hold at least 5 XCI games. A 2GB SD Card could hold at least 16. Of course, it is highly unlikely that even the most prolific storyteller could come up with 2550 levels for a single game, so most games should clock in at around 5MB, which means that an X16 user could play hundreds of XCI games without changing their SD card. Because of filename conflicts, each game would need to be in a separate directory.
 
-#### Required Keys
+#### Main File: Required Keys
 
 The following are the required keys for the main file. Any keys outside of these will be ignored. If any of these are missing from the main file or have values that are formatted incorrectly, the game will fail to build. Please note that your development platform may have a case-sensitive file system (e.g. Linux, Mac), so the capitalization of filename values matters. Meanwhile all keys are not case-sensitive, but they must be spelled correctly and be immediately followed only by whitespace and then the value. This is the case for all XCI configuration files.
 
@@ -173,7 +173,7 @@ The following example shows how a hex file would specify the first 16 colors of 
 When VERA elements are using 16 colors (as all elements in XCI game do), the color is specified by a four-bit value, or a single hex digit, representing 0 through 15. Despite how the palette may be configured, color 0 of every palette offset is transparent, so it might as well be black, as shown above. As we can see, the next color value is white, which is color index 1. So, a bitmap where each byte is hex ```01``` would have alternating transparent and white pixels. Looking down the palette, we can see that color index 2 is a medium red, as the blue and green values are set to zero, but the red value is set to 8, which is the middle intensity between 1 and 15. Making each byte of a bitmap hex ```12``` would have alternating white and red pixels, with no transparency. We will see more concrete examples of hex-encoded bitmaps in the next two sections, which will assume the default palette.
 
 #### Tiles Hex File
-The tiles for XCI games are 8x8 pixels, with 4 bits per pixel. So, for the hex file, each hex character will represent a pixel of a tile, and 64 characters (32 bytes) are required to define one tile. XCI allows for up to 720 different tiles to be defined in this file, but at least 177 need to be defined. This is because tile indices 32 (space) through 176 (tilde) will be an ASCII character font. Included with the XCI development kit is an example tile set that defines a default character font and some other basic tiles that are needed for the menu and toolbar. But, you are completely free to redefine all of them, just remember the usage of those ASCII character tiles for the menu and text field is fixed.
+The tiles for XCI games are 8x8 pixels, with 4 bits per pixel. So, for the hex file, each hex character will represent a pixel of a tile, and 64 characters (32 bytes) are required to define one tile. XCI allows for up to 720 different tiles to be defined in this file, but at least 177 need to be defined. This is because tile indices 32 (space) through 176 (tilde) will be an ASCII character font. Included with the XCI development kit is an example tile set that defines a default character font and some other basic tiles that are needed for the menu and toolbar. But, you are completely free to redefine all of them, just remember the usage of those ASCII character tiles for the menu and text field is fixed. Also, the characters should use color 1 for their foreground and 6 for their background, just like the initial X16 BASIC screen, so that the configuration can effectively switch out those colors in other palette offsets. If colors other than those are used in ASCII tiles, they will not chage their color values from palette offset 0.
 
 Also note that while tiles being used for the menu, text field and tool will be using palette offset zero, as defined by the palette hex file, within the levels, any tile may be used with any of the palette offsets available in the current zone. This means that tiles (and sprites!) can be used as overlays on the level bitmap to add additional color depth. Tiles can also be flipped both horizontally and vertically.
 
@@ -356,6 +356,8 @@ menu_lc 2H
 menu_sp 0
 menu_rc 2
 menu_div 4
+menu_check 134
+menu_uncheck 135
 menu File
 item new
 item load
@@ -403,16 +405,88 @@ tiles 9H 6 6 9 8 31 127 8H 8 128 129 8H 12 11 11 12H
 tool pin
 tiles 9H 6 6 5 8 130 130H 7H 8 131 131H 7H 12 11 11 10H # pin out
 tiles 9H 6 6 5 8 132 132H 7H 8 133 133H 7H 12 11 11 10H # pin in
+
+inventory mygame_inv.xci
+walk 15
+run 16
+look 17
+use 18
+talk 19
+strike 20
 ```
 
 When the build utility loads this file (as it was referenced from the main file), it will add data to the main binary file (**MAIN.BIN**) to contain all of this configuration information, with the exception of the text color settings, which result in palette modifications.  The different key specifications will explain how all of the values are used.
 
 What this file gets you, with the complete example tile set (built from **mygame_tiles.hex**), is a menu and toolbar that look like this: ![menu screen](example/menu.png)
 
-#### Required Keys
+So how does XCI take the menu file and make that screen? Let's go through each of the required keys for it.  Just like with the main file, all of these keys need to be present, but after that we'll go through the optional keys that can be in there, whcih are also in the example. Any keys that aren't expected are ignored, just as if they were comments. If any of the values are invalid, the build will fail.
+
+#### Menu File: Required Keys
+* **menu_lc** - Tile used for left corner of menu bar.  Tile values consist of the index (in decimal) followed by an optional set of letters. If there are no letters after the number, then the tile is displayed normally. If it is followed by an ```H```, it is flipped horizontally. If it is followed by a ```V```, it is flipped vertically. If it is followed by ```HV```, it is flipped both horizontally and vertically. In the example, it has a value of ```2H```, which means that rounded corner tile we saw before will be used, flipped horizontally.
+* **menu_sp** - Tile used for empty space of menu bar. In the example, the plain white square tile (```0```) is specified.
+* **menu_rc** - Tile used for right corner of menu bar. In the example, the rounded corner is used again, without any flipping (```2```).
+* **menu** - This specifies the name of a menu, which will be rendered using the value's ASCII text. The menu file needs to have at least one menu defined. The menus will be rendered in the order they appear in the menu file, from left to right. The menu will contain all the items specified until the next **menu** key or the end of the file. In the example, the menus defined are ```File```, ```Sound```, and ```Help```. As you can see in the image, the menu bar starts with the left corner tile, followed by the first menu title, then two space tiles, the second menu tile, two more space tile, the last menu tile, enough spacees to fill through the 39th tile space, and finally the right corner tile at the 40th tile space, which is the extreme right end of the visible tiles. Note that the tile map is actually 64 tiles wide in VRAM, but only the first 40 columns are ever visible. When a menu is clicked, it will appear underneath the menu bar. Each item will be preceded by a space tile (unless it's a divider item), followed by the ASCII label for the item, and finally enough space tiles to fill out the menu. The menu width is determined by the longest label among its items, being its width plus 2, to accomodate space tiles on either side of the label. In the example, as seen in the above image, the ```File``` menu is shown, which has ```Load Game...``` as its widest item label, making the total width of the menu 14 tiles.
+* **item** - This specifies an item to include is a menu. The items specified in this file will be placed in the last specified menu in order from top to bottom. The values available for items must come from one of the identifiers supported by XCI, but a game only needs to support a subset of these, however it must have at least one non-divider item per menu. The following identifiers are supported:
+ * **new** - Rendered as "New Game". This is will start a new game with no progress at zone 0, level 0. If a game is in progress, the player will be prompted to save their game.
+ * **load** - Rendered as "Load Game...". This will prompt the player with a list of available saved games to load. The saved game will resume at the last visited level with all progress attained at the time it was saved.
+ * **save** - Rendered as "Save Game". This will overwrite th current saved game file. If the current session started from a new game and was never saved before, the player will be prompted for a new filename.
+ * **saveas** - Rendered as "Save As...". This will prompt the player for a new filename to save the game. This gives the player the ability to maintain multiple restore points in case they are unsure about their most recent progress.
+ * **exit** - Rendered as "Exit".  Will prompt the player with the option to save the game before exitting. This will ultimately trigger a soft reset to bring the player back to the BASIC start screen. It is highly recommended that the a menu contains this item.
+ * **music** - Rendered as "Music" preceded by a space for a checkmark. By default, music is turned on, and the checkmark will be displayed. Selecting the item will toggle the checkmark. The state of this item will be stored in the saved game file so that when the game is reloaded the state will be restored to the player's preference. If this item is included in the meanu file, the **menu_check** key needs to be included.
+ * **sfx** - Rendered as "Sound Effects" preceded by a space for a checkmark. Toggles the enabling of sound effects, which is also maintained in saved games. It also requires the **menu_check** key.
+ * **controls** - Rendered as "Controls". Blacks out the level bitmap and displays the controls guide. This requires the **controls** key to be defined, which will specify the source file for the guide.
+ * **about** - Rendered as "About". Blacks out the level bitmap and displays information about the game. This requires the **about** key to be defined, which will specify the source file for the about screen.
+ * **div** - Rendered as the divider tile for the width of the menu. Generally is placed between other items to provide visual grouping of similar items. Requires the **menu_div** key to define which tile to use.
+* **tb_height** - Height of the toolbar, in tiles. Must be between 1 and 4.
+* **tb_width** - Width of the toolbar, in tiles. Must be at least as many tiles as there are tools specified, but no more than 40.
+* **tool** - Tool to include on the toolbar. At least one tool must be included. Value must be one of the identifiers of a supported XCI tool. The following tools are supported:
+ * **inventory** - Replaces the toolbar with the inventory bar. Requires the **inventory** key to specify the inventory configuration file. When an item is selected from the inventory, the mouse cursor will change to a frame specified in the inventory file and the inventory bar will disappear. Then the player can attempt to use the item on a location within the level by clicking the mouse over the location. Each of these values (except for **inventory** and **pin**) has an identically named optional key for specifying the sprite frame that the mouse cursor will change to. If the corresponding key is not specified, then the mouse will use the default cursor frame when that tool is selected.
+ * **walk** - Lets the player select a location for their avatar to attempt to walk to.
+ * **run** - Lets the player select a location for their avatar to attempt to run to.
+ * **look** - Lets the player select a location to look at and get some information.
+ * **use** - Lets the player select a location to attempt to use "bare-handed" (without an inventory item). Generally useful for things like opening doors and picking up new items.
+ * **talk** - Lets the player select a location (presumably occupied by a character or listening device) to talk to.
+ * **strike** - Lets the player select a location (presumable occupied by an enemy or something that just needs punching) to strike with its hand or whatever weapon is available.
+ * **pin** - Lets the player toggle whether the toolbar is pinned in place. By default, when the toolbar first appears (by moving the mouse cursor to the bottom of the screen), the pin is "out", allowing the toolbar to disappear when the mouse cursor leaves it. If the pin is toggled to "in", the toolbar will stay visible until the pin is "pulled out" again. The first **tiles** key after this defines the appearance of the pin being out. If a second **tiles** is in the menu file before the next **tool** key or the end of file, that will define the appearance of the pin being in, otherwise the pin tool will never change appearance from its "out" definition, but it will still work and change state without visual feedback.
+* **tiles** - Tiles used for the preceding tool's toolbar button.  Unlike other tile keys described before, this one takes an ordered set of tile indexes (potentially with H and/or V appended for flipping) to define the button area.  Toolbar buttons may have variable widths, but the height is fixed at the value of **tb_height**. In the example menu file, the height is set to 4, so the tiles must be laid out in multiples of 4. So, if 4 tiles are specified, the button is 1 tile wide. In the example, each button specifies 16 tiles, so they are each 4 tiles wide.  The tiles are in left-down order, so that the first 4 are the top row, then the next 3 rows to the bottom.  The total number of tiles for all buttons should be **tb_height** x **tb_width**. In the example, this means that there are 4x32, or 128 tiles across all 8 buttons. Note again that the pin can have two different buttons, so only one of them counts in the total, but both tile sets need to be the same size.
+
+As described for some key-value combinations, some optional keys become required, but they are still specified in the next subsection of this document.
+
+#### Menu File: Optional Keys
+* **menu_bg** - Menu background color, based on palette offset 0. By default this is set to 1, which is white in the default X16 palette. This will affect palette offset 11, which will be a copy of palette offset 0, but with color 6 replaced with the color from palette offset 0 specified by this value. So, without this key and using the default X16 palette, palette offset 11 will have color 6 set to white.
+* **menu_fg** - Menu foreground color, based on palette offset 0. By default this is set to 0, which is black in the default X16 palette. This will replace color 1 in pallete offset 11 with the color from palette offset 0 specified by this value. So, without this key and using the default X16 palette, palette offset 11 will have color 1 set to black. As seen in the example menu file, the default values were used explicitly for all optional keys, and so the image above shows that the menu has black-on-white letters.
+* **menu_div** - Tile to use for menu dividers.  Only required if any **div** items exist in any menu. Specified with the decimal tile index number followed by H and/or V if the tile needs to be flipped. This tile, however it is oriented, will need to be horizontally adjacent to itself, so it should be able to form something like a horizontal line.
+* **menu_check** - Tile to use to indicate when a toggle menu item (e.g. **music**) is enabled. Only required if any toggle items exist in any menu. It will be placed to the left of the menu item's level.
+* **menu_uncheck** - Tile to use to indicatge when a toggle menu item is disabled. If not specified, the menu space (**menu_sp**) tile will be used.
+* **controls** - Filename of the Controls layout file. Only required if any **controls** items exist in any menu. See the [Controls File](#controls-file) section for a specification of its contents.
+* **about** - Filename of the About layout file. Only required if any **about** items exist in any menu. See the [About File](#about-file) section for a specification of its contents.
+* **text1_bg** - Background color of text style 1, based on palette offset 0. By default it is set to 0, which is black in the default X16 palette. This is used for text that appears in the text field, which can be specified to use text style 0 (same as menu), 1, 2 or 3. Text style 1 is defined by palette offset 12, which is a copy of palette offset 0, but the specified color will replace color 6. So, without this key and using the default X16 palette, palette offset 12 will have color 6 set to black.
+* **text1_fg** - Foreground color of text style 1, based on palette offset 0. By default it is set to 1, which is white in the default X16 palette. This will replace color 1 in palette offset 12. So, without this key and using the default X16 palette, palette offset 12 will leave color 1 set to white.
+* **text2_bg** - Background color of text style 2, based on palette offset 0. By default it is set to 0, which is black in the default X16 palette. Text style 2 is defined by palette offset 13, which is a copy of palette offset 0, but the specified color will replace color 6. So, without this key and using the default X16 palette, palette offset 13 will have color 6 set to black.
+* **text2_fg** - Foreground color of text style 2, based on palette offset 0. By default it is set to 7, which is yellow in the default X16 palette. This will replace color 1 in palette offset 13. So, without this key and using the default X16 palette, palette offset 13 will replace color 1 with yellow.
+* **text3_bg** - Background color of text style 3, based on palette offset 0. By default it is set to 0, which is black in the default X16 palette. Text style 3 is defined by palette offset 14, which is a copy of palette offset 0, but the specified color will replace color 6. So, without this key and using the default X16 palette, palette offset 14 will have color 6 set to black.
+* **text3_fg** - Foreground color of text style 3, based on palette offset 0. By default it is set to 14, which is light blue in the default X16 palette. This will replace color 1 in palette offset 14. So, without this key and using the default X16 palette, palette offset 14 will replace color 1 with light blue.
+* **inventory** - Filename of the inventory configuration file.  Only required if any **inventory** tools exist in the toolbar.  See the [Inventory File](#inventory-file) section for a specification of its contents.
+* **walk** - Index for the walk mouse cursor sprite frame. If not specified, the default cursor will be used.
+* **run** - Index for the run mouse cursor sprite frame. If not specified, the default cursor will be used.
+* **look** - Index for the look mouse cursor sprite frame. If not specified, the default cursor will be used.
+* **use** - Index for the walk mouse cursor sprite frame. If not specified, the default cursor will be used.
+* **talk** - Index for the walk mouse cursor sprite frame. If not specified, the default cursor will be used.
+* **strike** - Index for the walk mouse cursor sprite frame. If not specified, the default cursor will be used.
+
+### Help Files
+(TODO)
+
+#### Controls File
+(TODO)
+
+#### About File
 (TODO)
 
 ### Title Screen File
+(TODO)
+
+### Inventory File
 (TODO)
 
 #### Raw Image Files
