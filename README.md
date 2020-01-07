@@ -352,7 +352,10 @@ The menu file is a key-value configuration text file, just like the main file.  
 # Menu bar definition
 menu_bg 1 # background color = white
 menu_fg 0 # foreground color = black
-menu_div \4
+menu_lc 2H
+menu_sp 0
+menu_rc 2
+menu_div 4
 menu File
 item new
 item load
