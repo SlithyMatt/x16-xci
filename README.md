@@ -374,8 +374,8 @@ item controls
 item div
 item about
 
-controls help.txt
-about about.txt
+controls mygame_help.txt
+about mygame_about.txt
 
 # text styles
 text1_bg 0 # text style 1 background color = black
@@ -475,10 +475,35 @@ As described for some key-value combinations, some optional keys become required
 * **strike** - Index for the walk mouse cursor sprite frame. If not specified, the default cursor will be used.
 
 ### Help Files
-(TODO)
+Help files are simple tile layout files that expect most tiles to be ASCII characters. To do this, rather than using hex files, they are regular text files with some basic markup. Like will all other file, hash symbols are used for comments, unless preceded by a backslash (```\#```), which will specify an actual hash character tile to be rendered. Double backslashes (```\\```) are used to specify backslash tiles. Non-ASCII tiles are specified by a backslash followed by the tile index and optionally H and/or V for flipping. For example, an upside-down X16 butterfly would be ```\3V```. ASCII tiles can also be flipped, but they must be treated like other tiles and use their tile index (which is the same as their decimal ASCII code) after a backslash. For example, a backwards ```E``` would be ```\45H```. If an ```H``` or ```V``` tile needs to immediately follow an escaped tile index, it must be preceded with a backslash (e.g. ```\3\H``` is a butterfly followed by an ```H```, rather than flipped horizontally). ASCII tiles will use the menu colors, a.k.a. text style 0, which is black-on-white by default. All other tiles will use palette offset 0. All whitespace characters will be rendered as space character tiles. Each line can specify no more than 40 tiles.  There can be no more than 25 lines. When rendered, the tiles will be centered in the level area (rows 1-25). Rows shorter than the longest row will be filled out with space tiles. Clicking on the level area will remove the help screen and return the user to the game.
+
+The following sections show examples of how help files can be formatted.
 
 #### Controls File
-(TODO)
+The controls file is a help file whose filename is specified by the **controls** key in the menu file. It is rendered when the player selects the "Controls" menu item. The example controls file (**mygame_help.txt**) is written as follows.
+
+```
+# This is a comment.
+\2H                                      \2
+
+ File: Start, load, save & exit game
+ Sound: Toggle music and sound effects
+
+ Mouse down to bottom to show toolbar
+ \20\20H Show            \23\24 Use or
+ \21\21H Inventory       \25\26 Take
+
+ \13\14 Walk to         \27\28 Talk to
+ \15\16 Location        \29\30 Somebody
+
+ \17\14 Run to          \31\127 Punch
+ \18\19 Location        \128\129 Something!
+
+ \22\22H Look at         \130\130H Pin/Unpin
+ \22V\22HV Something       \131\131H Toolbar
+
+\2HV                   Click to Close Help\2V
+```
 
 #### About File
 (TODO)

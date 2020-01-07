@@ -1,0 +1,20 @@
+# This is a comment.
+\2H                                      \2
+
+ File: Start, load, save & exit game
+ Sound: Toggle music and sound effects
+
+ Mouse down to bottom to show toolbar
+ \20\20H Show            \23\24 Use or
+ \21\21H Inventory       \25\26 Take
+
+ \13\14 Walk to         \27\28 Talk to
+ \15\16 Location        \29\30 Somebody
+
+ \17\14 Run to          \31\127 Punch
+ \18\19 Location        \128\129 Something!
+
+ \22\22H Look at         \130\130H Pin/Unpin
+ \22V\22HV Something       \131\131H Toolbar
+
+\2HV                   Click to Close Help\2V
