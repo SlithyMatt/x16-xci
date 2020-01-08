@@ -485,11 +485,11 @@ The controls file is a help file whose filename is specified by the **controls**
 ```
 # This is a comment.
 \2H                                      \2
-
  File: Start, load, save & exit game
  Sound: Toggle music and sound effects
 
  Mouse down to bottom to show toolbar
+
  \20\20H Show            \23\24 Use or
  \21\21H Inventory       \25\26 Take
 
@@ -502,11 +502,27 @@ The controls file is a help file whose filename is specified by the **controls**
  \22\22H Look at         \130\130H Pin/Unpin
  \22V\22HV Something       \131\131H Toolbar
 
-\2HV                   Click to Close Help\2V
+\2HV                   click to close Help\2V
 ```
 
+When rendered, it will appear on screen like this: ![controls help](example/help.png)
+
+Note that the toolbar is pinned and no menus are visible to show how the tile layout will be centered in the level area.
+
 #### About File
-(TODO)
+The about file is a help file whoe=se filename is specified by the **about** key in the menu file.  It is rendered when the player selects the "About" menu item. The example controls file (**mygame_about.txt**) is written as follows.
+
+```
+\2H                                   \2
+ My Game: An Exemplary XCI Adventure
+ Copyleft 2020 by John Doe
+ Version 0.0
+\2HV               click to close About\2V
+```
+
+When rendered, it will appear on screen like this: ![about box](example/about.png)
+
+Note that the toolbar is pinned and no menus are visible to show how the tile layout will be centered in the level area.
 
 ### Title Screen File
 (TODO)

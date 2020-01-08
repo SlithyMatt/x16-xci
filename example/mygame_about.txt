@@ -1,0 +1,5 @@
+\2H                                   \2
+ My Game: An Exemplary XCI Adventure
+ Copyleft 2020 by John Doe
+ Version 0.0
+\2HV               click to close About\2V

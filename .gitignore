@@ -52,4 +52,5 @@ dkms.conf
 
 # game binaries
 *.BIN
+*.bin
 *.PRG
