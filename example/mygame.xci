@@ -2,9 +2,9 @@
 title My Game
 author John Doe
 palette mygame_pal.hex
-tiles mygame_tiles.hex
-sprites mygame_sprites.hex
-menu mygame_menu.xci
+tiles_hex mygame_tiles.hex
+sprites_hex mygame_sprites.hex
+menu_xci mygame_menu.xci
 title_screen mygame_start.xci
 init_cursor 0 # sprite frame index
 zone mygame_zone0.xci # the first zone defined will be loaded first,

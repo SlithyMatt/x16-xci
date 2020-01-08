@@ -1,0 +1,56 @@
+#ifndef XCI_H
+#define XCI_H
+
+enum xci_key {
+   TITLE = 0,
+   AUTHOR,
+   PALETTE,
+   TILES_HEX,
+   SPRITES_HEX,
+   MENU_XCI,
+   TITLE_SCREEN,
+   INIT_CURSOR,
+   ZONE,
+   MENU_BG,
+   MENU_FG,
+   MENU_LC,
+   MENU_SP,
+   MENU_RC,
+   MENU_DIV,
+   MENU_CHECK,
+   MENU_UNCHECK,
+   MENU,
+   MENU_ITEM,
+   CONTROLS,
+   ABOUT,
+   TEXT1_BG,
+   TEXT1_FG,
+   TEXT2_BG,
+   TEXT2_FG,
+   TEXT3_BG,
+   TEXT3_FG,
+   TB_HEIGHT,
+   TB_WIDTH,
+   TOOL,
+   TOOL_TILES,
+   INVENTORY,
+   WALK,
+   RUN,
+   LOOK,
+   USE,
+   TALK,
+   STRIKE,
+   DURATION,
+   BITMAP,
+   MUSIC,
+   SPRITE_FRAMES,
+   SPRITE,
+   TILES,
+   WAIT,
+   SPRITE_MOVE,
+
+   NUM_XCI_KEYS
+};
+typedef enum xci_key xci_key_t;
+
+#endif XCI_H

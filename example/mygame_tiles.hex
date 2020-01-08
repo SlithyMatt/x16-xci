@@ -7,25 +7,25 @@
 # Tiles 32-126 are an ASCII character set and should still resemble the
 # characters they represent if modified.
 
-# Tile 0: Solid white square
-11111111
-11111111
-11111111
-11111111
-11111111
-11111111
-11111111
-11111111
+# Tile 0: Transparent
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
+00000000
 
-# Tile 1: Small red circle with white outline, transparent background
-00000000
-00011000
-00122100
-01222210
-01222210
-00122100
-00011000
-00000000
+# Tile 1: Solid white square
+11111111
+11111111
+11111111
+11111111
+11111111
+11111111
+11111111
+11111111
 
 # Tile 2: White square with rounded corner. Can be flipped to round different corners of a white box
 11100000

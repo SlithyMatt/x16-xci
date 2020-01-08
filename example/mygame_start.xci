@@ -1,0 +1,20 @@
+# My Game Start Screen
+duration 600 # 10 seconds
+bitmap start.data
+music start.vgm
+
+# define animation loop
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+
+# define initial sprite and tile positions
+sprite 1 16 200
+tiles 11  27 29  32 98 121 32 74 111 104 110 32 68 111 101 32 # byline
+
+# define animation timeline
+wait 2
+sprite_move 1  2  72  2 0
+wait 144 # preceding sprite_move will be just finished
+tiles 0  20 24  3 3
+tiles 0  18 25  3 0 0 3
+wait 394 # wait until last second
+tiles 11  17 28  72 101 108 108 111 63 # Hello?

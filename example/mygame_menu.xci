@@ -6,20 +6,20 @@ menu_sp 0
 menu_rc 2
 menu_div 4
 menu File
-item new
-item load
-item div
-item save
-item saveas
-item div
-item exit
+menu_item new
+menu_item load
+menu_item div
+menu_item save
+menu_item saveas
+menu_item div
+menu_item exit
 menu Sound
-item music
-item sfx
+menu_item music
+menu_item sfx
 menu Help
-item controls
-item div
-item about
+menu_item controls
+menu_item div
+menu_item about
 
 controls help.txt
 about about.txt
@@ -36,19 +36,19 @@ text3_fg 14 # light blue
 tb_height 4
 tb_width 32
 tool inventory
-tiles 5H 6 6 9 7 20 20H 8H 7 21 21H 8H 10 11 11 12H
+tool_tiles 5H 6 6 9 7 20 20H 8H 7 21 21H 8H 10 11 11 12H
 tool walk
-tiles 9H 6 6 9 8 13 14 8H 8 15 16 8H 12 11 11 12H
+tool_tiles 9H 6 6 9 8 13 14 8H 8 15 16 8H 12 11 11 12H
 tool run
-tiles 9H 6 6 9 8 17 14 8H 8 18 19 8H 12 11 11 12H
+tool_tiles 9H 6 6 9 8 17 14 8H 8 18 19 8H 12 11 11 12H
 tool look
-tiles 9H 6 6 9 8 22 22H 8H 8 22V 22HV 8H 12 11 11 12H
+tool_tiles 9H 6 6 9 8 22 22H 8H 8 22V 22HV 8H 12 11 11 12H
 tool use
-tiles 9H 6 6 9 8 23 24 8H 8 25 26 8H 12 11 11 12H
+tool_tiles 9H 6 6 9 8 23 24 8H 8 25 26 8H 12 11 11 12H
 tool talk
-tiles 9H 6 6 9 8 27 28 8H 8 29 30 8H 12 11 11 12H
+tool_tiles 9H 6 6 9 8 27 28 8H 8 29 30 8H 12 11 11 12H
 tool strike
-tiles 9H 6 6 9 8 31 127 8H 8 128 129 8H 12 11 11 12H
+tool_tiles 9H 6 6 9 8 31 127 8H 8 128 129 8H 12 11 11 12H
 tool pin
-tiles 9H 6 6 5 8 130 130H 7H 8 131 131H 7H 12 11 11 10H # pin out
-tiles 9H 6 6 5 8 132 132H 7H 8 133 133H 7H 12 11 11 10H # pin in
+tool_tiles 9H 6 6 5 8 130 130H 7H 8 131 131H 7H 12 11 11 10H # pin out
+tool_tiles 9H 6 6 5 8 132 132H 7H 8 133 133H 7H 12 11 11 10H # pin in
