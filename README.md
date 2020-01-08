@@ -510,7 +510,7 @@ When rendered, it will appear on screen like this: ![controls help](example/help
 Note that the toolbar is pinned and no menus are visible to show how the tile layout will be centered in the level area.
 
 #### About File
-The about file is a help file whoe=se filename is specified by the **about** key in the menu file.  It is rendered when the player selects the "About" menu item. The example controls file (**mygame_about.txt**) is written as follows.
+The about file is a help file whose filename is specified by the **about** key in the menu file.  It is rendered when the player selects the "About" menu item. The example controls file (**mygame_about.txt**) is written as follows.
 
 ```
 \2H                                   \2
