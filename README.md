@@ -576,6 +576,8 @@ The following is the example inventory file (**mygame_inv.xci**) as specified by
 
 ```
 # My Game inventory
+
+# Inventory layout
 inv_dim 4 38
 inv_item_dim 2 2
 inv_left_margin 134 134H
@@ -583,8 +585,18 @@ inv_right_margin 135
 inv_quant 1 4
 inv_quant_margin 135
 inv_scroll 136 135 136V
+inv_scroll_margin 134
 
-
+# Item list
+inv_item money 100 9999 21 137 138 138HV 137HV
+inv_item keys 1 1 22 139 140 141 142
+inv_item phone 1 1 23 143 143H 143V 143HV
+inv_item laptop 0 1 24 144 144H 145 145H
+inv_item banana 0 12 25 135 146 147 148
+inv_item coffee 0 1 26 149 149H 150 150H
+inv_item screwdriver 0 1 27 151 135 135 152
+inv_item thumbdrive 0 1 29 155 155H 156 156H
+inv_item grail 0 1 28 153 153H 154 154H
 ```
 
 <!--

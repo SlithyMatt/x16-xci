@@ -1267,4 +1267,232 @@ fffff222
 ffff2222
 f2222222
 
-# Tile 134:
+# Tile 134: Inventory left margin
+fffffffc
+fffffffc
+fffffffc
+fffffffc
+fffffffc
+fffffffc
+fffffffc
+fffffffc
+
+# Tile 135: Inventory right margin (solid light gray square)
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+
+# Tile 136: Inventory scroll button
+fffccfff
+fffccfff
+ffccccff
+ffccccff
+fccccccf
+fccccccf
+cccccccc
+cccccccc
+
+# Tile 137: Money UL/LR
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+dddddd0d
+d5555000
+d5550505
+d5555000
+
+# Tile 138: Money UR/LL
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+d0dddddd
+0000555d
+5055555d
+5055555d
+
+# Tile 139: Keys UL
+fffffff8
+ffffff8f
+fffbb8bf
+ffbbf8bb
+fbbbbbbb
+fbbbbbbb
+fbbbbbbb
+ffbbbbbb
+
+# Tile 140: Keys UR
+8fffffff
+f8ffffff
+ff8fffff
+ff8fffff
+b8ffffff
+b7ffffff
+b7ffffff
+77ffffff
+
+# Tile 141: Keys LL
+fffbbbb7
+ffffccff
+ffffbcff
+ffffccff
+ffffbcff
+ffffccff
+fffffcff
+ffffffff
+
+# Tile 142: Keys LR
+777fffff
+f877ffff
+ff877fff
+fff877ff
+ffffffff
+ffffffff
+ffffffff
+ffffffff
+
+# Tile 143: Phone
+ffffffff
+fffffccc
+ffffcbbb
+ff6fcbbb
+f6ffcbbb
+6ff6cbbb
+6f6fcbbb
+6f6fcbbb
+
+# Tile 144: Laptop top
+ffffffff
+ffffffff
+ffcccccc
+ffcbbbbb
+ffcbbbbb
+ffcbbbbb
+ffcbbbbb
+ffcbbbbb
+
+# Tile 145: Laptop bottom
+ffcbbbbb
+ffcccccc
+fcfcfcfc
+fccfcfcc
+ccccccff
+ccccccff
+cccccccc
+ffffffff
+
+# Tile 146: Banana top
+ffffffff
+ffffffff
+fffff99f
+fffff9ff
+fffffdff
+ffff77ff
+ffff778f
+fff7778f
+
+# Tile 147: Banana LL
+ffffffff
+ffffffff
+fffffff7
+f9777777
+ff877777
+fff88777
+fffff888
+ffffffff
+
+# Tile 148: Banana LR
+ff77778f
+f77778ff
+777778ff
+77778fff
+7788ffff
+88ffffff
+ffffffff
+ffffffff
+
+# Tile 149: Coffee top
+ffffffff
+ffffffff
+ffff1111
+fff11111
+ffff9999
+ffff1115
+ffff1155
+fffff155
+
+# Tile 150: Coffee bottom
+fffff999
+fffff999
+fffff999
+fffff111
+ffffff11
+ffffff11
+ffffffff
+ffffffff
+
+# Tile 151: Screwdriver top
+ffffffff
+f22fffff
+f2222fff
+ff2222ff
+ff22222f
+fff22222
+ffff222f
+fffff2fc
+
+# Tile 152: Screwdriver bottom
+cfffffff
+fcffffff
+ffcfffff
+fffcffff
+ffffcfff
+fffffcff
+ffffffff
+ffffffff
+
+# Tile 153: Grail top
+ffffffff
+ff888888
+fff77777
+fff72727
+fff77777
+ffff7777
+ffffff77
+fffffff8
+
+# Tile 154: Grail bottom
+fffffff7
+fffffff7
+fffffff7
+fffffff7
+fffffff7
+ffffff88
+ffff7777
+ffffffff
+
+# Tile 155: Thumbdrive top
+ffffffff
+ffffffcc
+ffffffcc
+ffffffcc
+fffff222
+fffff222
+fffff222
+fffff222
+
+# Tile 156: Thumbdrive bottom
+fffff222
+fffff222
+fffff222
+fffff222
+fffffbbb
+fffffbbf
+ffffffbb
+ffffffff
