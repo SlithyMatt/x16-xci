@@ -586,10 +586,13 @@ inv_scroll 136 135 136V
 
 
 ```
+
+<!--
 IIooI----IIooI----IIooI----IIooI----IA
 IIooIxxxxIIooIxxxxIIooIxxxxIIooIxxxxII
 IIooI----IIooI----IIooI----IIooI----II
 IIooIxxxxIIooIxxxxIIooIxxxxIIooIxxxxIV
+-->
 
 #### Raw Image Files
 (TODO)
