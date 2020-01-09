@@ -33,8 +33,7 @@ text3_bg 0
 text3_fg 14 # light blue
 
 # Toolbar definition
-tb_height 4
-tb_width 32
+tb_dim 32 4
 tool inventory
 tool_tiles 5H 6 6 9 7 20 20H 8H 7 21 21H 8H 10 11 11 12H
 tool walk

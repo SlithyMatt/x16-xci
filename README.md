@@ -386,8 +386,7 @@ text3_bg 0
 text3_fg 14 # light blue
 
 # Toolbar definition
-tb_height 4
-tb_width 32
+tb_dim 32 4
 tool inventory
 tool_tiles 5H 6 6 9 7 20 20H 8H 7 21 21H 8H 10 11 11 12H
 tool walk
@@ -437,8 +436,7 @@ So how does XCI take the menu file and make that screen? Let's go through each o
  * **controls** - Rendered as "Controls". Blacks out the level bitmap and displays the controls guide. This requires the **controls** key to be defined, which will specify the source file for the guide.
  * **about** - Rendered as "About". Blacks out the level bitmap and displays information about the game. This requires the **about** key to be defined, which will specify the source file for the about screen.
  * **div** - Rendered as the divider tile for the width of the menu. Generally is placed between other items to provide visual grouping of similar items. Requires the **menu_div** key to define which tile to use.
-* **tb_height** - Height of the toolbar, in tiles. Must be between 1 and 4.
-* **tb_width** - Width of the toolbar, in tiles. Must be at least as many tiles as there are tools specified, but no more than 40.
+* **tb_dim** - Dimensions of the toolbar, in tiles. The first number is the width, which must be at least as many tiles as there are tools specified, but no more than 40. The second number is the height, which must be between 1 and 4.
 * **tool** - Tool to include on the toolbar. At least one tool must be included. Value must be one of the identifiers of a supported XCI tool. The following tools are supported:
  * **inventory** - Replaces the toolbar with the inventory bar. Requires the **inventory** key to specify the inventory configuration file. When an item is selected from the inventory, the mouse cursor will change to a frame specified in the inventory file and the inventory bar will disappear. Then the player can attempt to use the item on a location within the level by clicking the mouse over the location. Each of these values (except for **inventory** and **pin**) has an identically named optional key for specifying the sprite frame that the mouse cursor will change to. If the corresponding key is not specified, then the mouse will use the default cursor frame when that tool is selected.
  * **walk** - Lets the player select a location for their avatar to attempt to walk to.
@@ -448,7 +446,7 @@ So how does XCI take the menu file and make that screen? Let's go through each o
  * **talk** - Lets the player select a location (presumably occupied by a character or listening device) to talk to.
  * **strike** - Lets the player select a location (presumable occupied by an enemy or something that just needs punching) to strike with its hand or whatever weapon is available.
  * **pin** - Lets the player toggle whether the toolbar is pinned in place. By default, when the toolbar first appears (by moving the mouse cursor to the bottom of the screen), the pin is "out", allowing the toolbar to disappear when the mouse cursor leaves it. If the pin is toggled to "in", the toolbar will stay visible until the pin is "pulled out" again. The first **tool_tiles** key after this defines the appearance of the pin being out. If a second **tool_tiles** is in the menu file before the next **tool** key or the end of file, that will define the appearance of the pin being in, otherwise the pin tool will never change appearance from its "out" definition, but it will still work and change state without visual feedback.
-* **tool_tiles** - Tiles used for the preceding tool's toolbar button.  Unlike other tile keys described before, this one takes an ordered set of tile indexes (potentially with H and/or V appended for flipping) to define the button area.  Toolbar buttons may have variable widths, but the height is fixed at the value of **tb_height**. In the example menu file, the height is set to 4, so the tiles must be laid out in multiples of 4. So, if 4 tiles are specified, the button is 1 tile wide. In the example, each button specifies 16 tiles, so they are each 4 tiles wide.  The tiles are in left-down order, so that the first 4 are the top row, then the next 3 rows to the bottom.  The total number of tiles for all buttons should be **tb_height** x **tb_width**. In the example, this means that there are 4x32, or 128 tiles across all 8 buttons. Note again that the pin can have two different buttons, so only one of them counts in the total, but both tile sets need to be the same size.
+* **tool_tiles** - Tiles used for the preceding tool's toolbar button.  Unlike other tile keys described before, this one takes an ordered set of tile indexes (potentially with H and/or V appended for flipping) to define the button area.  Toolbar buttons may have variable widths, but the height is fixed at the value of the height of **tb_dim**. In the example menu file, the height is set to 4, so the tiles must be laid out in multiples of 4. So, if 4 tiles are specified, the button is 1 tile wide. In the example, each button specifies 16 tiles, so they are each 4 tiles wide.  The tiles are in left-down order, so that the first 4 are the top row, then the next 3 rows to the bottom.  The total number of tiles for all buttons should be the **tb_dim** height x width. In the example, this means that there are 4x32, or 128 tiles across all 8 buttons. Note again that the pin can have two different buttons, so only one of them counts in the total, but both tile sets need to be the same size.
 
 As described for some key-value combinations, some optional keys become required, but they are still specified in the next subsection of this document.
 
@@ -577,8 +575,21 @@ The inventory file is specified by the menu file with the **inventory** key. It 
 The following is the example inventory file (**mygame_inv.xci**) as specified by the **inventory** key in **mygame_menu.xci**.
 
 ```
+# My Game inventory
+inv_dim 4 38
+inv_item_dim 2 2
+inv_left_margin 134 134H
+inv_right_margin 135
+inv_quant 1 4
+inv_quant_margin 135
+inv_scroll 136 135 136V
+
 
 ```
+IIooI----IIooI----IIooI----IIooI----IA
+IIooIxxxxIIooIxxxxIIooIxxxxIIooIxxxxII
+IIooI----IIooI----IIooI----IIooI----II
+IIooIxxxxIIooIxxxxIIooIxxxxIIooIxxxxIV
 
 #### Raw Image Files
 (TODO)
@@ -594,9 +605,13 @@ The following is the example inventory file (**mygame_inv.xci**) as specified by
 
 ##### Level File: Optional Keys
 
-* **bitmap** -
-* **music** -
-
+* **bitmap** - Filename of the level background bitmap, which should be an indexed 16-color 320x200 raw image file. It should have a raw 24-bit palette file that has the same filename appended with ```.pal```. If that file is not available, the bitmap will use the default palette, offset 0. It will be converted to X16 format and stored across 4 banks of banked RAM when that level's zone is loaded. The starting bank is based on the level number. Using N for the level number, it will be stored in banks 6N+2 through 6N+5. So, that would be banks 2-5 for level 0 (loaded from **Z0.L0.2.BIN** for zone 0, for example), banks 8-11 for level 1 and so on up to banks 56-59 for level 9. The palette for this bitmap will be written to palette offset N+1 (e.g. level 0 = palette offset 1) when the level's zone is loaded.
+* **music** - Filename of the level music VGM file. It is converted into a more X16-friendly format and stored in bank that it shares with sound effects in banked RAM. Using N for the level number, that bank number will be 6N+6. So, level 0 of zone 0 music and sound effects would be loaded from **Z0.L0.6.BIN** and stored in bank 6.
+* **sprite_frames** - Defines an animation loop for a particular sprite. The value is a set of space delimited values, starting with the sprite index, followed by the palette offset to use for the sprite in this loop. The remaining values are an ordered list of sprite frame indexes, appended with H and/or V if the frame needs to be flipped. The next movement for that sprite will step from frame to frame starting with the first listed, then throught he list and back to the beginning if there are enough movement steps before the next **sprite_frames** key with the same sprite index value. If there is only one sprite frame listed, then the sprite frame will not change until the next **sprite_frames** or **sprite_hide** key with the same sprite index value.
+* **sprite** - Displays a sprite at a specific screen location. The sprite will be its most recently defined frame. If preceded by a **sprite_frames** key, it will be the first frame specified in its list. The value is a set of up to 3 space delimited number values. The first (an only required) number is the sprite index. If no more numbers are defined, the sprite will appear at its last defined position. If that sprite index has never been placed before, it will be in the upper left corner of the screen, which will be partially overlap the menu bar if in a game level. Therefore it is recommended that the first **sprite** key for each sprite index in each configuration file is given an explicit position. This is done with the next two numbers in the value, which are the x and y screen coordinates, in that order. For game levels, the x coordinate should be between 0 and 304, and the y coordinate between 8 and 192, which will ensure the sprite is completely visible with no "overhang" past the level bitmap. Note that the coordinates will be for the upper-left corner of the sprite frame, not the center.
+* **tiles** - Displays a row of tiles starting from a specific location. Unlike sprites, tiles are not placed at arbitrary screen positions but at discrete positions within the 40x30 tile map. Rather than being moved or removed, they can only be replaced. By default, the entire game level bitmap area is tiled with all transparent tiles (index 0).  A single **tiles** key can display a single row of tiles with all the same palette offset, which is the first number in the key's space-delimited value. The next two numbers are the starting x and y coordinates of the tile row. The x coordinate must be between 0 and 39, and the y coordinate between 1 and 25 to be within the level bitmap area. The remaining values are an ordered list of tile indexes, appended with H and/or V if they are to be flipped. Note that if the number of tiles is greater than 40-x, then not all will be visible as the x coordinate of at least the rightmost tile will exceed 39. If any of the tiles need to be removed during the level, they need to be replaced with transparent tiles (index 0).
+* **wait** - Pauses a sequence for a specified number of "jiffys". A jiffy is 1/60 of a second, so a ```wait 60``` will pause for a whole second before executing any later keys in its sequence.  It will not stop the progress of a preceding key that is still executing (such as **sprite_move**).
+* **sprite_move** - Starts moving a sprite in a specified direction. Note that the sprite needs to be shown via a preceding **sprite** key in order for the movement to be visible. Its value contains exactly 5 space-delimited numbers. The first number specifies the sprite index. The second number is the number of jiffys in between each step of the movement (e.g. 2 jiffys between steps will produce 30 fps movement). The third number is the number of steps to execute, so the total duration of the movement will be the product of the second and third numbers (e.g. 30 steps at 2 jiffys per step will go on for a whole second before the movement stops). The fourth and fifth numbers are the x,y vector of the movement. This means that each step the sprite will move x pixels to the right and y pixels down. Leftward and upward movements require negative x and y values, respectively. The final position of the sprite will be its previous position plus the number of steps times the movement vector, so take care to make sure that the full range of movement will be valid sprite positions, as specified for the **sprite** key.
 
 #### VGM Files
 (TODO)
