@@ -54,3 +54,6 @@ dkms.conf
 *.BIN
 *.bin
 *.PRG
+
+# temp files
+.~lock.*
