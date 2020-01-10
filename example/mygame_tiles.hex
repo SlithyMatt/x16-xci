@@ -1361,9 +1361,9 @@ ffffffff
 ffffffff
 fffffccc
 ffffcbbb
-ff6fcbbb
+ffffcbbb
 f6ffcbbb
-6ff6cbbb
+6fffcbbb
 6f6fcbbb
 6f6fcbbb
 
@@ -1425,15 +1425,15 @@ fff11111
 ffff9999
 ffff1115
 ffff1155
-fffff155
+ffff1155
 
 # Tile 150: Coffee bottom
-fffff999
+ffff9999
 fffff999
 fffff999
 fffff111
-ffffff11
-ffffff11
+fffff111
+fffff111
 ffffffff
 ffffffff
 
