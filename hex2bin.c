@@ -1,3 +1,4 @@
+#include "hex2bin.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -14,37 +15,28 @@ uint8_t getNibble(char ascii) {
    return nibble;
 }
 
-void main(int argc, char **argv) {
+int hex2bin(const char* hex_fn, const char* bin_fn) {
+   hex2bin_addr(hex_fn,bin_fn,0x0000);
+}
+
+int hex2bin_addr(const char* hex_fn, const char* bin_fn, int address) {
    FILE *ifp;
    FILE *ofp;
 
-   int address;
    char idata[1003]; // Max 1000 ASCII characters + end of line and null terminator
    uint8_t odata;
    int i;
    uint8_t nibble;
 
-   if (argc < 3) {
-      printf("Usage: %s [source ASCII file] [converted binary file] [default load address]\n", argv[0]);
-      return;
-   }
-
-   ifp = fopen(argv[1], "r");
+   ifp = fopen(hex_fn, "r");
    if (ifp == NULL) {
-      printf("Error opening %s for reading\n", argv[1]);
-      return;
+      printf("Error opening %s for reading\n", hex_fn);
+      return -1;
    }
-   ofp = fopen(argv[2], "w");
+   ofp = fopen(bin_fn, "w");
    if (ofp == NULL) {
-      printf("Error opening %s for writing\n", argv[2]);
-      return;
-   }
-
-   if (argc >= 4) {
-      sscanf(argv[3],"%x",&address);
-   } else {
-      // set default load address to 0x0000
-      address = 0x0000;
+      printf("Error opening %s for writing\n", bin_fn);
+      return - 1;
    }
 
    odata = (uint8_t) (address & 0x00FF);
@@ -71,4 +63,24 @@ void main(int argc, char **argv) {
          }
       }
    }
+
+   return 0;
 }
+
+#ifdef TEST
+void main(int argc, char **argv) {
+
+   int address = 0x0000;
+
+   if (argc < 3) {
+      printf("Usage: %s [source ASCII file] [converted binary file] [default load address]\n", argv[0]);
+      return;
+   }
+
+   if (argc >= 4) {
+      sscanf(argv[3],"%x",&address);
+   }
+
+   hex2bin_addr(argv[1], argv[2], address);
+}
+#endif

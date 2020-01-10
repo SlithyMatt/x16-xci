@@ -1,5 +1,5 @@
-#ifndef XCI_H
-#define XCI_H
+#ifndef KEY_H
+#define KEY_H
 
 enum xci_key {
    TITLE = 0,
@@ -48,9 +48,25 @@ enum xci_key {
    TILES,
    WAIT,
    SPRITE_MOVE,
+   INV_DIM,
+   INV_ITEM_DIM,
+   INV_EMPTY,
+   INV_LEFT_MARGIN,
+   INV_RIGHT_MARGIN,
+   INV_QUANT,
+   INV_QUANT_MARGIN,
+   INV_SCROLL,
+   INV_SCROLL_MARGIN,
+   INV_ITEM,
+
 
    NUM_XCI_KEYS
 };
 typedef enum xci_key xci_key_t;
 
-#endif XCI_H
+#define MAX_KEY_LENGTH 31
+
+xci_key_t key2idx(const char* key);
+const char* idx2key(xci_key_t index);
+
+#endif // KEY_H
