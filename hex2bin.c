@@ -15,11 +15,50 @@ uint8_t getNibble(char ascii) {
    return nibble;
 }
 
-int hex2bin(const char* hex_fn, const char* bin_fn) {
-   hex2bin_addr(hex_fn,bin_fn,0x0000);
+size_t hex2bin(const char* hex_fn, uint8_t* bin, size_t max) {
+   FILE *ifp;
+   char idata[1003]; // Max 1000 ASCII characters + end of line and null terminator
+   int i;
+   uint8_t nibble;
+   uint8_t odata;
+   size_t size = 0;
+
+   ifp = fopen(hex_fn, "r");
+   if (ifp == NULL) {
+      printf("Error opening %s for reading\n", hex_fn);
+      return 0;
+   }
+
+   while (!feof(ifp) && (size < max)) {
+      if (fgets(idata, 1001, ifp) != NULL) {
+         if (idata[0] != '#') {
+            i = 0;
+            while ((idata[i] >= ' ') && (idata[i] != '#')) {
+               if (idata[i] == ' ') {
+                  i++;
+               } else {
+                  nibble = getNibble(idata[i]);
+                  odata = nibble << 4;
+                  nibble = getNibble(idata[i+1]);
+                  odata = odata | nibble;
+                  bin[size++] = odata;
+                  i += 2;
+               }
+            }
+         }
+      }
+   }
+
+   fclose(ifp);
+
+   return size;
 }
 
-int hex2bin_addr(const char* hex_fn, const char* bin_fn, int address) {
+int hex2bin_file(const char* hex_fn, const char* bin_fn) {
+   hex2bin_file_addr(hex_fn,bin_fn,0x0000);
+}
+
+int hex2bin_file_addr(const char* hex_fn, const char* bin_fn, int address) {
    FILE *ifp;
    FILE *ofp;
 
@@ -63,6 +102,9 @@ int hex2bin_addr(const char* hex_fn, const char* bin_fn, int address) {
          }
       }
    }
+
+   fclose(ifp);
+   fclose(ofp);
 
    return 0;
 }
