@@ -6,39 +6,126 @@
 
 #define MAX_LINE 1000
 
-int parse_config (const char* cfg_fn, xci_config_t* cfg) {
+int parse_config (const char *cfg_fn, xci_config_t *cfg) {
    FILE *ifp;
    char line[MAX_LINE+1];
    char *tok;
-   int posl
+   int pos;
+   xci_key_t key;
+   xci_val_list_t *val;
+   xci_val_list_t *last_val;
+   xci_config_node_t *node;
+   xci_config_node_t *last_node;
 
    ifp = fopen(cfg_fn, "r");
    if (ifp == NULL) {
       printf("parse_config: Unable to open %s\n", cfg_fn);
-      return -1
+      return -1;
    }
 
-   cfg = malloc(sizeof(xci_config_t));
-   cfg.source = malloc(strlen(cfg_fn)+1);
-   strcpy(cfg.source,cfg_fn);
+   cfg->source = malloc(strlen(cfg_fn)+1);
+   strcpy(cfg->source,cfg_fn);
+   cfg->nodes = NULL;
 
    while (!feof(ifp)) {
       if (fgets(line, MAX_LINE, ifp) != NULL) {
          if (line[0] != '#') {
             tok = strtok(line, " \t");
             pos = 0;
-            while ((pch != NULL) && (pch[0] != '#')) {
+            while ((tok != NULL) && (tok[0] != '#')) {
                if (pos == 0) {
-                  
+                  key = key2idx(tok);
+                  if ((int)key < 0) {
+                     break;
+                  }
+                  node = malloc(sizeof(xci_config_node_t));
+                  node->key = key;
+                  node->num_values = 0;
+                  node->values = NULL;
+                  node->next = NULL;
+                  if (cfg->nodes == NULL) {
+                     cfg->nodes = node;
+                  } else {
+                     last_node->next = node;
+                  }
+                  last_node = node;
                } else {
-
+                  node->num_values++;
+                  val = malloc(sizeof(xci_val_list_t));
+                  val->val = malloc(strlen(tok)+1);
+                  strcpy(val->val,tok);
+                  val->next = NULL;
+                  if (node->values == NULL) {
+                     node->values = val;
+                  } else {
+                     last_val->next = val;
+                  }
+                  last_val = val;
                }
+               tok = strtok(NULL, " \t\r\n");
+               pos++;
             }
          }
       }
    }
+
+   fclose(ifp);
 }
 
-void delete_config(xci_config_t* cfg) {
-
+void delete_val_list(xci_val_list_t *values) {
+   if (values != NULL) {
+      free(values->val);
+      delete_val_list(values->next);
+      free(values);
+   }
 }
+
+void delete_config_node(xci_config_node_t *node) {
+   if (node != NULL) {
+      delete_val_list(node->values);
+      delete_config_node(node->next);
+      free(node);
+   }
+}
+
+void delete_config(xci_config_t *cfg) {
+   free(cfg->source);
+   delete_config_node(cfg->nodes);
+}
+
+#ifdef TEST
+void main(int argc, char **argv) {
+   xci_config_t cfg;
+   xci_config_node_t *node;
+   xci_val_list_t *val;
+   int i;
+
+   if (argc < 2) {
+      printf("Usage: %s [config filename]\n", argv[0]);
+      return;
+   }
+
+   parse_config(argv[1], &cfg);
+
+   printf("Configuration:\n");
+   printf("Source: %s\n", cfg.source);
+   node = cfg.nodes;
+   while (node != NULL) {
+      printf("%d[%s]: ", node->key, idx2key(node->key));
+      val = node->values;
+      i = 1;
+      while (val != NULL) {
+         printf("%s", val->val);
+         if (i < node->num_values) {
+            printf(", ");
+         }
+         val = val->next;
+         i++;
+      }
+      printf("\n");
+      node = node->next;
+   }
+
+   delete_config(&cfg);
+}
+#endif
