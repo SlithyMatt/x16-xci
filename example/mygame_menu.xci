@@ -51,3 +51,12 @@ tool_tiles 9H 6 6 9 8 31 127 8H 8 128 129 8H 12 11 11 12H
 tool pin
 tool_tiles 9H 6 6 5 8 130 130H 7H 8 131 131H 7H 12 11 11 10H # pin out
 tool_tiles 9H 6 6 5 8 132 132H 7H 8 133 133H 7H 12 11 11 10H # pin in
+
+
+inventory mygame_inv.xci
+walk 15
+run 16
+look 17
+use 18
+talk 19
+strike 20

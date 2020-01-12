@@ -70,6 +70,7 @@ int parse_config (const char *cfg_fn, xci_config_t *cfg) {
    }
 
    fclose(ifp);
+   return 0;
 }
 
 void delete_val_list(xci_val_list_t *values) {
