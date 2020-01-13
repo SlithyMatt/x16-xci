@@ -61,21 +61,26 @@ const char xci_key_strings[NUM_XCI_KEYS][MAX_KEY_LENGTH] = {
    "inv_item"
 };
 
+void tolower(char *dest, int max, const char *source) {
+   int i = 0;
+   while ((source[i] != '\0') && (i < (max - 1))) {
+      if ((source[i] >= 'A') && (source[i] <= 'Z')) {
+         dest[i] = source[i] + ('a' - 'A');
+      } else {
+         dest[i] = source[i];
+      }
+      i++;
+   }
+   dest[i] = '\0';
+}
+
 xci_key_t key2idx(const char* key) {
    char key_lc[MAX_KEY_LENGTH];
    int i = 0;
    int cmp = -1;
 
-   while (key[i]) {
-      if ((key[i] >= 'A') && (key[i] <= 'Z')) {
-         key_lc[i] = key[i] + ('a' - 'A');
-      } else {
-         key_lc[i] = key[i];
-      }
-      i++;
-   }
-   key_lc[i] = '\0';
-   
+   tolower(key_lc, MAX_KEY_LENGTH, key);
+
    i = 0;
    while ((i < NUM_XCI_KEYS) && cmp) {
       cmp = strcmp(key_lc,xci_key_strings[i]);

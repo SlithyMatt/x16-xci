@@ -356,8 +356,8 @@ menu_lc 2H
 menu_sp 1
 menu_rc 2
 menu_div 4
-menu_check 134
-menu_uncheck 135
+menu_check 157
+menu_uncheck 158
 menu File
 menu_item new
 menu_item load
@@ -436,7 +436,7 @@ So how does XCI take the menu file and make that screen? Let's go through each o
  * **controls** - Rendered as "Controls". Blacks out the level bitmap and displays the controls guide. This requires the **controls** key to be defined, which will specify the source file for the guide.
  * **about** - Rendered as "About". Blacks out the level bitmap and displays information about the game. This requires the **about** key to be defined, which will specify the source file for the about screen.
  * **div** - Rendered as the divider tile for the width of the menu. Generally is placed between other items to provide visual grouping of similar items. Requires the **menu_div** key to define which tile to use.
-* **tb_dim** - Dimensions of the toolbar, in tiles. The first number is the width, which must be at least as many tiles as there are tools specified, but no more than 40. The second number is the height, which must be between 1 and 4.
+* **tb_dim** - Dimensions of the toolbar, in tiles. The first number is the width, which must be at least as many tiles as there are tools specified, but no more than 40. The second number is the height, which must be between 1 and 4. Must precede any **tool** keys.
 * **tool** - Tool to include on the toolbar. At least one tool must be included. Value must be one of the identifiers of a supported XCI tool. The following tools are supported:
  * **inventory** - Replaces the toolbar with the inventory bar. Requires the **inventory** key to specify the inventory configuration file. When an item is selected from the inventory, the mouse cursor will change to a frame specified in the inventory file and the inventory bar will disappear. Then the player can attempt to use the item on a location within the level by clicking the mouse over the location. Each of these values (except for **inventory** and **pin**) has an identically named optional key for specifying the sprite frame that the mouse cursor will change to. If the corresponding key is not specified, then the mouse will use the default cursor frame when that tool is selected.
  * **walk** - Lets the player select a location for their avatar to attempt to walk to.

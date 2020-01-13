@@ -13,6 +13,53 @@
 #define BLACK1 0x00
 #define BLACK2 0xF0
 
+int asc2tile(const char* descriptor, int pal_offset, uint8_t *tile) {
+   int i = 0;
+   tile_idx = atoi(descriptor);
+   if (tile_idx > MAX_TILE) {
+      printf("asc2tile: invalid tile index (%d)\n", tile_idx);
+      return -1;
+   }
+   tile[0] = (uint8_t)(tile_idx & 0xff);
+   i++;
+   if (tile_idx >= 10) {
+      i++;
+      if (tile_idx >= 100) {
+         i++;
+      }
+   }
+   tile[1] = ((tile_idx & 0x300) >> 8) | (pal_offset << 4);
+   if (descriptor[i] == 'H') {
+      tile[1] = tile[1] | H_FLIP;
+      i++;
+      if (descriptor[i] == 'V') {
+         tile[1] = tile[1] | V_FLIP;
+         i++;
+      }
+   } else if (descriptor[i] == 'V') {
+      tile[1] = tile[1] | V_FLIP;
+      i++;
+      if (descriptor[i] == 'H') {
+         tile[1] = tile[1] | H_FLIP;
+         i++;
+      }
+   }
+
+   return 2;
+}
+
+int str2tiles(const char* str, int pal_offset, uint8_t *tiles) {
+   int i = 0;
+
+   while (str[i] != '\0') {
+      tiles[i*2] = (uint8_t)str[i];
+      tiles[i*2+1] = pal_offset << 4;
+      i++;
+   }
+
+   return i*2; // number of tile bytes
+}
+
 int tile_layout(const char* filename, tilemap_t* tilemap) {
    FILE *ifp;
    char line[MAX_LINE+1];
@@ -161,6 +208,22 @@ int tile_layout(const char* filename, tilemap_t* tilemap) {
    }
 
    return 0;
+}
+
+int cfg2tiles(xci_val_list *values, int pal_offset, uint8_t* tiles) {
+   int size = 0;
+   int increment;
+   while (values != NULL) {
+      increment = asc2tile(values->val, pal_offset, &tiles[size]);
+      if (increment < 0) {
+         printf("cfg2tiles: Unable to parse tile config %s\n", values->val);
+         return -1;
+      }
+      size += increment;
+      values = values->next;
+   }
+
+   return size;
 }
 
 #ifdef TEST

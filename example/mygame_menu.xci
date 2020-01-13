@@ -2,9 +2,11 @@
 menu_bg 1 # background color = white
 menu_fg 0 # foreground color = black
 menu_lc 2H
-menu_sp 0
+menu_sp 1
 menu_rc 2
 menu_div 4
+menu_check 157
+menu_uncheck 158
 menu File
 menu_item new
 menu_item load

@@ -60,7 +60,6 @@ int parse_game_config(const char* cfg_fn) {
    int inv_offset = 0;
    int title_screen_size = 0;
    int title_screen_offset = sizeof(game_config_t) - sizeof(title_screen_config_t);
-   int cursor;
    cfg_bin->title_screen[0] = title_screen_offset & 0x00FF;
    cfg_bin->title_screen[1] = (title_screen_offset & 0xFF00) >> 8;
    cfg_bin->menu[0] = 0;
@@ -176,9 +175,9 @@ int parse_game_config(const char* cfg_fn) {
                   printf("parse_game_config: no value specified for init_cursor\n");
                   return -1
                }
-               cursor = atoi(node->values->val);
-               cfg_bin->cursor[0] = cursor & 0x00FF;
-               cfg_bin->cursor[1] = (cursor & 0xFF00) >> 8;
+               init_cursor = atoi(node->values->val);
+               cfg_bin->cursor[0] = init_cursor & 0x00FF;
+               cfg_bin->cursor[1] = (init_cursor & 0xFF00) >> 8;
                break;
             default:
                printf("parse_game_config: WARNING: unexpected key (%s)\n",
@@ -189,6 +188,8 @@ int parse_game_config(const char* cfg_fn) {
    }
 
    // TODO: check for all required keys
+
+   // TODO: write PAL.BIN
 
    return 0;
 }

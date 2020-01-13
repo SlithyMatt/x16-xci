@@ -69,4 +69,6 @@ typedef enum xci_key xci_key_t;
 xci_key_t key2idx(const char* key);
 const char* idx2key(xci_key_t index);
 
+void tolower(char *dest, int max, const char *source);
+
 #endif // KEY_H
