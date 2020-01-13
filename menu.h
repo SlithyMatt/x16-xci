@@ -47,12 +47,11 @@ typedef enum toolbar_action {
 } toolbar_action_t;
 
 typedef struct toolbar_button {
-   toolbar_action_t action;
+   uint8_t action;
    uint8_t start_x;
    uint8_t start_y;
    uint8_t end_x;
    uint8_t end_y;
-   uint8_t
    // followed by 2*(end_x-startx+1)*(end_x-startx+1) bytes of
    // tilemap for the button.  If action == PIN_TOOLBAR,
    // the number of tiles will be doubled to have both states
@@ -73,6 +72,7 @@ typedef struct toolbar_config {
    // followed by num_tools toolbar buttons, then inventory_config_t
 } toolbar_config_t;
 
-int parse_menu_config(const char* cfg_fn, uint8_t *bin);
+int parse_menu_config(const char* cfg_fn, menu_cfg *cfg_bin,
+                      int *tb_offset, int *inv_offset);
 
 #endif // MENU_H
