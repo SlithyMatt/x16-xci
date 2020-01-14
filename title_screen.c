@@ -3,6 +3,7 @@
 #include "game_config.h"
 #include "animation.h"
 #include "bitmap.h"
+#include "vgm2x16opm.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -46,7 +47,15 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
             }
             break;
          case MUSIC:
-
+            if (node->num_values < 1) {
+               printf("parse_title_screen_config: no filename specified for music\n");
+               return -1
+            }
+            if (vgm2x16opm(node->values->val, "TTL.MUS.BIN") < 0) {
+               printf("parse_title_screen_config: error converting music VGM file (%s)\n",
+                      node->values->val);
+               return -1
+            }
             break;
          case SPRITE_FRAMES:
          case SPRITE:

@@ -16,5 +16,6 @@ sprite_move 1  2  72  2 0
 wait 144 # preceding sprite_move will be just finished
 tiles 0  20 24  3 3
 tiles 0  18 25  3 0 0 3
-wait 394 # wait until last second
+wait 255 # wait until last second
+wait 139
 tiles 11  17 28  72 101 108 108 111 63 # Hello?

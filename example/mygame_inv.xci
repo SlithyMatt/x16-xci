@@ -1,7 +1,7 @@
 # My Game inventory
 
 # Inventory layout
-inv_dim 4 38
+inv_dim 38 4
 inv_item_dim 2 2
 inv_empty 135 135 135 135
 inv_left_margin 134 134H
