@@ -26,8 +26,7 @@ typedef struct inventory_item_cfg {
    // followed by item button tilemap, sized by inventory_config_t::item_width,item_height
 }
 
-int parse_inv_config(const char* cfg_fn, inventory_config_t *cfg_bin,
-                     int *inv_offset);
+int parse_inv_config(const char* cfg_fn, inventory_config_t *cfg_bin);
 
 int inv_item_index(const char* label);
 

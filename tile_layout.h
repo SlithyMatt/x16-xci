@@ -13,15 +13,15 @@ typedef struct {
 } tilemap_t;
 
 // Converts a single ASCII tile descriptor to 2-byte binary tile
-int asc2tile(const char* descriptor, int pal_offset, uint8_t *tile);
+int asc2tile(const char *descriptor, int pal_offset, uint8_t *tile);
 
 // Converts an ASCII string to 2-byte binary ASCII character tiles
-int str2tiles(const char* str, int pal_offset, uint8_t *tiles);
+int str2tiles(const char *str, int pal_offset, uint8_t *tiles);
 
 // Parses a tile layout tile into a tilemap
-int tile_layout(const char* filename, tilemap_t* tilemap);
+int tile_layout(const char *filename, tilemap_t *tilemap);
 
 // Converts a list of ASCII tile descriptors to 2-byte binary tiles
-int cfg2tiles(xci_val_list *values, int pal_offset, uint8_t* tiles);
+int cfg2tiles(xci_val_list *values, int pal_offset, uint8_t *tiles);
 
 #endif

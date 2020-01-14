@@ -1,6 +1,6 @@
 #include "menu.h"
+#include "game_config.h"
 #include "config.h"
-#include "title_screen.h"
 #include "inventory.h"
 #include <stdio.h>
 #include <stdint.h>
@@ -81,7 +81,7 @@ toolbar_action_t tool2idx(const char *tool_label) {
 }
 
 
-int parse_menu_config(const char* cfg_fn, menu_config_t *cfg_bin,
+int parse_menu_config(const char *cfg_fn, menu_config_t *cfg_bin,
                       int *tb_offset, int *inv_offset) {
    uint8_t *bin = (uint8_t *) cfg_bin;
    xci_config_t cfg;
@@ -92,7 +92,7 @@ int parse_menu_config(const char* cfg_fn, menu_config_t *cfg_bin,
    int tb_size = sizeof(toolbar_button_t);
    uint8_t inv_bin[MAX_INV_SIZE];
    inventory_config_t *inv_cfg = (inventory_config_t *)inv_bin;
-   int inv_size = sizeof(inventory_config_t);
+   int inv_size = 0;
    int size = sizeof(menu_config_t);
    int num;
    int menu_header_idx = FIRST_MENU_HEADER;
@@ -106,239 +106,362 @@ int parse_menu_config(const char* cfg_fn, menu_config_t *cfg_bin,
    int tb_height = 0;
    char menu_label[MAX_MENU_ITEM_LABEL];
    toolbar_button_t tb_button;
+   int buttons_expected = 0;
 
    memset(cfg_bin,0,sizeof(menu_config_t));
    memset(tb_cfg,0,sizeof(toolbar_config_t));
    memset(inv_cfg,0,sizeof(inventory_config_t));
 
-   if (parse_config(cfg_fn, &cfg) == 0) {
-      node = cfg.nodes;
-      while (node != NULL) {
-         switch (node->key) {
-            case MENU_BG:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for menu_bg\n");
-                  return -1
+   if (parse_config(cfg_fn, &cfg) < 0) {
+      printf("parse_menu_config: error parsing config source (%s)\n", cfg_fn);
+      return -1;
+   }
+   node = cfg.nodes;
+   while (node != NULL) {
+      switch (node->key) {
+         case MENU_BG:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for menu_bg\n");
+               return -1;
+            }
+            num = atoi(node->values->val);
+            init_pal[MENU_PO+TEXT_BG] = init_pal[TEXT_BG];
+            break;
+         case MENU_FG:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for menu_fg\n");
+               return -1;
+            }
+            num = atoi(node->values->val);
+            init_pal[MENU_PO+TEXT_FG] = init_pal[TEXT_FG];
+            break;
+         case MENU_LC:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for menu_lc\n");
+               return -1;
+            }
+            if (asc2tile(node->values->val, 0, &cfg_bin->bar[MENU_BAR_LC]) < 0) {
+               printf("parse_menu_config: error parsing tile for menu_lc\n");
+               return -1;
+            }
+            break;
+         case MENU_SP:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for menu_sp\n");
+               return -1;
+            }
+            if (asc2tile(node->values->val, 0, cfg_bin->space) < 0) {
+               printf("parse_menu_config: error parsing tile for menu_sp\n");
+               return -1;
+            }
+            break;
+         case MENU_RC:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for menu_rc\n");
+               return -1;
+            }
+            if (asc2tile(node->values->val, 0, &cfg_bin->bar[MENU_BAR_RC]) < 0) {
+               printf("parse_menu_config: error parsing tile for menu_rc\n");
+               return -1;
+            }
+            break;
+         case MENU_DIV:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for menu_div\n");
+               return -1;
+            }
+            if (asc2tile(node->values->val, 0, cfg_bin->div) < 0) {
+               printf("parse_menu_config: error parsing tile for menu_div\n");
+               return -1;
+            }
+            break;
+         case MENU_CHECK:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for menu_check\n");
+               return -1;
+            }
+            if (asc2tile(node->values->val, 0, cfg_bin->check) < 0) {
+               printf("parse_menu_config: error parsing tile for menu_check\n");
+               return -1;
+            }
+            break;
+         case MENU_UNCHECK:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for menu_uncheck\n");
+               return -1;
+            }
+            if (asc2tile(node->values->val, 0, cfg_bin->uncheck) < 0) {
+               printf("parse_menu_config: error parsing tile for menu_uncheck\n");
+               return -1;
+            }
+            break;
+         case MENU:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for menu\n");
+               return -1;
+            }
+            cfg_bin->num_menus++;
+            menu_header_idx += str2tiles(node->values->val, MENU_PO_IDX,
+                                        &cfg_bin->bar[menu_header_idx]);
+            cfg_bin->bar[menu_header_idx++] = cfg_bin->space[0];
+            cfg_bin->bar[menu_header_idx++] = cfg_bin->space[1];
+            last_menu_header = &bin[size];
+            last_menu_header->num_items = 0;
+            size++;
+            break;
+         case MENU_ITEM:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for menu_item\n");
+               return -1;
+            }
+            menu_item = 0;
+            tolower(menu_label, MAX_MENU_ITEM_LABEL, node->num_values->val);
+            while (menu_item != NUM_MENU_ITEMS) {
+               if (strcmp(menu_item_labels[menu_item], menu_labels) == 0) {
+                  break;
                }
-               num = atoi(node->values->val);
-               init_pal[MENU_PO+TEXT_BG] = init_pal[TEXT_BG];
-               break;
-            case MENU_FG:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for menu_fg\n");
-                  return -1
-               }
-               num = atoi(node->values->val);
-               init_pal[MENU_PO+TEXT_FG] = init_pal[TEXT_FG];
-               break;
-            case MENU_LC:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for menu_lc\n");
+               menu_item++;
+            }
+            if (menu_item == NUM_MENU_ITEMS) {
+               printf("parse_menu_config: unrecognized menu item (%s)\n",
+                      node->values->val);
+               return -1;
+            }
+            last_menu_header->num_items++;
+            bin[size++] = menu_item;
+            break;
+         case CONTROLS:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for controls\n");
+               return -1;
+            }
+            if (tile_layout(node->values->val, controls) < 0) {
+               printf("parse_menu_config: error parsing controls file (%s)\n",
+                      node->values->val);
+               return -1;
+            }
+            controls_inc = 1;
+            break;
+         case ABOUT:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for about\n");
+               return -1;
+            }
+            if (tile_layout(node->values->val, about) < 0) {
+               printf("parse_menu_config: error parsing about file (%s)\n",
+                      node->values->val);
+               return -1;
+            }
+            about_inc = 1;
+            break;
+         case TEXT1_BG:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for text1_bg\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            init_pal[TEXT1_PO+TEXT_BG] = init_pal[TEXT_BG];
+            break;
+         case TEXT1_FG:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for text1_fg\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            init_pal[TEXT1_PO+TEXT_FG] = init_pal[TEXT_FG];
+            break;
+         case TEXT2_BG:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for text2_bg\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            init_pal[TEXT2_PO+TEXT_BG] = init_pal[TEXT_BG];
+            break;
+         case TEXT2_FG:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for text2_fg\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            init_pal[TEXT2_PO+TEXT_FG] = init_pal[TEXT_FG];
+            break;
+         case TEXT3_BG:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for text3_bg\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            init_pal[TEXT3_PO+TEXT_BG] = init_pal[TEXT_BG];
+            break;
+         case TEXT3_FG:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for text3_fg\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            init_pal[TEXT3_PO+TEXT_FG] = init_pal[TEXT_FG];
+            break;
+         case TB_DIM:
+            if (node->num_values < 2) {
+               printf("parse_menu_config: too few values defined for tb_dim (2 required)\n");
+               return -1
+            }
+            val = node->values;
+            tb_width = atoi(val->val);
+            if ((tb_width < 1) || (tb_width > 40)) {
+               printf("parse_menu_config: illegal value for tb_dim width (%d)\n",
+                      tb_width);
+            }
+            val = val->next;
+            tb_height = atoi(val->val);
+            if ((tb_height < 1) || (tb_height > 4)) {
+               printf("parse_menu_config: illegal value for tb_dim height (%d)\n",
+                      tb_height);
+            }
+            tb_cfg->start_x = (40 - tb_width)/2;
+            tb_cfg->start_y = 30 - tb_height;
+            tb_button.start_x = tb_cfg->start_x;
+            break;
+         case TOOL:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for tool\n");
+               return -1
+            }
+            tb_button.action = tool2idx(node->values->val);
+            if (tb_button.action == -1) {
+               printf("parse_menu_config: unexpected tool label (%s)\n",
+                      node->values->val);
+               return -1;
+            }
+            tb_cfg->num_tools++;
+            tb_button.end_x = 0;
+            if (tb_button.action == PIN_TOOLBAR) {
+               buttons_expected = 2;
+            } else {
+               buttons_expected = 1;
+            }
+            break;
+         case TOOL_TILES:
+            if (buttons_expected < 1) {
+               printf("parse_menu_config: unexpected tool_tiles\n");
+               return -1;
+            }
+            if ((node->num_values % tb_height) != 0) {
+               printf("parse_menu_config: invalid tool_tiles\n");
+               printf("  tile count must be multiple of toolbar height (%d)\n",
+                      tb_height);
+               return -1;
+            }
+            buttons_expected--;
+            if (tb_button.end_x > 0) {
+               if (node->num_values !=
+                   (tb_button.end_x - tb_button.start_x + 1) * tb_height) {
+                  printf("parse_menu_config: altername tool_tiles different size than last\n");
                   return -1;
                }
-               if (asc2tile(node->values->val, 0, &cfg_bin->bar[MENU_BAR_LC]) < 0) {
-                  printf("parse_menu_config: error parsing tile for menu_lc\n");
-                  return -1;
+            } else {
+               tb_button.end_x = tb_button.start_x +
+                                 node->num_values / tb_height;
+               if ((tb_button.end_x - tb_cfg->start_x) > tb_width) {
+                  printf("parse_menu_config: toolbar buttons exceed toolbar width\n");
                }
-               break;
-            case MENU_SP:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for menu_sp\n");
-                  return -1;
-               }
-               if (asc2tile(node->values->val, 0, cfg_bin->space) < 0) {
-                  printf("parse_menu_config: error parsing tile for menu_sp\n");
-                  return -1;
-               }
-               break;
-            case MENU_RC:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for menu_rc\n");
-                  return -1;
-               }
-               if (asc2tile(node->values->val, 0, &cfg_bin->bar[MENU_BAR_RC]) < 0) {
-                  printf("parse_menu_config: error parsing tile for menu_rc\n");
-                  return -1;
-               }
-               break;
-            case MENU_DIV:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for menu_div\n");
-                  return -1;
-               }
-               if (asc2tile(node->values->val, 0, cfg_bin->div) < 0) {
-                  printf("parse_menu_config: error parsing tile for menu_div\n");
-                  return -1;
-               }
-               break;
-            case MENU_CHECK:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for menu_check\n");
-                  return -1;
-               }
-               if (asc2tile(node->values->val, 0, cfg_bin->check) < 0) {
-                  printf("parse_menu_config: error parsing tile for menu_check\n");
-                  return -1;
-               }
-               break;
-            case MENU_UNCHECK:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for menu_uncheck\n");
-                  return -1;
-               }
-               if (asc2tile(node->values->val, 0, cfg_bin->uncheck) < 0) {
-                  printf("parse_menu_config: error parsing tile for menu_uncheck\n");
-                  return -1;
-               }
-               break;
-            case MENU:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for menu\n");
-                  return -1;
-               }
-               cfg_bin->num_menus++;
-               menu_header_idx += str2tiles(node->values->val, MENU_PO_IDX,
-                                           &cfg_bin->bar[menu_header_idx]);
-               cfg_bin->bar[menu_header_idx++] = cfg_bin->space[0];
-               cfg_bin->bar[menu_header_idx++] = cfg_bin->space[1];
-               last_menu_header = &bin[size];
-               last_menu_header->num_items = 0;
-               size++;
-               break;
-            case MENU_ITEM:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for menu_item\n");
-                  return -1;
-               }
-               menu_item = 0;
-               tolower(menu_label, MAX_MENU_ITEM_LABEL, node->num_values->val);
-               while (menu_item != NUM_MENU_ITEMS) {
-                  if (strcmp(menu_item_labels[menu_item], menu_labels) == 0) {
-                     break;
-                  }
-                  menu_item++;
-               }
-               if (menu_item == NUM_MENU_ITEMS) {
-                  printf("parse_menu_config: unrecognized menu item (%s)\n",
-                         node->values->val);
-                  return -1;
-               }
-               last_menu_header->num_items++;
-               bin[size++] = menu_item;
-               break;
-            case CONTROLS:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for controls\n");
-                  return -1;
-               }
-               if (tile_layout(node->values->val, controls) < 0) {
-                  printf("parse_menu_config: error parsing controls file (%s)\n",
-                         node->values->val);
-                  return -1;
-               }
-               controls_inc = 1;
-               break;
-            case ABOUT:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for about\n");
-                  return -1;
-               }
-               if (tile_layout(node->values->val, about) < 0) {
-                  printf("parse_menu_config: error parsing about file (%s)\n",
-                         node->values->val);
-                  return -1;
-               }
-               about_inc = 1;
-               break;
-            case TEXT1_BG:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for text1_bg\n");
-                  return -1
-               }
-               num = atoi(node->values->val);
-               init_pal[TEXT1_PO+TEXT_BG] = init_pal[TEXT_BG];
-               break;
-            case TEXT1_FG:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for text1_fg\n");
-                  return -1
-               }
-               num = atoi(node->values->val);
-               init_pal[TEXT1_PO+TEXT_FG] = init_pal[TEXT_FG];
-               break;
-            case TEXT2_BG:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for text2_bg\n");
-                  return -1
-               }
-               num = atoi(node->values->val);
-               init_pal[TEXT2_PO+TEXT_BG] = init_pal[TEXT_BG];
-               break;
-            case TEXT2_FG:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for text2_fg\n");
-                  return -1
-               }
-               num = atoi(node->values->val);
-               init_pal[TEXT2_PO+TEXT_FG] = init_pal[TEXT_FG];
-               break;
-            case TEXT3_BG:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for text3_bg\n");
-                  return -1
-               }
-               num = atoi(node->values->val);
-               init_pal[TEXT3_PO+TEXT_BG] = init_pal[TEXT_BG];
-               break;
-            case TEXT3_FG:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for text3_fg\n");
-                  return -1
-               }
-               num = atoi(node->values->val);
-               init_pal[TEXT3_PO+TEXT_FG] = init_pal[TEXT_FG];
-               break;
-            case TB_DIM:
-               if (node->num_values < 2) {
-                  printf("parse_menu_config: too few values defined for tb_dim (2 required)\n");
-                  return -1
-               }
-               val = node->values;
-               tb_width = atoi(val->val);
-               if ((tb_width < 1) || (tb_width > 40)) {
-                  printf("parse_menu_config: illegal value for tb_dim width (%d)\n",
-                         tb_width);
-               }
-               val = val->next;
-               tb_height = atoi(val->val);
-               if ((tb_height < 1) || (tb_height > 4)) {
-                  printf("parse_menu_config: illegal value for tb_dim height (%d)\n",
-                         tb_height);
-               }
-               tb_cfg->start_x = (40 - tb_width)/2;
-               tb_cfg->start_y = 30 - tb_height;
-               tb_button.start_x = tb_cfg->start_x;
-               break;
-            case TOOL:
-               if (node->num_values < 1) {
-                  printf("parse_menu_config: no value specified for tool\n");
-                  return -1
-               }
-               tb_button.action = tool2idx(node->values->val);
-               if (tb_button.action == -1) {
-                  printf("parse_menu_config: unexpected tool label (%s)\n",
-                         node->values->val);
-                  return -1;
-               }
-               tb_cfg->num_tools++;               
-               break;
-
-         }
-         node = node->next;
+               memcpy(&tb_bin[tb_size],&tb_button,sizeof(toolbar_button_t));
+               tb_size += sizeof(toolbar_button_t);
+            }
+            num = cfg2tiles(node->values, 0, &tb_bin[tb_size]);
+            if (num < 0) {
+               printf("parse_menu_config: error building tiles from tool_tiles\n");
+               return - 1;
+            }
+            tb_size += num;
+            if (buttons_expected == 0) {
+               tb_button.start_x = tb_button.end_x;
+            }
+            break;
+         case INVENTORY:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no filename specified for inventory\n");
+               return -1
+            }
+            inv_size = parse_inv_config(node->values->val, inv_cfg);
+            if (inv_size < 0) {
+               printf("parse_menu_config: error parsing inventory file (%s)\n",
+                      node->values->val);
+               return -1;
+            }
+            break;
+         case WALK_CURSOR:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for walk\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            tb_cfg->walk_cursor[0] = num & 0x00FF;
+            tb_cfg->walk_cursor[1] = (num & 0xFF00) >> 8;
+            break;
+         case RUN_CURSOR:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for run\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            tb_cfg->run_cursor[0] = num & 0x00FF;
+            tb_cfg->run_cursor[1] = (num & 0xFF00) >> 8;
+            break;
+         case LOOK_CURSOR:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for look\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            tb_cfg->look_cursor[0] = num & 0x00FF;
+            tb_cfg->look_cursor[1] = (num & 0xFF00) >> 8;
+            break;
+         case USE_CURSOR:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for use\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            tb_cfg->use_cursor[0] = num & 0x00FF;
+            tb_cfg->use_cursor[1] = (num & 0xFF00) >> 8;
+            break;
+         case TALK_CURSOR:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for talk\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            tb_cfg->talk_cursor[0] = num & 0x00FF;
+            tb_cfg->talk_cursor[1] = (num & 0xFF00) >> 8;
+            break;
+         case STRIKE_CURSOR:
+            if (node->num_values < 1) {
+               printf("parse_menu_config: no value specified for strike\n");
+               return -1
+            }
+            num = atoi(node->values->val);
+            tb_cfg->strike_cursor[0] = num & 0x00FF;
+            tb_cfg->strike_cursor[1] = (num & 0xFF00) >> 8;
+            break;
+         default:
+            printf("parse_menu_config: WARNING: unexpected key (%s)\n",
+                   idx2key(node->key));
       }
+      node = node->next;
    }
 
-   // TODO: layout data
+   // TODO - check for required keys
+
+   delete_config(&cfg);
+
+   *tb_offset = size;
+   memcpy(&bin[size],tb_bin,tb_size);
+   size += tb_size;
+   *inv_offset = size;
+   memcpy(&bin[size],inv_bin,inv_size);
+   size += inv_size;
 
    return size;
 }
