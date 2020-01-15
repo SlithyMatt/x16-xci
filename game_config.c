@@ -3,6 +3,7 @@
 #include "menu.h"
 #include "title_screen.h"
 #include "hex2bin.h"
+#include "zone.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -211,7 +212,17 @@ int parse_game_config(const char *cfg_fn) {
             cfg_bin->cursor[1] = (init_cursor & 0xFF00) >> 8;
             break;
          case ZONE:
-            // TODO
+            if (node->num_values < 1) {
+               printf("parse_game_config: no filename specified for level\n");
+               return -1;
+            }
+            num = parse_zone_config(cfg_bin->zones,node->values->val);
+            if (num < 0) {
+               printf("parse_game_config: error parsing zone file (%s)\n", node->values->val);
+               return -1;
+            }
+            cfg_bin->zone_levels[cfg_bin->zones] = num;
+            cfg_bin->zones++;
             break;
          default:
             printf("parse_game_config: WARNING: unexpected key (%s)\n",

@@ -5,6 +5,7 @@
 #include <stdint.h>
 
 #define STRING_LEN_MAX 32
+#define MAX_NUM_ZONES 256
 
 extern uint8_t init_pal[]; // 256 colors x 2 bytes per color
 
@@ -13,6 +14,7 @@ typedef struct game_config {
    uint8_t author[STRING_LEN_MAX];
    uint8_t cursor[2];
    uint8_t zones;
+   uint8_t zone_levels[MAX_NUM_ZONES];
    uint8_t title_screen[2];
    uint8_t menu[2];
    uint8_t toolbar[2];

@@ -1,5 +1,5 @@
-#include "config.h"
 #include "inventory.h"
+#include "config.h"
 #include "tile_layout.h"
 #include <stdio.h>
 #include <stdint.h>

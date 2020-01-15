@@ -623,10 +623,18 @@ The following keys are required, but based on their values some optional keys ma
 * **inv_scroll_margin** - Defines the row of tiles to be rendered immediately to the left of the scroll bar. This row will be stacked for the entire height of the control. In the example, only a single tile (```134```) is defined, which is rendered between the rightmost quantity box and the scroll bar. If this key is not defined, nothing will separate the scroll bar and the rightmost item.
 
 ### Raw Image Files
-(TODO)
+Bitmaps are loaded into VRAM from uncompressed 4 bit-per-pixel files. The title screen uses a 320x240 bitmap while each game level uses a 320x200 bitmap. These are derived from raw image data files, which can be produced by programs such as [GIMP](https://www.gimp.org). For XCI, these bitmaps must use an indexed palette of no more than 16 colors, with color index 0 assumed to be black/transparent (since the bitmaps are stored in layer 0 of the X16, there is nothing behind the bitmap, so transparent pixels will always be rendered as black). The raw data image file starts with the upper-left corner pixel and contains a byte for each pixel defining its color index (which should be between 0 and 15), going across each row of pixels and then down row by row through the end, with the last byte being the color index for the lower-right corner pixel. And that's it -- no meta data of any kind. The color palette is stored in a separate file, which has a filename that simply appends **.pal** to end of the image filename. For example, the title screen bitmap image is from **mygame_start.data** and the palette is from **mygame_start.data.pal**. This is done automatically when exporting an image to raw data from GIMP. The palette file will contain up to 16 24-bit color definitions. This means the red, green and blue values each get a whole byte (in that order for each color index), so a full 16-color palette file will be 48 bytes. This will be converted to the 12-bit format used by the X16 for loading into the palette registers. If no palette file is found at the expected filename, the default palette for the game will be assumed.
 
 ### Zone Files
-(TODO)
+Zone files are XCI configuration files, just like the main file, which identifies them using **zone** keys. The zones are numbered based on the order their corresponding **zone** keys appear in the main file, from 0 up to 255. New games start will zone 0, which will be loaded after the title screen is done and ```New Game``` is selected from the menu, bringin the player to level 0 of zone 0. If an in-progress game is loaded, the zone where the player left off will be loaded instead and play will continue in the level where the game was saved. Each zone can have up to 10 levels, numbered 0 to 9 based on their appearance in the zone file. Below is the example zone 0 file (**mygame_zone0.xci**), which defines two levels (0 and 1, effectively).
+
+```
+# Zone 0 levels
+level mygame_z0_level0.xci
+level mygame_z0_level1.xci
+```
+
+And that's it. All that's required for a zone file is a set of **level** keys. At least one must be defined, and their value is simply the filename of the level file that defines it, as specified in the [Level Files](#level-files) section. The filename does not need to be named anything special, all that matters is the order in which they appear in the zone files, just like how the zone filenames don't matter and are only indexed by their order in the main file.
 
 #### Level Files
 (TODO)
