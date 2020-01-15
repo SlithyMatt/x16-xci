@@ -1,6 +1,9 @@
 #include "animation.h"
 #include "tile_layout.h"
-int parse_animation_node(const xci_config_node *node, uint8_t *bin) {
+#include <stdio.h>
+#include <stdlib.h>
+
+int parse_animation_node(const xci_config_node_t *node, uint8_t *bin) {
    xci_val_list_t *val = node->values;
    sprite_frames_t *sprite_frames_bin = (sprite_frames_t *)bin;
    sprite_pos_t *sprite_bin = (sprite_pos_t *)bin;
@@ -15,7 +18,7 @@ int parse_animation_node(const xci_config_node *node, uint8_t *bin) {
       case SPRITE_FRAMES:
          if (node->num_values < 3) {
             printf("parse_animation_node: sprite_frames requires at least 3 values\n");
-            return -1
+            return -1;
          }
          sprite_frames_bin->key = SPRITE_FRAMES;
          sprite_frames_bin->index = atoi(val->val);
@@ -34,7 +37,7 @@ int parse_animation_node(const xci_config_node *node, uint8_t *bin) {
       case SPRITE:
          if (node->num_values < 3) {
             printf("parse_animation_node: sprite requires 3 values\n");
-            return -1
+            return -1;
          }
          sprite_bin->key = SPRITE;
          sprite_bin->index = atoi(val->val);
@@ -49,7 +52,7 @@ int parse_animation_node(const xci_config_node *node, uint8_t *bin) {
       case TILES:
          if (node->num_values < 4) {
             printf("parse_animation_node: tiles requires 4 values\n");
-            return -1
+            return -1;
          }
          tile_row_bin->key = TILES;
          pal = atoi(val->val);
@@ -70,16 +73,16 @@ int parse_animation_node(const xci_config_node *node, uint8_t *bin) {
       case WAIT:
          if (node->num_values < 1) {
             printf("parse_animation_node: no value specified for wait\n");
-            return -1
+            return -1;
          }
          wait_bin->key = WAIT;
          wait_bin->jiffys = atoi(val->val);
          size = sizeof(wait_t);
          break;
       case SPRITE_MOVE:
-         if (node->num_values < 5 {
+         if (node->num_values < 5) {
             printf("parse_animation_node: sprite_move requires 5 values\n");
-            return -1
+            return -1;
          }
          sprite_move_bin->key = SPRITE_MOVE;
          sprite_move_bin->index = atoi(val->val);

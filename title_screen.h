@@ -1,6 +1,8 @@
 #ifndef TITLE_SCREEN_H
 #define TITLE_SCREEN_H
 
+#include <stdint.h>
+
 typedef struct title_screen_config {
    uint8_t duration[2];
    // followed by instruction sequence, then menu_config_t

@@ -2,6 +2,7 @@
 #include "config.h"
 #include "menu.h"
 #include "title_screen.h"
+#include "hex2bin.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -17,8 +18,8 @@
 
 uint8_t init_pal[OUT_PAL_SIZE];
 
-int concat_string_val(const xci_val_list *vals, uint8_t *str) {
-   xci_val_list_t *val = vals;
+int concat_string_val(const xci_val_list_t *vals, uint8_t *str) {
+   const xci_val_list_t *val = vals;
    int i = 0;
    char temp_str[STRING_LEN_MAX*2] = ""; // contain possible overflow
 
@@ -46,10 +47,10 @@ int concat_string_val(const xci_val_list *vals, uint8_t *str) {
 void fill_pal() {
    int i;
    // copy palette offset 0 to offsets 1-14
-   for (i = 16; i < 240; i += 16) {
-      memcpy(&init_pal[i], init_pal, 16);
+   for (i = 32; i < 480; i += 32) {
+      memcpy(&init_pal[i], init_pal, 32);
    }
-   memset(&init_pal[240], 0, 16); // offset 15 all black
+   memset(&init_pal[480], 0, 32); // offset 15 all black
 }
 
 int parse_game_config(const char *cfg_fn) {
@@ -93,10 +94,10 @@ int parse_game_config(const char *cfg_fn) {
                return -1;
             }
             break;
-         case PALETTE:
+         case PALETTE_HEX:
             if (node->num_values < 1) {
                printf("parse_game_config: no filename specified for palette\n");
-               return -1
+               return -1;
             }
             if (hex2bin(node->values->val, init_pal, IN_PAL_SIZE) < IN_PAL_SIZE) {
                printf("parse_game_config: %s has insufficient data (%d bytes required)\n",
@@ -104,30 +105,30 @@ int parse_game_config(const char *cfg_fn) {
             }
             fill_pal();
             break;
-         case TILES:
+         case TILES_HEX:
             if (node->num_values < 1) {
                printf("parse_game_config: no filename specified for tiles\n");
-               return -1
+               return -1;
             }
             if (hex2bin_file(node->values->val, "TILES.BIN") < 0) {
                printf("parse_game_config: error parsing tiles file %s\n",
                       node->values->val);
             }
             break;
-         case SPRITES:
+         case SPRITES_HEX:
             if (node->num_values < 1) {
                printf("parse_game_config: no filename specified for sprites\n");
-               return -1
+               return -1;
             }
             if (hex2bin_file(node->values->val, "SPRITES.BIN") < 0) {
                printf("parse_game_config: error parsing sprites file %s\n",
                       node->values->val);
             }
             break;
-         case MENU:
+         case MENU_XCI:
             if (node->num_values < 1) {
                printf("parse_game_config: no filename specified for menu\n");
-               return -1
+               return -1;
             }
             if (menu_cfg == NULL) {
                menu_cfg = malloc(MAX_GAME_CONFIG_BIN);
@@ -151,10 +152,10 @@ int parse_game_config(const char *cfg_fn) {
          case TITLE_SCREEN:
             if (node->num_values < 1) {
                printf("parse_game_config: no filename specified for menu\n");
-               return -1
+               return -1;
             }
             title_screen_size =
-               parse_title_screen_config(node->values->val, cfg_bin->title_screen_cfg);
+               parse_title_screen_config(node->values->val, &cfg_bin->title_screen_cfg);
             if (title_screen_size < 0) {
                printf("parse_game_config: error parsing title_screen file %s\n",
                       node->values->val);
@@ -162,9 +163,9 @@ int parse_game_config(const char *cfg_fn) {
             }
             menu_offset = title_screen_offset+title_screen_size;
             if (menu_cfg == NULL) {
-               menu_cfg = &bin[menu_offset];
+               menu_cfg = (menu_config_t *)&bin[menu_offset];
             } else {
-               memcpy(&bin[menu_offset], menu_cfg);
+               memcpy(&bin[menu_offset], menu_cfg, menu_size);
                free (menu_cfg);
             }
             cfg_bin->menu[0] = menu_offset & 0x00FF;
@@ -181,11 +182,14 @@ int parse_game_config(const char *cfg_fn) {
          case INIT_CURSOR:
             if (node->num_values < 1) {
                printf("parse_game_config: no value specified for init_cursor\n");
-               return -1
+               return -1;
             }
             init_cursor = atoi(node->values->val);
             cfg_bin->cursor[0] = init_cursor & 0x00FF;
             cfg_bin->cursor[1] = (init_cursor & 0xFF00) >> 8;
+            break;
+         case ZONE:
+            // TODO
             break;
          default:
             printf("parse_game_config: WARNING: unexpected key (%s)\n",
@@ -198,29 +202,29 @@ int parse_game_config(const char *cfg_fn) {
 
    delete_config(&cfg);
 
-   opf = fopen(PAL_BIN_FN, "wb");
-   if (opf == NULL) {
+   ofp = fopen(PAL_BIN_FN, "wb");
+   if (ofp == NULL) {
       printf("parse_game_config: error writing to %s\n", PAL_BIN_FN);
       return - 1;
    }
    // X16 binary file header
-   fputc(0, opf);
-   fputc(0, opf);
+   fputc(0, ofp);
+   fputc(0, ofp);
    // Write palette binary file
-   fwrite(init_pal, 1, OUT_PAL_SIZE, opf);
-   fclose(opf);
+   fwrite(init_pal, 1, OUT_PAL_SIZE, ofp);
+   fclose(ofp);
 
-   opf = fopen(MAIN_BIN_FN, "wb");
-   if (opf == NULL) {
+   ofp = fopen(MAIN_BIN_FN, "wb");
+   if (ofp == NULL) {
       printf("parse_game_config: error writing to %s\n", MAIN_BIN_FN);
       return - 1;
    }
    // X16 binary file header
-   fputc(0, opf);
-   fputc(0, opf);
+   fputc(0, ofp);
+   fputc(0, ofp);
    // Write main binary file
-   fwrite(cfg_bin, 1, menu_offset+menu_size, opf);
-   fclose(opf);
+   fwrite(cfg_bin, 1, menu_offset+menu_size, ofp);
+   fclose(ofp);
 
    return 0;
 }

@@ -15,7 +15,8 @@
 
 int asc2tile(const char *descriptor, int pal_offset, uint8_t *tile) {
    int i = 0;
-   tile_idx = atoi(descriptor);
+   int tile_idx = atoi(descriptor);
+   
    if (tile_idx > MAX_TILE) {
       printf("asc2tile: invalid tile index (%d)\n", tile_idx);
       return -1;
@@ -210,7 +211,7 @@ int tile_layout(const char *filename, tilemap_t *tilemap) {
    return 0;
 }
 
-int cfg2tiles(xci_val_list *values, int pal_offset, uint8_t *tiles) {
+int cfg2tiles(xci_val_list_t *values, int pal_offset, uint8_t *tiles) {
    int size = 0;
    int increment;
    while (values != NULL) {

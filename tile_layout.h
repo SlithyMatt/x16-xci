@@ -22,6 +22,6 @@ int str2tiles(const char *str, int pal_offset, uint8_t *tiles);
 int tile_layout(const char *filename, tilemap_t *tilemap);
 
 // Converts a list of ASCII tile descriptors to 2-byte binary tiles
-int cfg2tiles(xci_val_list *values, int pal_offset, uint8_t *tiles);
+int cfg2tiles(xci_val_list_t *values, int pal_offset, uint8_t *tiles);
 
 #endif

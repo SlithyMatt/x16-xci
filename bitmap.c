@@ -16,7 +16,6 @@ int conv_bitmap_addr(const char *raw_fn, const char *xci_fn,
    FILE *ifp;
    FILE *ofp;
 
-   int address;
    uint8_t idata[2];
    uint8_t odata[2];
    char pal_fn[MAX_FN_LENGTH];

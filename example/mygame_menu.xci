@@ -23,8 +23,8 @@ menu_item controls
 menu_item div
 menu_item about
 
-controls help.txt
-about about.txt
+controls mygame_help.txt
+about mygame_about.txt
 
 # text styles
 text1_bg 0 # text style 1 background color = black

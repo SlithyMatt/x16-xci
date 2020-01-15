@@ -42,6 +42,6 @@ typedef struct tile_row {
 } tile_row_t;
 
 
-int parse_animation_node(const xci_config_node *node, uint8_t *bin);
+int parse_animation_node(const xci_config_node_t *node, uint8_t *bin);
 
 #endif // ANIMATION_H

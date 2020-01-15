@@ -4,7 +4,7 @@
 enum xci_key {
    TITLE = 0,
    AUTHOR,
-   PALETTE,
+   PALETTE_HEX,
    TILES_HEX,
    SPRITES_HEX,
    MENU_XCI,
@@ -29,8 +29,7 @@ enum xci_key {
    TEXT2_FG,
    TEXT3_BG,
    TEXT3_FG,
-   TB_HEIGHT,
-   TB_WIDTH,
+   TB_DIM,
    TOOL,
    TOOL_TILES,
    INVENTORY,
@@ -69,6 +68,6 @@ typedef enum xci_key xci_key_t;
 xci_key_t key2idx(const char* key);
 const char* idx2key(xci_key_t index);
 
-void tolower(char *dest, int max, const char *source);
+void strn_tolower(char *dest, int max, const char *source);
 
 #endif // KEY_H

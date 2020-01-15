@@ -1,6 +1,8 @@
 #ifndef MENU_H
 #define MENU_H
 
+#include <stdint.h>
+
 typedef struct menu_config {
    uint8_t bar[80];
    uint8_t div[2];
@@ -21,7 +23,7 @@ typedef struct menu_header {
 } menu_header_t;
 
 typedef enum menu_item {
-   MENU_DIV = 0,
+   MENU_DIV_ITEM = 0,
    NEW_GAME,
    LOAD_GAME,
    SAVE_GAME,

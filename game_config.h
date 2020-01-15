@@ -1,11 +1,12 @@
 #ifndef GAME_CONFIG_H
 #define GAME_CONFIG_H
 
+#include "title_screen.h"
 #include <stdint.h>
 
 #define STRING_LEN_MAX 32
 
-extern uint8_t *init_pal; // 256 colors x 2 bytes per color
+extern uint8_t init_pal[]; // 256 colors x 2 bytes per color
 
 typedef struct game_config {
    uint8_t title[STRING_LEN_MAX];

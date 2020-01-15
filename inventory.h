@@ -1,6 +1,8 @@
 #ifndef INVENTORY_H
 #define INVENTORY_H
 
+#include <stdint.h>
+
 #define MAX_ITEM_LABEL 16
 
 typedef struct inventory_config {

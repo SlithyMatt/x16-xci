@@ -30,8 +30,7 @@ const char xci_key_strings[NUM_XCI_KEYS][MAX_KEY_LENGTH] = {
    "text2_fg",
    "text3_bg",
    "text3_fg",
-   "tb_height",
-   "tb_width",
+   "tb_dim",
    "tool",
    "tool_tiles",
    "inventory",
@@ -61,7 +60,7 @@ const char xci_key_strings[NUM_XCI_KEYS][MAX_KEY_LENGTH] = {
    "inv_item"
 };
 
-void tolower(char *dest, int max, const char *source) {
+void strn_tolower(char *dest, int max, const char *source) {
    int i = 0;
    while ((source[i] != '\0') && (i < (max - 1))) {
       if ((source[i] >= 'A') && (source[i] <= 'Z')) {
@@ -79,7 +78,7 @@ xci_key_t key2idx(const char* key) {
    int i = 0;
    int cmp = -1;
 
-   tolower(key_lc, MAX_KEY_LENGTH, key);
+   strn_tolower(key_lc, MAX_KEY_LENGTH, key);
 
    i = 0;
    while ((i < NUM_XCI_KEYS) && cmp) {

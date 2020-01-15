@@ -1,6 +1,7 @@
 #ifndef HEX2BIN_H
 #define HEX2BIN_H
 
+#include <stdio.h>
 #include <stdint.h>
 
 int hex2bin_file(const char* hex_fn, const char* bin_fn);

@@ -1,7 +1,7 @@
 # My Game Start Screen
 duration 600 # 10 seconds
-bitmap start.data
-music start.vgm
+bitmap mygame_start.data
+music mygame_start.vgm
 
 # define animation loop
 sprite_frames 1  0  1 2 3 2 1 4 5 4

@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define BITMAP_PAL_OFFSET 16
+#define BITMAP_PAL_OFFSET (16*2)
 
 int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin) {
    uint8_t *bin = (uint8_t *)cfg_bin;
@@ -19,7 +19,7 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
    xci_val_list_t *val;
    int num;
 
-   if (parse_config(cfg_fn, &cfg) == 0) {
+   if (parse_config(cfg_fn, &cfg) < 0) {
       printf("parse_title_screen_config: error parsing config source (%s)\n", cfg_fn);
       return -1;
    }
@@ -29,7 +29,7 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
          case DURATION:
             if (node->num_values < 1) {
                printf("parse_title_screen_config: no value specified for duration\n");
-               return -1
+               return -1;
             }
             num = atoi(node->values->val);
             cfg_bin->duration[0] = num & 0x00FF;
@@ -38,7 +38,7 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
          case BITMAP:
             if (node->num_values < 1) {
                printf("parse_title_screen_config: no filename specified for bitmap\n");
-               return -1
+               return -1;
             }
             if (conv_bitmap(node->values->val, "TTL.BM.BIN",
                             &init_pal[BITMAP_PAL_OFFSET]) < 0) {
@@ -49,12 +49,12 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
          case MUSIC:
             if (node->num_values < 1) {
                printf("parse_title_screen_config: no filename specified for music\n");
-               return -1
+               return -1;
             }
             if (vgm2x16opm(node->values->val, "TTL.MUS.BIN") < 0) {
                printf("parse_title_screen_config: error converting music VGM file (%s)\n",
                       node->values->val);
-               return -1
+               return -1;
             }
             break;
          case SPRITE_FRAMES:
