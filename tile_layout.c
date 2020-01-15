@@ -10,13 +10,13 @@
 #define H_FLIP 0x04
 #define V_FLIP 0x08
 #define MAX_TILE 719
-#define BLACK1 0x00
+#define BLACK1 0x01
 #define BLACK2 0xF0
 
 int asc2tile(const char *descriptor, int pal_offset, uint8_t *tile) {
    int i = 0;
    int tile_idx = atoi(descriptor);
-   
+
    if (tile_idx > MAX_TILE) {
       printf("asc2tile: invalid tile index (%d)\n", tile_idx);
       return -1;

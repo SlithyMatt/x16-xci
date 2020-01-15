@@ -30,11 +30,11 @@ changing its frame based on its position and game state to indicate
 the type of action that will happen when the mouse button is clicked.
 
 ## Memory Map
-Main RAM ($0801-$9EFF): XCI engine code, top-level game data
+Main RAM ($0801-$9EFF): XCI engine code, top-level game data (starting at $6000)
 
 Banked RAM ($A000-$BFFF): 6 banks per level, up to 10 levels per currently loaded zone.
 * Bank 0: Kernal Use
-* Bank 1: Zone level 0 configuration data
+* Bank 1: Zone level 0 configuration data (title screen music at start)
 * Banks 2-5: Zone level 0 background bitmap
 * Bank 6: Zone level 0 music and sound effects
 * Bank 7: Zone level 1 configuration data

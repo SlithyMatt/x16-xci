@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define MAX_GAME_CONFIG_BIN 0x2000
+#define MAX_GAME_CONFIG_BIN 0x3EFF
 
 #define IN_PAL_SIZE 32
 #define OUT_PAL_SIZE 512
@@ -65,6 +65,7 @@ int parse_game_config(const char *cfg_fn) {
    int inv_offset = 0;
    int title_screen_size = 0;
    int title_screen_offset = sizeof(game_config_t) - sizeof(title_screen_config_t);
+   int num;
    FILE *ofp;
 
    cfg_bin->title_screen[0] = title_screen_offset & 0x00FF;
@@ -141,8 +142,18 @@ int parse_game_config(const char *cfg_fn) {
                return -1;
             }
             if (menu_offset > 0) {
+               if ((menu_offset + menu_size) > MAX_GAME_CONFIG_BIN) {
+                  printf("parse_game_config: config too large\n");
+                  return -1;
+               }
                tb_offset = menu_offset + tb_offset;
                inv_offset = menu_offset + inv_offset;
+               num = cfg_bin->menu[0] + menu_cfg->controls[0];
+               menu_cfg->controls[0] = num & 0x00FF;
+               menu_cfg->controls[1] = cfg_bin->menu[1] + menu_cfg->controls[1] + (num >> 8);
+               num = cfg_bin->menu[0] + menu_cfg->about[0];
+               menu_cfg->about[0] = num & 0x00FF;
+               menu_cfg->about[1] = cfg_bin->menu[1] + menu_cfg->about[1] + (num >> 8);
                cfg_bin->toolbar[0] = tb_offset & 0x00FF;
                cfg_bin->toolbar[1] = (tb_offset & 0xFF00) >> 8;
                cfg_bin->inventory[0] = inv_offset & 0x00FF;
@@ -167,12 +178,23 @@ int parse_game_config(const char *cfg_fn) {
             } else {
                memcpy(&bin[menu_offset], menu_cfg, menu_size);
                free (menu_cfg);
+               menu_cfg = (menu_config_t *)&bin[menu_offset];
             }
             cfg_bin->menu[0] = menu_offset & 0x00FF;
             cfg_bin->menu[1] = (menu_offset & 0xFF00) >> 8;
             if (menu_size > 0) {
+               if ((menu_offset + menu_size) > MAX_GAME_CONFIG_BIN) {
+                  printf("parse_game_config: config too large\n");
+                  return -1;
+               }
                tb_offset = menu_offset + tb_offset;
                inv_offset = menu_offset + inv_offset;
+               num = cfg_bin->menu[0] + menu_cfg->controls[0];
+               menu_cfg->controls[0] = num & 0x00FF;
+               menu_cfg->controls[1] = cfg_bin->menu[1] + menu_cfg->controls[1] + (num >> 8);
+               num = cfg_bin->menu[0] + menu_cfg->about[0];
+               menu_cfg->about[0] = num & 0x00FF;
+               menu_cfg->about[1] = cfg_bin->menu[1] + menu_cfg->about[1] + (num >> 8);
                cfg_bin->toolbar[0] = tb_offset & 0x00FF;
                cfg_bin->toolbar[1] = (tb_offset & 0xFF00) >> 8;
                cfg_bin->inventory[0] = inv_offset & 0x00FF;

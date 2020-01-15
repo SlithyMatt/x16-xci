@@ -298,19 +298,23 @@ int parse_inv_config(const char *cfg_fn, inventory_config_t *cfg_bin) {
 
    for (row = 0; row < num_rows; row++) {
       for (sub_row = 0; sub_row < (cfg_bin->item_height - 1); sub_row++) {
+         for (i = 0; i < start_x*2; i++) {
+            // Transparent tiles
+            cfg_bin->tilemap[tilemap_idx++] = 0;
+         }
          for (column = 0; column < items_per_row; column++) {
-            for (i = 0; i < start_x*2; i++) {
-               // Transparent tiles
-               cfg_bin->tilemap[tilemap_idx++] = 0;
-            }
             for (i = 0; i < num_left_margin_tiles*2; i++) {
                cfg_bin->tilemap[tilemap_idx++] = left_margin_tiles[i];
             }
             for (i = 0; i < cfg_bin->item_width*2; i++) {
                cfg_bin->tilemap[tilemap_idx++] = empty_tiles[sub_row*2*cfg_bin->item_width + i];
             }
-            for (i = 0; i < cfg_bin->item_quant_width*2; i++) {
-               cfg_bin->tilemap[tilemap_idx++] = quant_margin_tiles[i % num_quant_margin_tiles];
+            for (i = 0; i < num_right_margin_tiles*2; i++) {
+               cfg_bin->tilemap[tilemap_idx++] = right_margin_tiles[i];
+            }
+            for (i = 0; i < cfg_bin->item_quant_width; i++) {
+               cfg_bin->tilemap[tilemap_idx++] = quant_margin_tiles[(i % num_quant_margin_tiles)*2];
+               cfg_bin->tilemap[tilemap_idx++] = quant_margin_tiles[(i % num_quant_margin_tiles)*2 + 1];
             }
          }
          for (i = 0; i < num_scroll_margin_tiles*2; i++) {
@@ -328,17 +332,20 @@ int parse_inv_config(const char *cfg_fn, inventory_config_t *cfg_bin) {
             cfg_bin->tilemap[tilemap_idx++] = 0;
          }
       }
+      for (i = 0; i < start_x*2; i++) {
+         // Transparent tiles
+         cfg_bin->tilemap[tilemap_idx++] = 0;
+      }
       for (column = 0; column < items_per_row; column++) {
-         for (i = 0; i < start_x*2; i++) {
-            // Transparent tiles
-            cfg_bin->tilemap[tilemap_idx++] = 0;
-         }
          for (i = 0; i < num_left_margin_tiles*2; i++) {
             cfg_bin->tilemap[tilemap_idx++] = left_margin_tiles[i];
          }
          for (i = 0; i < cfg_bin->item_width*2; i++) {
             cfg_bin->tilemap[tilemap_idx++] =
                empty_tiles[(cfg_bin->item_height-1)*2*cfg_bin->item_width + i];
+         }
+         for (i = 0; i < num_right_margin_tiles*2; i++) {
+            cfg_bin->tilemap[tilemap_idx++] = right_margin_tiles[i];
          }
          for (i = 0; i < cfg_bin->item_quant_width; i++) {
             cfg_bin->tilemap[tilemap_idx++] = 0x20;

@@ -90,7 +90,7 @@ int parse_menu_config(const char *cfg_fn, menu_config_t *cfg_bin,
    xci_val_list_t *val;
    uint8_t tb_bin[MAX_TOOLBAR_SIZE];
    toolbar_config_t *tb_cfg = (toolbar_config_t *)tb_bin;
-   int tb_size = sizeof(toolbar_button_t);
+   int tb_size = sizeof(toolbar_config_t);
    uint8_t inv_bin[MAX_INV_SIZE];
    inventory_config_t *inv_cfg = (inventory_config_t *)inv_bin;
    int inv_size = 0;
@@ -206,6 +206,8 @@ int parse_menu_config(const char *cfg_fn, menu_config_t *cfg_bin,
             cfg_bin->num_menus++;
             menu_header_idx += str2tiles(node->values->val, MENU_PO_IDX,
                                         &cfg_bin->bar[menu_header_idx]);
+            cfg_bin->bar[menu_header_idx++] = cfg_bin->space[0];
+            cfg_bin->bar[menu_header_idx++] = cfg_bin->space[1];
             cfg_bin->bar[menu_header_idx++] = cfg_bin->space[0];
             cfg_bin->bar[menu_header_idx++] = cfg_bin->space[1];
             last_menu_header = (menu_header_t *)&bin[size];
@@ -365,14 +367,14 @@ int parse_menu_config(const char *cfg_fn, menu_config_t *cfg_bin,
             buttons_expected--;
             if (tb_button.end_x > 0) {
                if (node->num_values !=
-                   (tb_button.end_x - tb_button.start_x) * tb_height) {
+                   (tb_button.end_x - tb_button.start_x + 1) * tb_height) {
                   printf("parse_menu_config: alternate tool_tiles different size than last\n");
                   return -1;
                }
             } else {
                tb_button.end_x = tb_button.start_x +
-                                 node->num_values / tb_height;
-               if ((tb_button.end_x - tb_cfg->start_x) > tb_width) {
+                                 node->num_values / tb_height - 1;
+               if ((tb_button.end_x - tb_cfg->start_x + 1) > tb_width) {
                   printf("parse_menu_config: toolbar buttons exceed toolbar width\n");
                   return -1;
                }
@@ -386,7 +388,7 @@ int parse_menu_config(const char *cfg_fn, menu_config_t *cfg_bin,
             }
             tb_size += num;
             if (buttons_expected == 0) {
-               tb_button.start_x = tb_button.end_x;
+               tb_button.start_x = tb_button.end_x + 1;
             }
             break;
          case INVENTORY:
@@ -464,7 +466,27 @@ int parse_menu_config(const char *cfg_fn, menu_config_t *cfg_bin,
 
    // TODO - check for required keys
 
+   // fill out remaining menu bar with space tiles
+   while (menu_header_idx < MENU_BAR_RC) {
+      cfg_bin->bar[menu_header_idx++] = cfg_bin->space[0];
+      cfg_bin->bar[menu_header_idx++] = cfg_bin->space[1];
+   }
+
    delete_config(&cfg);
+
+   if (controls_inc) {
+      cfg_bin->controls[0] = size & 0x00FF;
+      cfg_bin->controls[1] = (size & 0xFF00) >> 8;
+      memcpy(&bin[size],&controls,sizeof(tilemap_t));
+      size += sizeof(tilemap_t);
+   }
+
+   if (about_inc) {
+      cfg_bin->about[0] = size & 0x00FF;
+      cfg_bin->about[1] = (size & 0xFF00) >> 8;
+      memcpy(&bin[size],&about,sizeof(tilemap_t));
+      size += sizeof(tilemap_t);
+   }
 
    *tb_offset = size;
    memcpy(&bin[size],tb_bin,tb_size);

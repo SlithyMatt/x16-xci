@@ -56,11 +56,11 @@ int parse_animation_node(const xci_config_node_t *node, uint8_t *bin) {
          }
          tile_row_bin->key = TILES;
          pal = atoi(val->val);
-         val - val->next;
+         val = val->next;
          tile_row_bin->x = atoi(val->val);
-         val - val->next;
+         val = val->next;
          tile_row_bin->y = atoi(val->val);
-         val - val->next;
+         val = val->next;
          tile_row_bin->width = node->num_values - 3;
          size = sizeof(tile_row_t);
          num = cfg2tiles(val, pal, &bin[size]);
