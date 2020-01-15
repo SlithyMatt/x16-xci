@@ -5,3 +5,6 @@ all: $(ALL_OBJS) $(ALL_HDRS)
 	gcc -o xci.exe $(ALL_OBJS)
 %.o: %.c
 	gcc -c $< -o $@
+
+clean:
+	rm -f xci.exe $(ALL_OBJS)
