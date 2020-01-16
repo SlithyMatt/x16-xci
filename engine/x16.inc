@@ -60,7 +60,6 @@ ZP_PTR_1          = $00	; first four pointers for temporary use only
 ZP_PTR_2          = $22
 ZP_PTR_3          = $24
 ZP_PTR_4          = $26
-MUSIC_PTR         = $28
 
 ; I/O Registers
 VERA_addr_low     = $9F20

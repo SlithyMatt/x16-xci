@@ -204,15 +204,17 @@ int parse_menu_config(const char *cfg_fn, menu_config_t *cfg_bin,
                return -1;
             }
             cfg_bin->num_menus++;
+            last_menu_header = (menu_header_t *)&bin[size];
+            last_menu_header->start_x = menu_header_idx / 2;
             menu_header_idx += str2tiles(node->values->val, MENU_PO_IDX,
                                         &cfg_bin->bar[menu_header_idx]);
+            last_menu_header->end_x = menu_header_idx / 2 - 1;
             cfg_bin->bar[menu_header_idx++] = cfg_bin->space[0];
             cfg_bin->bar[menu_header_idx++] = cfg_bin->space[1];
             cfg_bin->bar[menu_header_idx++] = cfg_bin->space[0];
             cfg_bin->bar[menu_header_idx++] = cfg_bin->space[1];
-            last_menu_header = (menu_header_t *)&bin[size];
             last_menu_header->num_items = 0;
-            size++;
+            size += sizeof(menu_header_t);
             break;
          case MENU_ITEM:
             if (node->num_values < 1) {

@@ -5,6 +5,15 @@ GLOBALS_INC = 1
 
 ; ------------ Constants ------------
 
+; dedicated zero page pointers
+MUSIC_PTR      = $28
+ANIM_PTR       = $2A
+MENU_PTR       = $2C
+TB_PTR         = $2E
+INV_PTR        = $30
+HELP_CTRLS_PTR = $32
+HELP_ABOUT_PTR = $34
+ZL_COUNT_PTR   = $36
 
 VRAM_TILEMAP   = $09600 ; 64x32 (40x30 visible)
 VRAM_SPRITES   = $10000 ; 512 4bpp 16x16 frames
@@ -20,6 +29,14 @@ MOUSE_idx      = 0
 
 
 ; --------- Global Variables ---------
-
+frame_num:  .byte 0
+def_cursor: .dword 0
+num_zones:  .byte 0
+zone:       .byte 0
+level:      .byte 0
+ts_playing: .byte 1
+ts_dur:     .word 0
+music_bank: .byte TTL_MUS_BANK
+anim_bank:  .byte 0
 
 .endif

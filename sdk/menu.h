@@ -18,6 +18,8 @@ typedef struct menu_config {
 } menu_config_t;
 
 typedef struct menu_header {
+   uint8_t start_x;
+   uint8_t end_x;
    uint8_t num_items;
    // Followed by num_items menu_item_t's cast to uint8_t's
 } menu_header_t;

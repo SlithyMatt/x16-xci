@@ -5,13 +5,14 @@ MUSIC_INC = 1
 .include "ym2151.asm"
 .include "globals.asm"
 
+OPM_DELAY_REG   = 2
+OPM_DONE_REG    = 4
+
 __music_delay: .byte 0
 
 __music_playing: .byte 1
 
 __music_looping: .byte 1
-
-music_bank: .byte GAME_MUSIC_BANK
 
 .macro INC_MUSIC_PTR
    clc

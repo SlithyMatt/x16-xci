@@ -15,7 +15,6 @@ typedef struct game_config {
    uint8_t cursor[2];
    uint8_t zones;
    uint8_t zone_levels[MAX_NUM_ZONES];
-   uint8_t title_screen[2];
    uint8_t menu[2];
    uint8_t toolbar[2];
    uint8_t inventory[2];

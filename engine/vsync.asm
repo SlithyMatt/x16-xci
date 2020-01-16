@@ -2,7 +2,6 @@
 VSYNC_INC = 1
 
 .include "game.asm"
-.include "debug.asm"
 
 vsync_trig: .byte 0
 

@@ -69,8 +69,6 @@ int parse_game_config(const char *cfg_fn) {
    int num;
    FILE *ofp;
 
-   cfg_bin->title_screen[0] = title_screen_offset & 0x00FF;
-   cfg_bin->title_screen[1] = (title_screen_offset & 0xFF00) >> 8;
    cfg_bin->menu[0] = 0;
    cfg_bin->menu[1] = 0;
    cfg_bin->toolbar[0] = 0;
