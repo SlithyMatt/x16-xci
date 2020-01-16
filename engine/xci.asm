@@ -139,7 +139,7 @@ start:
    ; start title screen
    jsr init_music
    jsr start_music
-   ; TODO: start animation
+   jsr start_anim
 
 mainloop:
    wai

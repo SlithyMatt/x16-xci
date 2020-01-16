@@ -32,4 +32,6 @@ int parse_inv_config(const char* cfg_fn, inventory_config_t *cfg_bin);
 
 int inv_item_index(const char* label);
 
+void delete_inv_list();
+
 #endif // INVENTORY_H

@@ -58,6 +58,7 @@ enum xci_key {
    INV_SCROLL_MARGIN,
    INV_ITEM,
    LEVEL,
+   END_ANIM,
 
    NUM_XCI_KEYS
 };

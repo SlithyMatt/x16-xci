@@ -58,7 +58,8 @@ const char xci_key_strings[NUM_XCI_KEYS][MAX_KEY_LENGTH] = {
    "inv_scroll",
    "inv_scroll_margin",
    "inv_item",
-   "level"
+   "level",
+   "end_anim"
 };
 
 void strn_tolower(char *dest, int max, const char *source) {

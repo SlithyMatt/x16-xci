@@ -21,6 +21,7 @@ ts_tick:
    lda ts_dur
    bne @return
    stz ts_playing ; this is last tick of title screen
+   jsr stop_anim
    jsr init_menu
 @return:
    rts

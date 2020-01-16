@@ -255,6 +255,7 @@ int parse_game_config(const char *cfg_fn) {
    fputc(0, ofp);
    // Write main binary file
    fwrite(cfg_bin, 1, menu_offset+menu_size, ofp);
+   free(cfg_bin);
    fclose(ofp);
 
    return 0;

@@ -34,13 +34,17 @@ typedef struct wait {
 } wait_t;
 
 typedef struct tile_row {
-   uint8_t key; // must be xci_key::TILES
+   uint8_t key; // must be xci_key_t::TILES
    uint8_t x;
    uint8_t y;
    uint8_t width;
    // followed by width 2-byte tile definitions
 } tile_row_t;
 
+typedef struct end_anim {
+   uint8_t key; // must be xci_key_t::END_ANIM
+   uint8_t loops;
+} end_anim_t;
 
 int parse_animation_node(const xci_config_node_t *node, uint8_t *bin);
 

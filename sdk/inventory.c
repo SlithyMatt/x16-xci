@@ -368,6 +368,11 @@ int parse_inv_config(const char *cfg_fn, inventory_config_t *cfg_bin) {
       }
    }
 
+   free(empty_tiles);
+   free(left_margin_tiles);
+   free(right_margin_tiles);
+   free(quant_margin_tiles);
+   free(scroll_margin_tiles);
    delete_config(&cfg);
 
    return size;
@@ -388,4 +393,15 @@ int inv_item_index(const char* label){
    }
 
    return -1;
+}
+
+void delete_inv_list_node(inv_list_node_t *node) {
+   if (node != NULL) {
+      delete_inv_list_node(node->next);
+      free(node);
+   }
+}
+
+void delete_inv_list() {
+   delete_inv_list_node(inv_list);
 }
