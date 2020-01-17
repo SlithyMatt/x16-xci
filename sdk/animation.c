@@ -3,6 +3,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 
+#define MAX_SPRITE_FRAMES 31
+
+
 int parse_animation_node(const xci_config_node_t *node, uint8_t *bin) {
    xci_val_list_t *val = node->values;
    sprite_frames_t *sprite_frames_bin = (sprite_frames_t *)bin;
@@ -26,9 +29,14 @@ int parse_animation_node(const xci_config_node_t *node, uint8_t *bin) {
          sprite_frames_bin->pal_offset = atoi(val->val);
          val = val->next;
          sprite_frames_bin->num_frames = node->num_values - 2;
+         if (sprite_frames_bin->num_frames > MAX_SPRITE_FRAMES) {
+            printf("parse_animation_node: sprite_frames has too many frames\n");
+            return -1;
+         }
          size = sizeof(sprite_frames_t);
          while (val != NULL) {
             num = atoi(val->val);
+            // TODO: add flipping
             bin[size++] = num & 0x00FF;
             bin[size++] = (num & 0xFF00) >> 8;
             val = val->next;

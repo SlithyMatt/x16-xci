@@ -86,7 +86,10 @@ start:
    stz VERA_data0
    stz VERA_data0
 
-   stz VERA_ctrl
+   VERA_SET_ADDR VRAM_sprreg, 0  ; enable sprites
+   lda #$01
+   sta VERA_data0
+
    VERA_SET_ADDR VRAM_layer1, 0  ; enable VRAM layer 1
    lda #$01
    ora VERA_data0
@@ -128,9 +131,14 @@ start:
    sta ZL_COUNT_PTR
    lda cfg_zone_levels+1
    sta ZL_COUNT_PTR+1
+   asl cfg_cursor    ; convert sprite frame number to VRAM address
+   rol cfg_cursor+1  ; by just multiplying by 4
+   asl cfg_cursor
+   rol cfg_cursor+1
    lda cfg_cursor
    sta def_cursor
    lda cfg_cursor+1
+   ora #(^VRAM_SPRITES << 3) ; Add bank
    sta def_cursor+1
    lda cfg_zones
    sta num_zones

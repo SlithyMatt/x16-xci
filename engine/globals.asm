@@ -22,7 +22,9 @@ VRAM_BITMAP    = $00000 ; 4bpp 320x240
 
 RAM_CONFIG     = $6000
 
-TTL_MUS_BANK   = 1
+TTL_MUS_BANK            = 1
+SPRITE_FRAME_SEQ_BANK   = 61
+SPRITE_MOVEMENT_BANK    = 62
 
 ; sprite indices
 MOUSE_idx      = 0
