@@ -59,6 +59,7 @@ enum xci_key {
    INV_ITEM,
    LEVEL,
    END_ANIM,
+   SPRITE_HIDE,
 
    NUM_XCI_KEYS
 };

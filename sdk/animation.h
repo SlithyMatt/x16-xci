@@ -19,6 +19,11 @@ typedef struct sprite_pos {
    uint8_t y;
 } sprite_pos_t;
 
+typedef struct sprite_hide {
+   uint8_t key; // must be xci_key_t::SPRITE_HIDE
+   uint8_t index;
+} sprite_hide_t;
+
 typedef struct sprite_move {
    uint8_t key; // must be xci_key_t::SPRITE_MOVE
    uint8_t index;

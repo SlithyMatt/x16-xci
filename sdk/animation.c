@@ -4,18 +4,21 @@
 #include <stdlib.h>
 
 #define MAX_SPRITE_FRAMES 31
-
+#define SPRITE_HFLIP 0x40
+#define SPRITE_VFLIP 0x80
 
 int parse_animation_node(const xci_config_node_t *node, uint8_t *bin) {
    xci_val_list_t *val = node->values;
    sprite_frames_t *sprite_frames_bin = (sprite_frames_t *)bin;
    sprite_pos_t *sprite_bin = (sprite_pos_t *)bin;
+   sprite_hide_t *sprite_hide_bin = (sprite_hide_t *)bin;
    sprite_move_t *sprite_move_bin = (sprite_move_t *)bin;
    wait_t *wait_bin = (wait_t *)bin;
    tile_row_t *tile_row_bin = (tile_row_t *)bin;
    int size = 0;
    int num;
    int pal;
+   int i;
 
    switch (node->key) {
       case SPRITE_FRAMES:
@@ -36,9 +39,30 @@ int parse_animation_node(const xci_config_node_t *node, uint8_t *bin) {
          size = sizeof(sprite_frames_t);
          while (val != NULL) {
             num = atoi(val->val);
-            // TODO: add flipping
             bin[size++] = num & 0x00FF;
-            bin[size++] = (num & 0xFF00) >> 8;
+            bin[size] = (num & 0xFF00) >> 8;
+            i = 1;
+            if (num >= 10) {
+               i++;
+               if (num >= 100) {
+                  i++;
+               }
+            }
+            if (val->val[i] == 'H') {
+               bin[size] = bin[size] | SPRITE_HFLIP;
+               i++;
+               if (val->val[i] == 'V') {
+                  bin[size] = bin[size] | SPRITE_VFLIP;
+               }
+            } else if (val->val[i] == 'V') {
+               bin[size] = bin[size] | SPRITE_VFLIP;
+               i++;
+               if (val->val[i] == 'H') {
+                  bin[size] = bin[size] | SPRITE_HFLIP;
+               }
+            }
+            size++;
+
             val = val->next;
          }
          break;
@@ -56,6 +80,15 @@ int parse_animation_node(const xci_config_node_t *node, uint8_t *bin) {
          val = val->next;
          sprite_bin->y = atoi(val->val);
          size = sizeof(sprite_pos_t);
+         break;
+      case SPRITE_HIDE:
+         if (node->num_values < 1) {
+            printf("parse_animation_node: no value specified for sprite_hide");
+            return -1;
+         }
+         sprite_hide_bin->key = SPRITE_HIDE;
+         sprite_hide_bin->index = atoi(val->val);
+         size = sizeof(sprite_hide_t);
          break;
       case TILES:
          if (node->num_values < 4) {

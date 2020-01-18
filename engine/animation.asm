@@ -11,8 +11,15 @@ TILES_KEY            = 42
 WAIT_KEY             = 43
 SPRITE_MOVE_KEY      = 44
 END_ANIM_KEY         = 56
+SPRITE_HIDE_KEY      = 57
 
 NUM_SPRITES          = 128
+
+FRAME_FLIP           = $C0
+FRAME_FLIP_MASK      = $3F
+SPRITE_Z             = $0C
+SPRITE_Z_MASK        = $F3
+SPRITE_DIM           = $50
 
 __anim_playing:   .byte 0
 __anim_waiting:   .byte 0
@@ -21,7 +28,11 @@ __anim_loops:     .byte 0
 __sprite_idx:     .byte 0
 __pal_offset:     .byte 0
 __sprite_frame:   .word 0
-
+__sprite_flip:    .byte 0
+__sprite_x:       .word 0
+__sprite_y:       .byte 0
+__vec_x:          .byte 0
+__vec_y:          .byte 0
 
 .macro INC_ANIM_PTR
    lda ANIM_PTR
@@ -67,6 +78,8 @@ anim_tick:
    beq @sprite_frames
    cmp #SPRITE_KEY
    beq @sprite
+   cmp #SPRITE_HIDE_KEY
+   beq @sprite_hide
    cmp #TILES_KEY
    beq @tiles
    cmp #WAIT_KEY
@@ -78,19 +91,22 @@ anim_tick:
    jmp @stop ; unrecognized key, just stop
 @sprite_frames:
    jsr __anim_sprite_frames
-   jmp @move_all_sprites
+   jmp @play
 @sprite:
    jsr __anim_sprite
-   jmp @move_all_sprites
+   jmp @play
+@sprite_hide:
+   jsr __anim_sprite_hide
+   jmp @play
 @tiles:
    jsr __anim_tiles
-   jmp @move_all_sprites
+   jmp @play
 @wait:
    jsr __anim_wait
-   jmp @return
+   jmp @move_all_sprites
 @sprite_move:
    jsr __anim_new_sprite_move
-   jmp @move_all_sprites
+   jmp @play
 @end_anim:
    lda (ANIM_PTR,x)
    cmp __anim_loops
@@ -103,6 +119,7 @@ anim_tick:
    bra @return
 @move_all_sprites:
    jsr __anim_move_sprites
+   bra @return
 @stop:
    jsr stop_anim
 @return:
@@ -132,6 +149,8 @@ __anim_sprite_frames:
    INC_ANIM_PTR
    lda (ANIM_PTR)
    sta __sprite_frame+1
+   and #FRAME_FLIP
+   sta __sprite_flip
    INC_ANIM_PTR
    asl __sprite_frame   ; convert frame index to VRAM address
    rol __sprite_frame+1
@@ -142,6 +161,7 @@ __anim_sprite_frames:
    iny
    lda __sprite_frame+1
    ora #(^VRAM_SPRITES << 3)
+   ora __sprite_flip
    sta (ZP_PTR_1),y
    iny
    jmp @loop
@@ -153,12 +173,31 @@ __anim_sprite_frames:
    sta VERA_data0
    iny
    lda (ZP_PTR_1),y
+   and #FRAME_FLIP_MASK
    sta VERA_data0
    lda VERA_data0 ; leave position alone
    lda VERA_data0
    lda VERA_data0
    lda VERA_data0
-   ; TODO put in flipping
+   lda (ZP_PTR_1),y
+   and #FRAME_FLIP
+   asl
+   rol
+   rol
+   ora VERA_data0 ; add flipping to current Z-depth
+   sta __sprite_flip
+   jsr __sprattr  ; write flipping back
+   lda VERA_data0 ; ignore first 6 bytes
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda __sprite_flip
+   sta VERA_data0
+   lda __pal_offset
+   ora #SPRITE_DIM
+   sta VERA_data0
    rts
 
 __get_sprite_frame_addr:   ; Input: A - sprite index (0-127)
@@ -223,6 +262,41 @@ __anim_sprite:
    sta VERA_data0
    INC_ANIM_PTR
    stz VERA_data0 ; y[1] = 0 since max y = 240
+   lda VERA_data0 ; get current flipping
+   ora SPRITE_Z
+   sta __sprite_flip
+   jsr __sprattr  ; now show sprite by including Z-depth
+   lda VERA_data0 ; ignore first 6 bytes
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda __sprite_flip
+   sta VERA_data0
+   rts
+
+__anim_sprite_hide:
+   lda (ANIM_PTR) ; sprite index
+   jsr __sprattr  ; load current sprite flipping
+   lda VERA_data0 ; ignore first 6 bytes
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   and #SPRITE_Z_MASK
+   sta __sprite_flip
+   jsr __sprattr  ; clear Z-depth
+   lda VERA_data0 ; ignore first 6 bytes
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda __sprite_flip
+   sta VERA_data0
    rts
 
 __anim_tiles:
@@ -362,6 +436,12 @@ __anim_move_sprites:
    asl
    inc
    pha
+   iny
+   lda (ZP_PTR_2),y
+   sta __vec_x
+   iny
+   lda (ZP_PTR_2),y
+   sta __vec_y
    lda #SPRITE_FRAME_SEQ_BANK
    sta RAM_BANK
    lda __sprite_idx
@@ -373,15 +453,72 @@ __anim_move_sprites:
    sta __sprite_frame
    iny
    lda (ZP_PTR_1),y
+   and #FRAME_FLIP_MASK
    sta __sprite_frame+1
+   lda (ZP_PTR_1),y
+   and #FRAME_FLIP
+   asl
+   rol
+   rol
+   ora #SPRITE_Z
+   sta __sprite_flip
    ply
    lda (ZP_PTR_2),y ; reload frame index to increment for next time
    inc
    sta (ZP_PTR_2),y
    cmp @num_frames
-   bne @write
+   bne @read
    lda #0
    sta (ZP_PTR_2),y ; go back to frame index zero next time
+@read:
+   lda __sprite_idx
+   jsr __sprattr
+   lda VERA_data0 ; ignore - only position is needed
+   lda VERA_data0 ; ignore - only position is needed
+   lda VERA_data0
+   sta __sprite_x
+   lda VERA_data0
+   sta __sprite_x+1
+   lda VERA_data0
+   sta __sprite_y
+   ; apply vector
+   lda __vec_x
+   bmi @neg_x
+   clc
+   adc __sprite_x
+   sta __sprite_x
+   lda __sprite_x+1
+   adc #0
+   sta __sprite_x+1
+   bra @check_y
+@neg_x:
+   lda #0
+   sec
+   sbc __vec_x
+   sta __vec_x
+   lda __sprite_x
+   sec
+   sbc __vec_x
+   sta __sprite_x
+   lda __sprite_x+1
+   sbc #0
+   sta __sprite_x+1
+@check_y:
+   lda __vec_y
+   bmi @neg_y
+   clc
+   adc __sprite_y
+   sta __sprite_y
+   bra @write
+@neg_y:
+   lda #0
+   sec
+   sbc __vec_y
+   sta __vec_y
+   lda __sprite_y
+   sec
+   sbc __vec_y
+   sta __sprite_y
 @write:
    lda __sprite_idx
    jsr __sprattr
@@ -389,10 +526,15 @@ __anim_move_sprites:
    sta VERA_data0
    lda __sprite_frame+1
    sta VERA_data0
-
-
-
-
+   lda __sprite_x
+   sta VERA_data0
+   lda __sprite_x+1
+   sta VERA_data0
+   lda __sprite_y
+   sta VERA_data0
+   stz VERA_data0
+   lda __sprite_flip
+   sta VERA_data0
 @return:
    rts
 
