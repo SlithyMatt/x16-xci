@@ -22,6 +22,7 @@ ts_tick:
    bne @return
    stz ts_playing ; this is last tick of title screen
    jsr stop_anim
+   jsr stop_music
    jsr init_menu
 @return:
    rts

@@ -1,5 +1,4 @@
 .include "x16.inc"
-.include "globals.asm"
 
 .org $080D
 .segment "STARTUP"
@@ -95,6 +94,22 @@ start:
    ora VERA_data0
    sta VERA_data0
 
+   ; load configuration
+   lda #0
+   sta ROM_BANK
+   lda #1
+   ldx #8
+   ldy #0
+   jsr SETLFS        ; SetFileParams(LogNum=1,DevNum=8,SA=0)
+   lda #(main_fn_end-main_fn-1)
+   ldx #<main_fn
+   ldy #>main_fn
+   jsr SETNAM        ; SetFileName(main_fn)
+   lda #0
+   ldx #<RAM_CONFIG
+   ldy #>RAM_CONFIG
+   jsr LOAD          ; LoadFile(Verify=0,Address=RAM_CONFIG)
+
    ; setup interrupts
    jsr init_irq
 
@@ -143,6 +158,10 @@ start:
    lda cfg_zones
    sta num_zones
    lda cfg_ts_dur
+   sta ts_dur
+   lda cfg_ts_dur+1
+   sta ts_dur+1
+
 
    ; start title screen
    jsr init_music

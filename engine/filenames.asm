@@ -5,6 +5,7 @@ FILENAMES_INC = 1
 
 filenames:
 main_fn:       .asciiz "main.bin"
+main_fn_end:
 sprites_fn:    .asciiz "sprites.bin"
 tiles_fn:      .asciiz "tiles.bin"
 palette_fn:    .asciiz "pal.bin"

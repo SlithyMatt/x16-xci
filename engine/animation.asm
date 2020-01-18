@@ -68,12 +68,14 @@ anim_tick:
    dec
    sta __anim_waiting
    beq @play
-   jmp @return
+   jmp @move_all_sprites
 @play:
    lda anim_bank
    sta RAM_BANK
    lda (ANIM_PTR)
+   pha
    INC_ANIM_PTR
+   pla
    cmp #SPRITE_FRAMES_KEY
    beq @sprite_frames
    cmp #SPRITE_KEY
@@ -129,7 +131,7 @@ __anim_sprite_frames:
    lda (ANIM_PTR)
    sta __sprite_idx
    INC_ANIM_PTR
-   lda (ANIM_PTR,x)
+   lda (ANIM_PTR)
    sta __pal_offset
    INC_ANIM_PTR
    lda #SPRITE_FRAME_SEQ_BANK
@@ -139,6 +141,7 @@ __anim_sprite_frames:
    lda (ANIM_PTR) ; number of frames
    sta (ZP_PTR_1)
    tax ; words to copy = number of frames
+   INC_ANIM_PTR
    ldy #1
 @loop:
    cpx #0
@@ -186,6 +189,7 @@ __anim_sprite_frames:
    rol
    ora VERA_data0 ; add flipping to current Z-depth
    sta __sprite_flip
+   lda __sprite_idx
    jsr __sprattr  ; write flipping back
    lda VERA_data0 ; ignore first 6 bytes
    lda VERA_data0
@@ -263,8 +267,9 @@ __anim_sprite:
    INC_ANIM_PTR
    stz VERA_data0 ; y[1] = 0 since max y = 240
    lda VERA_data0 ; get current flipping
-   ora SPRITE_Z
+   ora #SPRITE_Z
    sta __sprite_flip
+   lda __sprite_idx
    jsr __sprattr  ; now show sprite by including Z-depth
    lda VERA_data0 ; ignore first 6 bytes
    lda VERA_data0

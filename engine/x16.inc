@@ -123,6 +123,14 @@ VRAM_audio     = $F6000
 VRAM_spi       = $F7000
 VRAM_uart      = $F8000
 
+LAYER_CTRL_0      = 0
+LAYER_CTRL_1      = 1
+LAYER_MAP_BASE    = 2
+LAYER_TILE_BASE   = 4
+LAYER_HSCROLL     = 6
+LAYER_BM_OFFSET   = 7
+LAYER_VSCROLL     = 8
+
 VROM_petscii   = $1F000
 
 ; IRQs

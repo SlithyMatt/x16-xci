@@ -15,6 +15,15 @@ MENU_NUM       = 92
 
 init_menu:
    ; blackout bitmap
+   stz VERA_ctrl
+   lda #LAYER_BM_OFFSET
+   sta VERA_addr_low
+   lda #>VRAM_layer0
+   sta VERA_addr_high
+   lda #(^VRAM_layer0 | $10)
+   sta VERA_addr_bank
+   lda #BLACK_PO
+   sta VERA_data0
 
    ; clear all tiles
 

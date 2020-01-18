@@ -26,6 +26,15 @@ TTL_MUS_BANK            = 1
 SPRITE_FRAME_SEQ_BANK   = 61
 SPRITE_MOVEMENT_BANK    = 62
 
+; palette offsets
+DEFAULT_PO     = 0
+LEVEL0_PO      = 1
+MENU_PO        = 11
+TEXT1_PO       = 12
+TEXT2_PO       = 13
+TEXT3_PO       = 14
+BLACK_PO       = 15
+
 ; sprite indices
 MOUSE_idx      = 0
 
