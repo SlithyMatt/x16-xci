@@ -15,10 +15,12 @@ HELP_CTRLS_PTR = $32
 HELP_ABOUT_PTR = $34
 ZL_COUNT_PTR   = $36
 
-VRAM_TILEMAP   = $09600 ; 64x32 (40x30 visible)
-VRAM_SPRITES   = $10000 ; 512 4bpp 16x16 frames
-VRAM_TILES     = $0A600 ; 720 4bpp 8x8 tiles
 VRAM_BITMAP    = $00000 ; 4bpp 320x240
+VRAM_TILEMAP   = $09600 ; 64x32 (40x30 visible)
+VRAM_TILES     = $0A600 ; 720 4bpp 8x8 tiles
+VRAM_SPRITES   = $10000 ; 512 4bpp 16x16 frames
+
+TILEMAP_SIZE   = VRAM_TILES - VRAM_TILEMAP
 
 RAM_CONFIG     = $6000
 
@@ -41,7 +43,7 @@ MOUSE_idx      = 0
 
 ; --------- Global Variables ---------
 frame_num:  .byte 0
-def_cursor: .dword 0
+def_cursor: .word 0
 num_zones:  .byte 0
 zone:       .byte 0
 level:      .byte 0

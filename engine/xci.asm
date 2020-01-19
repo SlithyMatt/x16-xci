@@ -119,28 +119,43 @@ start:
    lda #>cfg_ts_anim
    sta ANIM_PTR+1
    lda cfg_menu
+   clc
+   adc #<RAM_CONFIG
    sta MENU_PTR
    lda cfg_menu+1
+   adc #>RAM_CONFIG
    sta MENU_PTR+1
    lda cfg_tb
+   clc
+   adc #<RAM_CONFIG
    sta TB_PTR
    lda cfg_tb+1
+   adc #>RAM_CONFIG
    sta TB_PTR+1
    lda cfg_inv
+   clc
+   adc #<RAM_CONFIG
    sta INV_PTR
    lda cfg_inv+1
+   adc #>RAM_CONFIG
    sta INV_PTR+1
    ldy MENU_CONTROLS
    lda (MENU_PTR),y
+   clc
+   adc #<RAM_CONFIG
    sta HELP_CTRLS_PTR
    iny
    lda (MENU_PTR),y
+   adc #>RAM_CONFIG
    sta HELP_CTRLS_PTR+1
    ldy MENU_ABOUT
    lda (MENU_PTR),y
+   clc
+   adc #<RAM_CONFIG
    sta HELP_ABOUT_PTR
    iny
    lda (MENU_PTR),y
+   adc #>RAM_CONFIG
    sta HELP_ABOUT_PTR+1
    lda cfg_zone_levels
    sta ZL_COUNT_PTR

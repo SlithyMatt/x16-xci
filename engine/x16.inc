@@ -104,6 +104,7 @@ JOYSTICK_SCAN     := $FF53
 JOYSTICK_GET		:= $FF56
 MOUSE_CONFIG		:= $FF68
 MOUSE_GET			:= $FF6B
+MOUSE_SCAN        := $FF71
 SETLFS            := $FFBA
 SETNAM            := $FFBD
 LOAD              := $FFD5

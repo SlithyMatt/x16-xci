@@ -543,18 +543,18 @@ tiles 11  27 29  32 98 121 32 74 111 104 110 32 68 111 101 32 # byline
 
 # define animation timeline
 wait 2
-sprite_move 1  2  72  2 0
-wait 144 # preceding sprite_move will be just finished
-tiles 0  20 24  3 3
+sprite_move 1  2  68  2 0
+wait 136 # preceding sprite_move will be just finished
+tiles 0  19 24  3 3
 tiles 0  18 25  3 0 0 3
 wait 255 # wait until last second
-wait 139
-tiles 11  17 28  72 101 108 108 111 63 # Hello?
+wait 131
+tiles 12  17 28  72 101 108 108 111 63 # Hello?
 ```
 
 In this configuration, we are specifying a total duration of 600 "jiffys". A jiffy is 1/60 of a second, so 600 jiffys is 10 seconds. All game timing is set at that resolution, as that is the scan frequency of the display (60Hz, just like NTSC, which makes X16 games "feel" like North American 8-bit games of the era). At the start, there is a background bitmap, music, and initial positions of a sprite and some tiles. Sprite 1 is defined to use the player avatar frames in a loop while walking, and then it walk to the center of the screen. The only tiles at first are a byline in the bottom right crediting our friend John Doe. Later, when the sprite makes it to the middle of the screen after 146 jiffys (2.43 seconds), some X16 butterflies appear around it. Then, at the very last second, more tiles come up to give you a snarky "Hello?". This is because the title sequence can be stopped at any time with a single mouse click, which will clear the screen and then display the menu bar. If the player just waits until the end of the sequence, it will clear itself and then show the menu bar when the total duration is over.
 
-Here is a preview of what that title sequence looks like: (TODO)
+Here is a preview of what that title sequence looks like: ![title screen](example/title.gif)
 
 #### Title Screen File: Required Keys
 The only required key for the title screen file is **duration**. The simplest possible title sequence would do nothing for zero jiffys, which would mean a file that only says ```duration 0```. This would just make the menu bar appear as soon as possible once the game program was run.  **duration** can only have a single number of jiffys for its value, with a maximum value of 65536 (1092.267 seconds, or 18 minutes and 12.267 seconds -- that would be a very long title screen, so try to keep it under a minute or 3600 jiffys).
