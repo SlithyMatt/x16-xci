@@ -372,6 +372,7 @@ __anim_new_sprite_move:
    sta ZP_PTR_1+1
    ldy #0
    lda (ANIM_PTR)    ; frame delay
+   dec
    sta (ZP_PTR_1),y
    iny
    sta (ZP_PTR_1),y  ; delay counter
@@ -399,8 +400,7 @@ __anim_move_sprites:
 @frame_idx: .byte 0
 @num_frames: .byte 0
 @start:
-   lda #0
-   sta __sprite_idx
+   stz __sprite_idx
    lda #<RAM_WIN
    sta ZP_PTR_2
    lda #>RAM_WIN
@@ -414,6 +414,13 @@ __anim_move_sprites:
 @check_moving:
    lda #SPRITE_MOVEMENT_BANK
    sta RAM_BANK
+   lda ZP_PTR_2   ; increment ZP_PTR_2 to next sprite movement
+   clc
+   adc #8
+   sta ZP_PTR_2
+   lda ZP_PTR_2+1
+   adc #0
+   sta ZP_PTR_2+1
    lda (ZP_PTR_2)
    bne @check_delay
    jmp @loop
@@ -467,6 +474,8 @@ __anim_move_sprites:
    rol
    ora #SPRITE_Z
    sta __sprite_flip
+   lda #SPRITE_MOVEMENT_BANK
+   sta RAM_BANK
    ply
    lda (ZP_PTR_2),y ; reload frame index to increment for next time
    inc
