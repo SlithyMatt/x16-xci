@@ -4,13 +4,13 @@ FILENAMES_INC = 1
 .include "globals.asm"
 
 filenames:
-main_fn:       .asciiz "main.bin"
+main_fn:       .asciiz "MAIN.BIN"
 main_fn_end:
-sprites_fn:    .asciiz "sprites.bin"
-tiles_fn:      .asciiz "tiles.bin"
-palette_fn:    .asciiz "pal.bin"
-ttl_bm_fn:     .asciiz "ttl.bm.bin"
-ttl_mus_fn:    .asciiz "ttl.mus.bin"
+sprites_fn:    .asciiz "SPRITES.BIN"
+tiles_fn:      .asciiz "TILES.BIN"
+palette_fn:    .asciiz "PAL.BIN"
+ttl_bm_fn:     .asciiz "TTL.BM.BIN"
+ttl_mus_fn:    .asciiz "TTL.MUS.BIN"
 end_filenames:
 FILES_TO_LOAD = 1
 bankparams:
