@@ -3,8 +3,6 @@ VSYNC_INC = 1
 
 .include "game.asm"
 
-vsync_trig: .byte 0
-
 check_vsync:
    lda vsync_trig
    beq @done

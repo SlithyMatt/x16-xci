@@ -1,7 +1,7 @@
 .ifndef IRQ_INC
 IRQ_INC = 1
 
-.include "vsync.asm"
+.include "globals.asm"
 
 def_irq: .word $0000
 
@@ -16,7 +16,7 @@ init_irq:
    sta IRQVec+1
    rts
 
-   
+
 
 handle_irq:
    ; check for VSYNC

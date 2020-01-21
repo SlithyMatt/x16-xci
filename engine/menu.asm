@@ -387,7 +387,7 @@ __menu_build_item_tiles:   ; A: item ID
 menu_tick:
    lda __menu_bar_visible
    beq @return
-   lda mouse_button
+   lda mouse_left_click
    beq @return
    lda __menu_visible
    beq @check_bar
@@ -488,15 +488,15 @@ __menu_bar_click:
 @loop:
    ldx __menu_idx
    lda __menu_table,x
-   sta ZP_PTR_1
+   sta ZP_PTR_2
    inx
    lda __menu_table,x
-   sta ZP_PTR_1+1
+   sta ZP_PTR_2+1
    lda mouse_tile_x
-   cmp (ZP_PTR_1)
+   cmp (ZP_PTR_2)
    bmi @next
    ldy #1
-   cmp (ZP_PTR_1),y
+   cmp (ZP_PTR_2),y
    bpl @next
    bra @show
 @next:
@@ -508,48 +508,56 @@ __menu_bar_click:
    jmp @return
 @show:
    jsr tile_backup
-   lda (ZP_PTR_1)
+   lda (ZP_PTR_2)
    sta __menu_start_x
    clc
    adc #15
    sta __menu_end_x
    ldy #2
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_2),y
    inc
    sta __menu_end_y
-   lda ZP_PTR_1
+   lda ZP_PTR_2
    clc
    adc #3
-   sta ZP_PTR_1
-   lda ZP_PTR_1+1
+   sta ZP_PTR_2
+   lda ZP_PTR_2+1
    adc #0
-   sta ZP_PTR_1+1
+   sta ZP_PTR_2+1
    ldx #0
 @item_loop:
-   lda (ZP_PTR_1)
+   lda (ZP_PTR_2)
    sta __menu_y_map,x
    phx
+   inx
+   txa
+   tay
    lda #1
    ldx __menu_start_x
-   ldy #1
    jsr xy2vaddr
    stz VERA_ctrl
    ora #$10
    sta VERA_addr_bank
    stx VERA_addr_low
    sty VERA_addr_high
-   ldx #0
-   ldy #1
+   ldy #2
 @tile_loop:
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_2),y
    sta VERA_data0
    iny
-   inx
-   cpx #30
+   cpy #32
    bne @tile_loop
+   lda ZP_PTR_2
+   clc
+   adc #32
+   sta ZP_PTR_2
+   lda ZP_PTR_2+1
+   adc #0
+   sta ZP_PTR_2+1
    plx
    inx
    cpx __menu_end_y
+   bne @item_loop
    lda #1
    sta __menu_visible
 @return:

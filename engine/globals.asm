@@ -108,6 +108,7 @@ MOUSE_idx      = 0
 
 
 ; --------- Global Variables ---------
+vsync_trig: .byte 0
 frame_num:  .byte 0
 def_cursor: .word 0
 num_zones:  .byte 0
@@ -118,9 +119,11 @@ ts_dur:     .word 0
 music_bank: .byte TTL_MUS_BANK
 anim_bank:  .byte 0
 
+
 mouse_tile_x:  .byte 0
 mouse_tile_y:  .byte 0
-mouse_button:  .byte 0
+mouse_buttons: .byte 0
+mouse_left_click: .byte 0
 
 backup_tilemap:
 .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
