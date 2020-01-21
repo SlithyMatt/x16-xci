@@ -344,7 +344,7 @@ __menu_build_item_tiles:   ; A: item ID
    lda (MENU_PTR),y
    ldy #2
    sta (ZP_PTR_2),y
-   ldy #MENU_CHECK
+   ldy #MENU_CHECK+1
    lda (MENU_PTR),y
    ldy #3
    sta (ZP_PTR_2),y
@@ -398,10 +398,10 @@ menu_tick:
    cmp __menu_end_x
    bpl @restore
    lda mouse_tile_y
+   beq @restore
    cmp __menu_end_y
    bpl @restore
    jsr __menu_command
-   lda (ZP_PTR_1)
    cmp #MENU_DIV_ITEM
    beq @return
 @restore:
@@ -413,7 +413,7 @@ menu_tick:
 @return:
    rts
 
-__menu_command:
+__menu_command:   ; Output: A - item ID
    bra @start
 @offset: .word 0
 @start:
@@ -423,6 +423,7 @@ __menu_command:
    lda __menu_table,x
    sta ZP_PTR_1
    inx
+   lda __menu_table,x
    sta ZP_PTR_1+1
    lda ZP_PTR_1
    clc
@@ -433,6 +434,7 @@ __menu_command:
    sta ZP_PTR_1+1
    ldy mouse_tile_y
    lda __menu_y_map,y
+   pha
    cmp #NEW_GAME
    beq @new
    cmp #LOAD_GAME
@@ -475,18 +477,21 @@ __menu_command:
    bra @return
 @controls:
    jsr help_controls
-   rts
+   bra @return
 @about:
    jsr help_about
-   rts
+   bra @return
 @return:
+   pla
    rts
 
 
 __menu_bar_click:
    stz __menu_idx
 @loop:
-   ldx __menu_idx
+   lda __menu_idx
+   asl
+   tax
    lda __menu_table,x
    sta ZP_PTR_2
    inx
@@ -524,12 +529,11 @@ __menu_bar_click:
    lda ZP_PTR_2+1
    adc #0
    sta ZP_PTR_2+1
-   ldx #0
+   ldx #1
 @item_loop:
    lda (ZP_PTR_2)
    sta __menu_y_map,x
    phx
-   inx
    txa
    tay
    lda #1
