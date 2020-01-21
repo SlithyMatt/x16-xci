@@ -315,6 +315,7 @@ __menu_build_item_tiles:   ; A: item ID
    sta (ZP_PTR_2),y
    bra @build
 @div:
+   pla   ; clear stack
    ldy #MENU_DIV
    lda (MENU_PTR),y
    sta @div_tile
@@ -329,7 +330,7 @@ __menu_build_item_tiles:   ; A: item ID
    lda @div_tile+1
    sta (ZP_PTR_2),y
    iny
-   cpy #30
+   cpy #32
    bne @div_loop
    bra @return
 @toggle:
