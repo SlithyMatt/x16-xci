@@ -301,4 +301,139 @@ get_tile:   ; Input:
    pla
    rts
 
+
+tile_backup:
+   ldy #1
+@row_loop:
+   lda #1
+   ldx #0
+   phy
+   jsr xy2vaddr
+   stz VERA_ctrl
+   ora #$10
+   sta VERA_addr_bank
+   stx VERA_addr_low
+   sty VERA_addr_high
+   pla
+   pha
+   dec
+   asl
+   tay
+   lda __tile_backup_row_table,y
+   sta ZP_PTR_1
+   iny
+   lda __tile_backup_row_table,y
+   sta ZP_PTR_1+1
+   ldy #0
+@tile_loop:
+   lda VERA_data0
+   sta (ZP_PTR_1),y
+   iny
+   cpy #80
+   bne @tile_loop
+   ply
+   iny
+   cpy #30
+   bne @row_loop
+   rts
+
+tile_restore:
+   ldy #1
+@row_loop:
+   lda #1
+   ldx #0
+   phy
+   jsr xy2vaddr
+   stz VERA_ctrl
+   ora #$10
+   sta VERA_addr_bank
+   stx VERA_addr_low
+   sty VERA_addr_high
+   pla
+   pha
+   dec
+   asl
+   tay
+   lda __tile_backup_row_table,y
+   sta ZP_PTR_1
+   iny
+   lda __tile_backup_row_table,y
+   sta ZP_PTR_1+1
+   ldy #0
+@tile_loop:
+   lda (ZP_PTR_1),y
+   sta VERA_data0
+   iny
+   cpy #80
+   bne @tile_loop
+   ply
+   iny
+   cpy #30
+   bne @row_loop
+   rts
+
+__tile_backup_map:
+__tile_row0:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row1:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row2:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row3:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row4:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row5:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row6:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row7:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row8:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row9:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row10:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row11:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row12:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row13:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row14:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row15:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row16:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row17:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row18:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row19:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row20:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row21:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row22:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row23:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row24:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row25:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row26:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row27:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row28:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+__tile_row29:  .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
+__tile_backup_row_table:
+.word __tile_row0
+.word __tile_row1
+.word __tile_row2
+.word __tile_row3
+.word __tile_row4
+.word __tile_row5
+.word __tile_row6
+.word __tile_row7
+.word __tile_row8
+.word __tile_row9
+.word __tile_row10
+.word __tile_row11
+.word __tile_row12
+.word __tile_row13
+.word __tile_row14
+.word __tile_row15
+.word __tile_row16
+.word __tile_row17
+.word __tile_row18
+.word __tile_row19
+.word __tile_row20
+.word __tile_row21
+.word __tile_row22
+.word __tile_row23
+.word __tile_row24
+.word __tile_row25
+.word __tile_row26
+.word __tile_row27
+.word __tile_row28
+.word __tile_row29
+
 .endif

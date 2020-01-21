@@ -7,6 +7,7 @@ GAME_INC = 1
 .include "menu.asm"
 .include "animation.asm"
 .include "title_screen.asm"
+.include "mouse.asm"
 
 init_game:
    jsr init_music
@@ -21,6 +22,7 @@ game_tick:        ; called after every VSYNC detected (60 Hz)
    sta frame_num
 @tick:
    jsr ts_tick
+   jsr mouse_tick
    jsr music_tick
    jsr menu_tick
    jsr anim_tick

@@ -3,6 +3,11 @@ MENU_INC = 1
 
 .include "x16.inc"
 .include "globals.asm"
+.include "zone.asm"
+.include "xgf.asm"
+.include "music.asm"
+.include "help.asm"
+.include "tilelib.asm"
 
 MENU_ASCII_BYTE2  = MENU_PO << 4
 
@@ -67,7 +72,7 @@ __menu_y_map:
 
 __menu_idx:       .byte 0
 __menu_start_x:   .byte 0
-__menu_end_x:     .byte 0
+__menu_end_x:     .byte 0  ; always __menu_start_x+15 when menu visible
 __menu_end_y:     .byte 0
 
 __menu_0:
@@ -133,6 +138,7 @@ __menu_4:
 .word 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 .word 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 .word 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
+
 
 __menu_table:
 .word __menu_0
@@ -381,9 +387,184 @@ __menu_build_item_tiles:   ; A: item ID
 menu_tick:
    lda __menu_bar_visible
    beq @return
-
+   lda mouse_button
+   beq @return
+   lda __menu_visible
+   beq @check_bar
+   lda mouse_tile_x
+   beq @restore
+   cmp __menu_start_x
+   bmi @restore
+   cmp __menu_end_x
+   bpl @restore
+   lda mouse_tile_y
+   cmp __menu_end_y
+   bpl @restore
+   jsr __menu_command
+   lda (ZP_PTR_1)
+   cmp #MENU_DIV_ITEM
+   beq @return
+@restore:
+   stz __menu_visible
+   jsr tile_restore
+   bra @return
+@check_bar:
+   jsr __menu_bar_click
 @return:
    rts
 
+__menu_command:
+   bra @start
+@offset: .word 0
+@start:
+   lda __menu_idx
+   asl
+   tax
+   lda __menu_table,x
+   sta ZP_PTR_1
+   inx
+   sta ZP_PTR_1+1
+   lda ZP_PTR_1
+   clc
+   adc #3
+   sta ZP_PTR_1
+   lda ZP_PTR_1+1
+   adc #0
+   sta ZP_PTR_1+1
+   ldy mouse_tile_y
+   lda __menu_y_map,y
+   cmp #NEW_GAME
+   beq @new
+   cmp #LOAD_GAME
+   beq @load
+   cmp #SAVE_GAME
+   beq @save
+   cmp #SAVE_GAME_AS
+   beq @saveas
+   cmp #EXIT_GAME
+   beq @exit
+   cmp #TOGGLE_MUSIC
+   beq @music
+   cmp #TOGGLE_SFX
+   beq @sfx
+   cmp #HELP_CONTROLS
+   beq @controls
+   cmp #HELP_ABOUT
+   beq @about
+   bra @return
+@new:
+   jsr new_game
+   bra @return
+@load:
+   jsr load_game
+   bra @return
+@save:
+   jsr save_game
+   bra @return
+@saveas:
+   jsr save_game_as
+   bra @return
+@exit:
+   jsr __menu_exit
+   bra @return
+@music:
+   jsr __menu_toggle_music
+   bra @return
+@sfx:
+   jsr __menu_toggle_sfx
+   bra @return
+@controls:
+   jsr help_controls
+   rts
+@about:
+   jsr help_about
+   rts
+@return:
+   rts
+
+
+__menu_bar_click:
+   stz __menu_idx
+@loop:
+   ldx __menu_idx
+   lda __menu_table,x
+   sta ZP_PTR_1
+   inx
+   lda __menu_table,x
+   sta ZP_PTR_1+1
+   lda mouse_tile_x
+   cmp (ZP_PTR_1)
+   bmi @next
+   ldy #1
+   cmp (ZP_PTR_1),y
+   bpl @next
+   bra @show
+@next:
+   inc __menu_idx
+   lda __menu_idx
+   ldy #MENU_NUM
+   cmp (MENU_PTR),y
+   bne @loop
+   jmp @return
+@show:
+   jsr tile_backup
+   lda (ZP_PTR_1)
+   sta __menu_start_x
+   clc
+   adc #15
+   sta __menu_end_x
+   ldy #2
+   lda (ZP_PTR_1),y
+   inc
+   sta __menu_end_y
+   lda ZP_PTR_1
+   clc
+   adc #3
+   sta ZP_PTR_1
+   lda ZP_PTR_1+1
+   adc #0
+   sta ZP_PTR_1+1
+   ldx #0
+@item_loop:
+   lda (ZP_PTR_1)
+   sta __menu_y_map,x
+   phx
+   lda #1
+   ldx __menu_start_x
+   ldy #1
+   jsr xy2vaddr
+   stz VERA_ctrl
+   ora #$10
+   sta VERA_addr_bank
+   stx VERA_addr_low
+   sty VERA_addr_high
+   ldx #0
+   ldy #1
+@tile_loop:
+   lda (ZP_PTR_1),y
+   sta VERA_data0
+   iny
+   inx
+   cpx #30
+   bne @tile_loop
+   plx
+   inx
+   cpx __menu_end_y
+   lda #1
+   sta __menu_visible
+@return:
+   rts
+
+__menu_exit:
+
+   rts
+
+__menu_toggle_music:
+
+   rts
+
+__menu_toggle_sfx:
+
+   rts
 
 .endif
