@@ -187,27 +187,7 @@ init_menu:
    lda @tilemap
    bne @clear_tile_loop
 
-   ; init mouse cursor
-   lda #0
-   sta ROM_BANK
-   lda #$FF ; custom cursor
-   ldx #2   ; scale x 2
-   jsr MOUSE_CONFIG
-   VERA_SET_ADDR VRAM_sprattr, 1
-   lda def_cursor
-   sta VERA_data0
-   lda def_cursor+1
-   sta VERA_data0
-   lda VERA_data0 ; leave position alone
-   lda VERA_data0
-   lda VERA_data0
-   lda VERA_data0
-   lda #$0C       ; make cursor visible, no flipping
-   sta VERA_data0
-   lda #$50       ; size 16x16, palette offset 0
-   sta VERA_data0
-
-   ; disable other sprites
+   ; disable all sprites except mouse cursor
    VERA_SET_ADDR $F500E, 4 ; sprite 1 byte 6, stride of 8
    ldx #1
 @clear_sprite_loop:

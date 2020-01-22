@@ -179,6 +179,7 @@ start:
 
 
    ; start title screen
+   jsr init_mouse
    jsr init_music
    jsr start_music
    jsr start_anim

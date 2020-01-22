@@ -57,14 +57,11 @@ xy2vaddr:   ; Input:
    ror @xoff+1
    ror @xoff
 @xoff_div8:
-   clc
-   ror @xoff+1
+   lsr @xoff+1
    ror @xoff
-   clc
-   ror @xoff+1
+   lsr @xoff+1
    ror @xoff
-   clc
-   ror @xoff+1
+   lsr @xoff+1
    ror @xoff
    txa
    clc
@@ -81,14 +78,11 @@ xy2vaddr:   ; Input:
    ror @yoff+1
    ror @yoff
 @yoff_div8:
-   clc
-   ror @yoff+1
+   lsr @yoff+1
    ror @yoff
-   clc
-   ror @yoff+1
+   lsr @yoff+1
    ror @yoff
-   clc
-   ror @yoff+1
+   lsr @yoff+1
    ror @yoff
    tya
    clc

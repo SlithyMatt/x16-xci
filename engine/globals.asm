@@ -1,6 +1,7 @@
 .ifndef GLOBALS_INC
 GLOBALS_INC = 1
 
+; ASCII-ASCII character map to prevent PETSCII translation
 .charmap $40, $40
 .charmap $41, $41
 .charmap $42, $42
@@ -65,6 +66,17 @@ GLOBALS_INC = 1
 .charmap $7e, $7e
 .charmap $7f, $7f
 
+; ------------- Macros --------------
+
+.macro SET_MOUSE_CURSOR frame_addr
+   stz VERA_ctrl
+   VERA_SET_ADDR VRAM_sprattr, 1
+   lda frame_addr
+   sta VERA_data0
+   lda frame_addr+1
+   sta VERA_data0
+.endmacro
+
 ; ---------- Build Options ----------
 
 ; ------------ Constants ------------
@@ -118,6 +130,13 @@ ts_playing: .byte 1
 ts_dur:     .word 0
 music_bank: .byte TTL_MUS_BANK
 anim_bank:  .byte 0
+
+tb_visible:    .byte 0
+tb_start_y:    .byte 0
+current_tool:  .byte 0
+inv_visible:   .byte 0
+inv_start_y:   .byte 0
+current_item:  .byte 0
 
 
 mouse_tile_x:  .byte 0

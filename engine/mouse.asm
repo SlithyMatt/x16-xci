@@ -5,6 +5,28 @@ MOUSE_LEFT_BUTTON = $01
 
 __mouse_last_left_button: .byte 0
 
+init_mouse:
+   lda #0
+   sta ROM_BANK
+   lda #$FF ; custom cursor
+   ldx #2   ; scale x 2
+   jsr MOUSE_CONFIG
+   stz VERA_ctrl
+   VERA_SET_ADDR VRAM_sprattr, 1
+   lda def_cursor
+   sta VERA_data0
+   lda def_cursor+1
+   sta VERA_data0
+   lda VERA_data0 ; leave position alone
+   lda VERA_data0
+   lda VERA_data0
+   lda VERA_data0
+   lda #$0C       ; make cursor visible, no flipping
+   sta VERA_data0
+   lda #$50       ; size 16x16, palette offset 0
+   sta VERA_data0
+   rts
+
 mouse_tick:
    lda #0
    sta ROM_BANK
