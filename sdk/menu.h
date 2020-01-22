@@ -52,16 +52,6 @@ typedef enum toolbar_action {
    NUM_TOOLS
 } toolbar_action_t;
 
-typedef struct toolbar_button {
-   uint8_t action;
-   uint8_t start_x;
-   uint8_t end_x;
-   // followed by 2*(end_x-startx+1)*(30-toolbar_config::start_y) bytes of
-   // tilemap for the button.  If action == PIN_TOOLBAR,
-   // the number of tiles will be doubled to have both states
-   // of the pin button
-} toolbar_button_t;
-
 typedef struct toolbar_config {
    uint8_t start_x;
    uint8_t start_y;
@@ -74,6 +64,17 @@ typedef struct toolbar_config {
    uint8_t num_tools;
    // followed by num_tools toolbar buttons, then inventory_config_t
 } toolbar_config_t;
+
+typedef struct toolbar_button {
+   uint8_t action;
+   uint8_t start_x;
+   uint8_t end_x;
+   // followed by 2*(end_x-startx+1)*(30-toolbar_config::start_y) bytes of
+   // tilemap for the button.  If action == PIN_TOOLBAR,
+   // the number of tiles will be doubled to have both states
+   // of the pin button
+} toolbar_button_t;
+
 
 extern int init_cursor;
 
