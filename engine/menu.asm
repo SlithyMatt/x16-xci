@@ -35,6 +35,11 @@ HELP_ABOUT     = 9
 __menu_bar_visible:  .byte 0
 __menu_visible:      .byte 0
 
+__menu_music_check:        .byte 1
+__menu_music_check_tile:   .word 0
+__menu_sfx_check:          .byte 1
+__menu_sfx_check_tile:     .word 0
+
 __str_new:        .byte "New Game      "
 __str_load:       .byte "Load Game...  "
 __str_save:       .byte "Save Game     "
@@ -302,9 +307,11 @@ init_menu:
 __menu_build_item_tiles:   ; A: item ID
                            ; ZP_PTR_2: menu item layout
    bra @start
+@id: .byte 0
 @div_tile: .word 0
+@check_tile: .word 0
 @start:
-   pha
+   sta @id
    cmp #MENU_DIV_ITEM
    beq @div
    cmp #TOGGLE_MUSIC
@@ -321,7 +328,6 @@ __menu_build_item_tiles:   ; A: item ID
    sta (ZP_PTR_2),y
    bra @build
 @div:
-   pla   ; clear stack
    ldy #MENU_DIV
    lda (MENU_PTR),y
    sta @div_tile
@@ -348,8 +354,28 @@ __menu_build_item_tiles:   ; A: item ID
    lda (MENU_PTR),y
    ldy #3
    sta (ZP_PTR_2),y
+   lda ZP_PTR_2
+   clc
+   adc #2
+   sta @check_tile
+   lda ZP_PTR_2+1
+   adc #0
+   sta @check_tile+1
+   lda @id
+   cmp #TOGGLE_MUSIC
+   beq @music
+   lda @check_tile
+   sta __menu_sfx_check_tile
+   lda @check_tile+1
+   sta __menu_sfx_check_tile+1
+   bra @build
+@music:
+   lda @check_tile
+   sta __menu_music_check_tile
+   lda @check_tile+1
+   sta __menu_music_check_tile+1
 @build:
-   pla
+   lda @id
    asl
    tax
    lda __menu_strings,x
@@ -392,7 +418,6 @@ menu_tick:
    lda __menu_visible
    beq @check_bar
    lda mouse_tile_x
-   beq @restore
    cmp __menu_start_x
    bmi @restore
    cmp __menu_end_x
@@ -409,6 +434,8 @@ menu_tick:
    jsr tile_restore
    bra @return
 @check_bar:
+   lda mouse_tile_y
+   bne @return
    jsr __menu_bar_click
 @return:
    rts
@@ -568,15 +595,75 @@ __menu_bar_click:
    rts
 
 __menu_exit:
+   ; TODO - ask if player is sure
+   jsr stop_music
+   lda #KERNAL_ROM_BANK
+   sta ROM_BANK
+   lda #0
+   jsr MOUSE_CONFIG
+   brk ; TODO: find more graceful exit
 
-   rts
 
 __menu_toggle_music:
-
+   lda __menu_music_check_tile
+   sta ZP_PTR_1
+   lda __menu_music_check_tile+1
+   sta ZP_PTR_1+1
+   lda __menu_music_check
+   bne @stop
+   lda #1
+   sta __menu_music_check
+   ldy #MENU_CHECK
+   lda (MENU_PTR),y
+   sta (ZP_PTR_1)
+   iny
+   lda (MENU_PTR),y
+   ldy #1
+   sta (ZP_PTR_1),y
+   jsr start_music
+   bra @return
+@stop:
+   stz __menu_music_check
+   ldy #MENU_UNCHECK
+   lda (MENU_PTR),y
+   sta (ZP_PTR_1)
+   iny
+   lda (MENU_PTR),y
+   ldy #1
+   sta (ZP_PTR_1),y
+   jsr stop_music
+@return:
    rts
 
 __menu_toggle_sfx:
-
+   lda __menu_sfx_check_tile
+   sta ZP_PTR_1
+   lda __menu_sfx_check_tile+1
+   sta ZP_PTR_1+1
+   lda __menu_sfx_check
+   bne @stop
+   lda #1
+   sta __menu_sfx_check
+   ldy #MENU_CHECK
+   lda (MENU_PTR),y
+   sta (ZP_PTR_1)
+   iny
+   lda (MENU_PTR),y
+   ldy #1
+   sta (ZP_PTR_1),y
+   ; TODO - enable sound effects
+   bra @return
+@stop:
+   stz __menu_sfx_check
+   ldy #MENU_UNCHECK
+   lda (MENU_PTR),y
+   sta (ZP_PTR_1)
+   iny
+   lda (MENU_PTR),y
+   ldy #1
+   sta (ZP_PTR_1),y
+   ; TODO - disable sound effects
+@return:
    rts
 
 .endif

@@ -80,6 +80,10 @@ YM_data           = $9FE1
 ; Emulator Registers
 GIF_ctrl          = $9FB5
 
+; ROM Banks
+KERNAL_ROM_BANK   = 0
+BASIC_ROM_BANK    = 4
+
 ; Banked Addresses
 RAM_WIN           = $A000
 RAM_WIN_SIZE      = $2000
@@ -107,7 +111,12 @@ MOUSE_GET			:= $FF6B
 MOUSE_SCAN        := $FF71
 SETLFS            := $FFBA
 SETNAM            := $FFBD
+CLRCHN            := $FFCC
 LOAD              := $FFD5
+
+; BASIC Vectors
+BASIC_PANIC       := $C000
+BASIC_INIT        := $C003
 
 
 ; VRAM Addresses
