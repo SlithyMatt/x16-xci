@@ -46,6 +46,7 @@ __tb_tools:
 .dword 0,0,0,0,0,0,0
 
 __tb_pin_pos:        .byte 0
+__tb_pin_width:      .byte 0
 __tb_pin_tiles_ptr:  .word 0
 __tb_pinned:         .byte 0
 
@@ -147,9 +148,13 @@ init_toolbar:
    lda @height
    bne @tile_loop
    lda @action
+   cmp #INVENTORY_TOOL
+   beq @inv
    cmp #PIN_TOOLBAR
    bne @next_button
    stx __tb_pin_pos
+   lda @width
+   sta __tb_pin_width
    lda ZP_PTR_1
    sta __tb_pin_tiles_ptr
    lda ZP_PTR_1+1
@@ -170,6 +175,8 @@ init_toolbar:
    sta ZP_PTR_1+1
    dec @height
    bra @pin_loop
+@inv:
+   jsr init_inv
 @next_button:
    lda @action
    jsr __tb_set_cursor
@@ -187,7 +194,7 @@ __tb_set_cursor:  ; A: tool ID
    bra @start
 @id:           .byte 0
 @cursor_table: .byte 0
-@cursor_cfg:   .byte 0
+@cursor:       .word 0
 @start:
    sta @id
    txa
@@ -217,31 +224,40 @@ __tb_set_cursor:  ; A: tool ID
    sta __tb_tools,y
    bra @return
 @walk:
-   lda #TB_WALK_CURSOR
+   ldy #TB_WALK_CURSOR
    bra @copy
 @run:
-   lda #TB_RUN_CURSOR
+   ldy #TB_RUN_CURSOR
    bra @copy
 @look:
-   lda #TB_LOOK_CURSOR
+   ldy #TB_LOOK_CURSOR
    bra @copy
 @use:
-   lda #TB_USE_CURSOR
+   ldy #TB_USE_CURSOR
    bra @copy
 @talk:
-   lda #TB_TALK_CURSOR
+   ldy #TB_TALK_CURSOR
    bra @copy
 @strike:
-   lda #TB_STRIKE_CURSOR
+   ldy #TB_STRIKE_CURSOR
 @copy:
-   sta @cursor_cfg
-   ldy @cursor_cfg
    lda (TB_PTR),y
+   sta @cursor
+   iny
+   lda (TB_PTR),y
+   sta @cursor+1
+   asl @cursor       ; mutliply cursor index by 4 to get VRAM address
+   rol @cursor+1
+   asl @cursor
+   rol @cursor+1
+   lda @cursor+1
+   ora #(^VRAM_SPRITES << 3) ; Add bank
+   sta @cursor+1
+   lda @cursor
    ldy @cursor_table
    sta __tb_tools,y
-   ldy @cursor_cfg+1
-   lda (TB_PTR),y
-   ldy @cursor_table+1
+   lda @cursor+1
+   iny
    sta __tb_tools,y
 @return:
    rts
@@ -271,6 +287,9 @@ toolbar_tick:
    lda mouse_left_click
    beq @return
    jsr __tb_click
+   lda current_tool
+   bne @hide
+   bra @return
 @hide:
    lda __tb_pinned
    bne @return       ; keep toolbar visible while pinned
@@ -325,6 +344,7 @@ __tb_show:
 __tb_click:
    bra @start
 @index: .byte 0
+@cursor: .word 0
 @start:
    stz @index
 @loop:
@@ -334,27 +354,48 @@ __tb_click:
    tax
    lda __tb_tools,x ; start_x
    cmp mouse_tile_x
-   bmi @get_action
+   beq @get_action
+   bpl @get_last_action
    inc @index
    lda @index
    cmp __tb_num_tools
    bne @loop
-@get_action:
+@get_last_action:
    dec @index
+@get_action:
    lda @index
    bmi @clear
    asl
    asl
    inc
+   tax
+   lda __tb_tools,x ; tool ID
    cmp #INVENTORY_TOOL
    beq @inventory
-   cmp #WALK_TOOL
-   beq @walk
-
+   cmp #PIN_TOOLBAR
+   beq @pin
+   sta current_tool
+   inx
+   lda __tb_tools,x
+   sta @cursor
+   inx
+   lda __tb_tools,x
+   sta @cursor+1
+   SET_MOUSE_CURSOR @cursor
+   bra @return
 @inventory:
-
-@walk:
-
+   stz __tb_pinned
+   jsr __tb_hide
+   jsr show_inv
+   bra @clear
+@pin:
+   lda __tb_pinned
+   bne @unpin
+   jsr __tb_pin
+   bra @clear
+@unpin:
+   stz __tb_pinned
+   jsr __tb_show
 @clear:
    stz current_tool
    SET_MOUSE_CURSOR def_cursor
@@ -388,6 +429,55 @@ __tb_hide:
    cmp #30
    bne @row_loop
    stz tb_visible
+   rts
+
+__tb_pin:
+   bra @start
+@start_x: .byte 0
+@start_y: .byte 0
+@start:
+   lda __tb_pin_pos
+   asl
+   asl
+   tax
+   lda __tb_tools,x  ; start_x
+   sta @start_x
+   lda tb_start_y
+   sta @start_y
+   lda __tb_pin_tiles_ptr
+   sta ZP_PTR_1
+   lda __tb_pin_tiles_ptr+1
+   sta ZP_PTR_1+1
+@loop:
+   lda #1
+   ldx @start_x
+   ldy @start_y
+   jsr xy2vaddr
+   stz VERA_ctrl
+   ora #$10
+   sta VERA_addr_bank
+   stx VERA_addr_low
+   sty VERA_addr_high
+   ldy #0
+@tile_loop:
+   lda (ZP_PTR_1),y
+   sta VERA_data0
+   iny
+   cpy __tb_pin_width
+   bne @tile_loop
+   lda ZP_PTR_1
+   clc
+   adc __tb_pin_width
+   sta ZP_PTR_1
+   lda ZP_PTR_1+1
+   adc #0
+   sta ZP_PTR_1+1
+   inc @start_y
+   lda @start_y
+   cmp #30
+   bne @loop
+   lda #1
+   sta __tb_pinned
    rts
 
 .endif
