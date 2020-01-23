@@ -77,6 +77,31 @@ GLOBALS_INC = 1
    sta VERA_data0
 .endmacro
 
+; ------------ Functions ------------
+
+byte_mult:  ; Input: X,Y - factors
+            ; Output: A - product
+   bra @start
+@x: .byte 0
+@start:
+   cpy #0
+   beq @zero
+   cpx #0
+   beq @zero
+   stx @x
+   txa
+   clc
+@loop:
+   dey
+   cpy #0
+   beq @return
+   adc @x
+   bra @loop
+@zero:
+   lda #0
+@return:
+   rts
+
 ; ---------- Build Options ----------
 
 ; ------------ Constants ------------

@@ -8,6 +8,7 @@
 
 #define TEXT_STYLE_OFFSET 11
 #define MAX_TEXT_STYLE 3
+#define MAX_NUM_ITEMS 128
 
 typedef struct inv_list_node {
    char label[MAX_ITEM_LABEL+1];
@@ -200,6 +201,11 @@ int parse_inv_config(const char *cfg_fn, inventory_config_t *cfg_bin) {
                return -1;
             }
             cfg_bin->num_items++;
+            if (cfg_bin->num_items > MAX_NUM_ITEMS) {
+               printf("parse_inv_config: too many items defined (max = %d)\n",
+                      MAX_NUM_ITEMS);
+               return -1;
+            }
             size += num;
             break;
          default:
@@ -285,6 +291,7 @@ int parse_inv_config(const char *cfg_fn, inventory_config_t *cfg_bin) {
    }
 
    items_per_row = (width - scroll_width) / cfg_bin->item_step_x;
+   cfg_bin->item_columns = items_per_row;
    width = items_per_row * cfg_bin->item_step_x + scroll_width;
    start_x = (40 - width) / 2;
    right_gap = 40 - (width + start_x);
@@ -295,6 +302,7 @@ int parse_inv_config(const char *cfg_fn, inventory_config_t *cfg_bin) {
    height -= height % cfg_bin->item_height;
    cfg_bin->start_y = 30 - height;
    num_rows = height / cfg_bin->item_height;
+   cfg_bin->item_rows = num_rows;
 
    for (row = 0; row < num_rows; row++) {
       for (sub_row = 0; sub_row < (cfg_bin->item_height - 1); sub_row++) {

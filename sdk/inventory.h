@@ -9,6 +9,8 @@ typedef struct inventory_config {
    uint8_t start_y;
    uint8_t tilemap[40*4*2];
    uint8_t num_items;
+   uint8_t item_rows;
+   uint8_t item_columns;
    uint8_t item_width;
    uint8_t item_height;
    uint8_t item_start_x;
