@@ -64,6 +64,8 @@ word2bcd:   ; Input:
    bra @start
 @bin: .word 0
 @start:
+   stx @bin
+   sty @bin+1
    sed
    lda #0
    sta (ZP_PTR_1)

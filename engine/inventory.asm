@@ -400,6 +400,7 @@ inv_tick:
    bra @hide
 @check_scroll:
 
+   bra @return
 @hide:
    jsr inv_hide
 @return:
