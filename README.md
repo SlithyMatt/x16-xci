@@ -641,7 +641,22 @@ level mygame_z0_level1.xci
 And that's it. All that's required for a zone file is a set of **level** keys. At least one must be defined, and their value is simply the filename of the level file that defines it, as specified in the [Level Files](#level-files) section. The filename does not need to be named anything special, all that matters is the order in which they appear in the zone files, just like how the zone filenames don't matter and are only indexed by their order in the main file.
 
 #### Level Files
-(TODO)
+Level files are XCI configuration files, just like the zone files that specify their filenames with **level** keys. Each level of the game is defined by a single level file, which tells a part of the story of the game and may have some interactive elements. A level, like the title screen, has a single bitmap background, a single piece of music playing in the background, and then a set of tiles and sprites overlaying the background. Additionally, the level also contains text that can be displayed at the bottom screen, either printed automatically when entering the level or in response to player actions. Unlike the title screen, which has a single sequence with a fixed duration, a level can have any number of timelines based on game state and player interaction.  These timelines then can end in a holding pattern waiting for further interaction, or transition to a different level.
+
+The main timeline of the level is what happens when the level is first visited. Subsequent visits may have different opening timelines based on changes in game state. Other timelines have to be triggered, either by being the exit point of another timeline or resulting from the player clicking on a particular tile position with a specific tool or inventory item.  Those trigger tiles can be defined at the beginning of the main timeline and triggered at any time, or at a specific point of a certain timeline.  Tiles can have multiple triggers defined for them at any time, but the earliest defined still-valid trigger for the level is the default trigger. The user can activate default triggers by simply moving the default mouse cursor over them and clicking. If the default trigger tool or inventory item has a custom cursor, the cursor will change to it to signify what the default trigger action is before the player clicks. To activate a non-default trigger, the player will have to select the associated tool or item explicitly before clicking.
+
+So, levels can go a number of different ways, and can be cateogrically different from others, but the same file format is always used. The first level in the example game is the simplest kind of level, a non-interactive introduction to the game story, so it only has a single timeline, like the title screen. However, it automatically leads into the next level and has the added dimension of text scrolling at the bottom. This level is defined in **mygame_z0_level0.xci**, which contains the following.
+
+```
+# Zone 0, level 0
+
+bitmap mygame_z0_level0.data
+music zone0.vgm
+
+init
+
+
+```
 
 ##### Level File: Required Keys
 (TODO)
