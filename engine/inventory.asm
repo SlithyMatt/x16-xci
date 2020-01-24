@@ -3,18 +3,20 @@ INVENTORY_INC = 1
 
 .include "bin2dec.asm"
 
-INV_START_Y          = 0
-INV_TILEMAP          = 1
-INV_NUM_ITEMS        = 321
-INT_ITEM_ROWS        = 322
-INV_ITEM_COLS        = 323
-INV_ITEM_WIDTH       = 324
-INV_ITEM_HEIGHT      = 325
-INV_ITEM_START_X     = 326
-INV_ITEM_STEP_X      = 327
-INV_ITEM_QUANT_X     = 328
-INV_ITEM_QUANT_WIDTH = 329
-INV_ITEM_CFG         = 330
+INV_START_X          = 0
+INV_START_Y          = 1
+INV_TILEMAP          = 2
+INV_NUM_ITEMS        = 322
+INT_ITEM_ROWS        = 323
+INV_ITEM_COLS        = 324
+INV_ITEM_WIDTH       = 325
+INV_ITEM_HEIGHT      = 326
+INV_ITEM_START_X     = 327
+INV_ITEM_STEP_X      = 328
+INV_ITEM_QUANT_X     = 329
+INV_ITEM_QUANT_WIDTH = 330
+INV_SCROLL_X         = 331
+INV_ITEM_CFG         = 332
 
 INV_MAX_ITEM_LABEL   = 16
 INV_ITEM_QUANT       = 16
@@ -22,11 +24,8 @@ INV_ITEM_MAX         = 18
 INV_ITEM_CURSOR      = 20
 INV_ITEM_TILES       = 22
 
+__inv_start_x:          .byte 0
 __inv_tilemap_addr:     .word 0
-__inv_scroll_up_x:      .byte 0
-__inv_scroll_up_y:      .byte 0
-__inv_scroll_down_x:    .byte 0
-__inv_scroll_down_y:    .byte 0
 __inv_num_items:        .byte 0
 __inv_max_items:        .byte 0
 __inv_page_rows:        .byte 0
@@ -39,6 +38,7 @@ __inv_item_start_x:     .byte 0
 __inv_item_step_x:      .byte 0
 __inv_item_quant_x:     .byte 0
 __inv_item_quant_width: .byte 0
+__inv_scroll_x:         .byte 0
 __inv_item_cfg_size:    .byte 0
 
 __inv_order:   ; position to index map
@@ -56,6 +56,9 @@ init_inv:
    stz current_item
    stz __inv_num_items
    stz __inv_page_start
+   ldy #INV_START_X
+   lda (INV_PTR),y
+   sta __inv_start_x
    ldy #INV_START_Y
    lda (INV_PTR),y
    sta inv_start_y
@@ -71,7 +74,7 @@ init_inv:
    adc #<INV_NUM_ITEMS
    sta ZP_PTR_1
    lda INV_PTR+1
-   adc #0
+   adc #>INV_NUM_ITEMS
    sta ZP_PTR_1+1
    lda (ZP_PTR_1)
    sta __inv_max_items
@@ -103,6 +106,16 @@ init_inv:
    ldy #INV_ITEM_QUANT_WIDTH-INV_NUM_ITEMS
    lda (ZP_PTR_1),y
    sta __inv_item_quant_width
+   ldy #INV_SCROLL_X-INV_NUM_ITEMS
+   lda (ZP_PTR_1),y
+   sta __inv_scroll_x
+   ldx __inv_item_width
+   ldy __inv_item_height
+   jsr byte_mult
+   asl
+   clc
+   adc #INV_ITEM_TILES
+   sta __inv_item_cfg_size
    lda INV_PTR
    clc
    adc #<INV_ITEM_CFG
@@ -111,12 +124,6 @@ init_inv:
    adc #>INV_ITEM_CFG
    tay
    jsr __inv_map_item_cfgs
-   ldx __inv_item_width
-   ldy __inv_item_height
-   jsr byte_mult
-   clc
-   adc #INV_ITEM_TILES
-   sta __inv_item_cfg_size
 @loop:
    lda current_item
    cmp __inv_max_items
@@ -135,6 +142,7 @@ init_inv:
    inc current_item
    bra @loop
 @return:
+   lda #NO_ITEM
    stz current_item
    rts
 
@@ -152,7 +160,7 @@ show_inv:
    lda __inv_tilemap_addr
    sta ZP_PTR_1
    lda __inv_tilemap_addr+1
-   sta ZP_PTR_1
+   sta ZP_PTR_1+1
 @loop:
    lda #1
    ldx #0
@@ -189,9 +197,12 @@ show_inv:
    lda @pos
    cmp __inv_page_size
    beq @return
+   cmp __inv_num_items
+   beq @return
    ldx @col
    ldy @row
    jsr __inv_show_item
+   inc @pos
    inc @col
    lda @col
    cmp __inv_page_cols
@@ -203,7 +214,6 @@ show_inv:
    cmp __inv_page_rows
    beq @return
    stz @col
-   inc @pos
    bra @fill_loop
 @return:
    lda #1
@@ -225,20 +235,20 @@ __inv_show_item:  ; A: item position in __inv_order
 @start:
    sta @pos
    lda __inv_item_start_x
-   clc
 @x_loop:
    cpx #0
    beq @set_y
+   clc
    adc __inv_item_step_x
    dex
    bra @x_loop
 @set_y:
    sta @x
    lda inv_start_y
-   clc
 @y_loop:
    cpy #0
    beq @show
+   clc
    adc __inv_item_height
    dey
    bra @y_loop
@@ -249,9 +259,12 @@ __inv_show_item:  ; A: item position in __inv_order
    sta @end_y
    ldx @pos
    lda __inv_order,x
+   asl
+   tax
+   lda __inv_cfg_map,x
    sta ZP_PTR_1
    inx
-   lda __inv_order,x
+   lda __inv_cfg_map,x
    sta ZP_PTR_1+1
    ldy #INV_ITEM_QUANT
    lda (ZP_PTR_1),y
@@ -306,9 +319,34 @@ __inv_show_item:  ; A: item position in __inv_order
    lda __inv_item_quant_width
    sec
    sbc @width
-
-
-
+   sta @width ; number of leading spaces required
+   beq @ascii
+   lda #1
+   ldx @x
+   ldy @y
+   jsr xy2vaddr
+   stz VERA_ctrl
+   ora #$20 ; stride of 2 to keep pre-loaded palette offset
+   sta VERA_addr_bank
+   stx VERA_addr_low
+   sty VERA_addr_high
+   ldx @width
+   lda #$20 ; ASCII space
+@space_loop:
+   sta VERA_data0
+   dex
+   bne @space_loop
+@ascii:
+   lda __inv_item_quant_width
+   sec
+   sbc @width
+   tax   ; X = numerals to display
+@numeral_loop:
+   dex
+   lda @quant_ascii,x
+   sta VERA_data0
+   cpx #0
+   bne @numeral_loop
 @return:
    rts
 
@@ -343,6 +381,31 @@ inv_hide:
 
 
 inv_tick:
+   lda inv_visible
+   beq @return
+   lda mouse_left_click
+   beq @return
+   lda mouse_tile_y
+   cmp inv_start_y
+   bmi @hide
+   lda mouse_tile_x
+   cmp __inv_start_x
+   bmi @hide
+   cmp __inv_scroll_x
+   beq @check_scroll
+   bpl @hide
+   jsr __inv_click
+   lda current_item
+   beq @return
+   bra @hide
+@check_scroll:
+
+@hide:
+   jsr inv_hide
+@return:
+   rts
+
+__inv_click:
 
    rts
 

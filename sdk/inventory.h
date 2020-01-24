@@ -6,6 +6,7 @@
 #define MAX_ITEM_LABEL 16
 
 typedef struct inventory_config {
+   uint8_t start_x;
    uint8_t start_y;
    uint8_t tilemap[40*4*2];
    uint8_t num_items;
@@ -17,6 +18,7 @@ typedef struct inventory_config {
    uint8_t item_step_x;
    uint8_t item_quant_x; // relative to button, no quant field if zero
    uint8_t item_quant_width;
+   uint8_t scroll_x;
    // followed by num_items * inventory_item_cfg_t
 } inventory_config_t;
 

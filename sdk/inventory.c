@@ -294,6 +294,8 @@ int parse_inv_config(const char *cfg_fn, inventory_config_t *cfg_bin) {
    cfg_bin->item_columns = items_per_row;
    width = items_per_row * cfg_bin->item_step_x + scroll_width;
    start_x = (40 - width) / 2;
+   cfg_bin->start_x = start_x;
+   cfg_bin->scroll_x = start_x + width - 1;
    right_gap = 40 - (width + start_x);
 
    cfg_bin->item_start_x = start_x + num_left_margin_tiles;

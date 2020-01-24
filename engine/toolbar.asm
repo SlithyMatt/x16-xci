@@ -53,12 +53,14 @@ __tb_pinned:         .byte 0
 
 init_toolbar:
    bra @start
-@start_x: .byte 0
-@action: .byte 0
-@height: .byte 0
-@width: .byte 0
-@i: .byte 0
+@start_x:   .byte 0
+@action:    .byte 0
+@height:    .byte 0
+@width:     .byte 0
+@i:         .byte 0
+@need_inv:  .byte 0
 @start:
+   stz @need_inv
    ldy #TB_START_X
    lda (TB_PTR),y
    sta __tb_start_x
@@ -176,7 +178,8 @@ init_toolbar:
    dec @height
    bra @pin_loop
 @inv:
-   jsr init_inv
+   lda #1
+   sta @need_inv
 @next_button:
    lda @action
    jsr __tb_set_cursor
@@ -185,6 +188,10 @@ init_toolbar:
    beq @done
    jmp @loop
 @done:
+   lda @need_inv
+   beq @enable
+   jsr init_inv
+@enable:
    lda #1
    sta __tb_enabled
    rts

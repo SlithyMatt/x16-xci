@@ -90,11 +90,11 @@ byte_mult:  ; Input: X,Y - factors
    beq @zero
    stx @x
    txa
-   clc
 @loop:
    dey
    cpy #0
    beq @return
+   clc
    adc @x
    bra @loop
 @zero:
@@ -143,6 +143,7 @@ BLACK_PO       = 15
 ; sprite indices
 MOUSE_idx      = 0
 
+NO_ITEM        = $FF
 
 ; --------- Global Variables ---------
 vsync_trig: .byte 0
@@ -162,6 +163,7 @@ current_tool:  .byte 0
 inv_visible:   .byte 0
 inv_start_y:   .byte 0
 current_item:  .byte 0
+
 
 
 mouse_tile_x:  .byte 0
