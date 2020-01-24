@@ -396,10 +396,24 @@ inv_tick:
    bpl @hide
    jsr __inv_click
    lda current_item
+   cmp #NO_ITEM
    beq @return
    bra @hide
 @check_scroll:
-
+   lda __inv_page_size
+   cmp __inv_num_items
+   bpl @return
+   lda mouse_tile_y
+   cmp inv_start_y
+   beq @scroll_up
+   cmp #30
+   beq @scroll_down
+   bra @return
+@scroll_up:
+   jsr __inv_scroll_up
+   bra @return
+@scroll_down:
+   jsr __inv_scroll_down
    bra @return
 @hide:
    jsr inv_hide
@@ -407,7 +421,112 @@ inv_tick:
    rts
 
 __inv_click:
+   bra @start
+@start_x:   .byte 0
+@end_x:     .byte 0
+@end_y:     .byte 0
+@x:         .byte 0
+@start:
+   lda __inv_item_start_x
+   sta @start_x
+   clc
+   adc __inv_item_width
+   sta @end_x
+   ldx #0
+@x_loop:
+   lda mouse_tile_x
+   cmp @start_x
+   bmi @return
+   cmp @end_x
+   bpl @next_col
+   stx @x
+   lda inv_start_y
+   clc
+   adc __inv_item_height
+   sta @end_y
+   ldy #0
+@y_loop:
+   lda mouse_tile_y
+   cmp @end_y
+   bpl @next_row
+   ldx __inv_page_cols
+   jsr byte_mult
+   clc
+   adc @x
+   clc
+   adc __inv_page_start
+   sta current_item
+   jsr __inv_set_item_cursor
+   bra @return
+@next_row:
+   lda @end_y
+   clc
+   adc __inv_item_height
+   iny
+   bra @y_loop
+@next_col:
+   inx
+   cpx __inv_page_cols
+   beq @no_item
+   lda @start_x
+   clc
+   adc __inv_item_step_x
+   sta @start_x
+   clc
+   adc __inv_item_width
+   sta @end_x
+   bra @x_loop
+@no_item:
+   lda #NO_ITEM
+   sta current_item
+@return:
+   rts
 
+__inv_set_item_cursor:
+   bra @start
+@cursor: .word 0
+@start:
+   lda current_item
+   cmp __inv_max_items
+   bpl @default
+   asl
+   tax
+   lda __inv_cfg_map,x
+   clc
+   adc #INV_ITEM_CURSOR
+   sta ZP_PTR_1
+   inx
+   lda __inv_cfg_map,x
+   adc #0
+   sta ZP_PTR_1+1
+   lda (ZP_PTR_1)
+   sta @cursor
+   ldy #1
+   lda (ZP_PTR_1),y
+   sta @cursor+1
+   asl @cursor ; convert cursor to VRAM address
+   rol @cursor+1
+   asl @cursor
+   rol @cursor+1
+   lda @cursor+1
+   ora #(^VRAM_SPRITES << 3) ; Add bank
+   sta @cursor+1
+   bra @set
+@default:
+   lda def_cursor
+   sta @cursor
+   lda def_cursor+1
+   sta @cursor+1
+@set:
+   SET_MOUSE_CURSOR @cursor
+   rts
+
+__inv_scroll_up:
+   ; TODO
+   rts
+
+__inv_scroll_down:
+   ; TODO
    rts
 
 __inv_map_item_cfgs: ; Input: X/Y item config start address
@@ -456,5 +575,16 @@ inv_get_quant: ; Input: A - item index
    lda (ZP_PTR_1),y
    tay
    rts
+
+inv_add_item:  ; A: item index
+               ; X/Y: quantity
+   ; TODO
+   rts
+
+inv_lose_item: ; A: item index
+               ; X/Y: quantity
+   ; TODO
+   rts
+
 
 .endif

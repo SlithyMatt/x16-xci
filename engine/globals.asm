@@ -162,7 +162,7 @@ tb_start_y:    .byte 0
 current_tool:  .byte 0
 inv_visible:   .byte 0
 inv_start_y:   .byte 0
-current_item:  .byte 0
+current_item:  .byte NO_ITEM
 
 
 
