@@ -1,1 +1,40 @@
 # Zone 0, level 0
+
+bitmap mygame_z0_level0.data
+music zone0.vgm
+
+init
+sprite_frames 2  0  30 31 32 33 34 35 36 37 # Flag waving
+sprite 2  282 54                            # Top-right of pole
+sprite_move 1  6  100  0 0                  # Fixed position, 10 fps, 10 s
+sprite_frames 3  0  38  # Front of car
+sprite 3  86 170        # Parked, not moving
+sprite_frames 4  0  40  # Read of car
+sprite 4  102 170       # Parked, not moving
+
+first
+wait 30
+text 1  Hello! Welcome to My Game!
+wait 90
+text 1  My name is John. John Doe.
+wait 120
+scroll 1
+line
+text 1  I assure you, I am alive.
+wait 90
+clear
+wait 30
+text 1  This is my house.
+wait 60
+text 1  See?
+tiles 11  10 27  158   159  159  159  159  159  159  159  159 158H
+tiles 11  10 28  160    77  121   32   72  111  117  115  101 160H
+tiles 11  10 29  158V 159V 159V 159V 159V 159V 159V 159V 159V 158HV
+wait 60
+text 1  This is where my game starts.
+wait 60
+text 1  But first we need to go inside.
+wait 60
+text 1  I'm already waiting there for you!
+wait 60
+go_level 0 1   # automatically go to zone 0, level 1

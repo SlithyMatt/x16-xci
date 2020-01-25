@@ -654,23 +654,65 @@ bitmap mygame_z0_level0.data
 music zone0.vgm
 
 init
+sprite_frames 2  0  30 31 32 33 34 35 36 37 # Flag waving
+sprite 2  282 54                            # Top-right of pole
+sprite_move 1  6  100  0 0                  # Fixed position, 10 fps, 10 s
+sprite_frames 3  0  38  # Front of car
+sprite 3  86 170        # Parked, not moving
+sprite_frames 4  0  40  # Read of car
+sprite 4  102 170       # Parked, not moving
 
-
+first
+wait 30
+text 1  Hello! Welcome to My Game!
+wait 90
+text 1  My name is John. John Doe.
+wait 120
+scroll 1
+line
+text 1  I assure you, I am alive.
+wait 90
+clear
+wait 30
+text 1  This is my house.
+wait 60
+text 1  See?
+tiles 11  10 27  158   159  159  159  159  159  159  159  159 158H
+tiles 11  10 28  160    77  121   32   72  111  117  115  101 160H
+tiles 11  10 29  158V 159V 159V 159V 159V 159V 159V 159V 159V 158HV
+wait 60
+text 1  This is where my game starts.
+wait 60
+text 1  But first we need to go inside.
+wait 60
+text 1  I'm already waiting there for you!
+wait 60
+go_level 0 1   # automatically go to zone 0, level 1
 ```
 
-##### Level File: Required Keys
-(TODO)
+So what's happening here? Well, after the background bitmap and music, we see two timelines. First is the timeline starting with the **init** key. This means that the animation immediately after is part of the initialization of the level, and will always be played every time the level is visited. Only after all the init instructions are executed will any other timelines be executed. That is why, like in this case, no waits are usually part of the init sequence so that the next animation can begin immediately. Hoever, kicking off a **sprite_move** is good for constant background animation, like the flag waving defined here (sprite 2). That movement will continue even after another timeline starts. Notice that a car is defined with sprites 3 and 4, rendered adjacently, but not moving as the car is parked. This is useful as we can re-use this background bitmap for another level, and the car doesn't have to be there, or could even be animated driving by the house.
 
-##### Level File: Optional Keys
+The second timeline starts with the **first** key.  This is only executed the first time a level is visited, immediately after the init sequence is executed. If this level were to be re-visited, only the init sequence would play. But the first time we are given a little introduction by the narrator, John Doe, the fictional author and protagonist of this game. Here we see the ways that text can be displayed below the scene. Each **text** key writes a line of text at the current position, which starts at the top of the 4-line text field, and then continues to the next line until the bottom is reached, and then new text appears at the bottom while the preceding text scrolls upward. This example also shows how that behavior can be adjusted by doing explicit scrolling, line feeding, and clearing of the text field.  FInally, at the end of this timeline, there is an unconditional transition to another level, by way of the **go_level** key.
+
+Technically, levels don't have any specifically required keys. Not even a bitmap or music is required. However, there needs to be something defined that will let the player continue and not just fall into a black hole. The next section will describe how all the supported keys work.
+
+##### Level File: Keys
 
 * **bitmap** - Filename of the level background bitmap, which should be an indexed 16-color 320x200 raw image file. It should have a raw 24-bit palette file that has the same filename appended with ```.pal```. If that file is not available, the bitmap will use the default palette, offset 0. It will be converted to X16 format and stored across 4 banks of banked RAM when that level's zone is loaded. The starting bank is based on the level number. Using N for the level number, it will be stored in banks 6N+2 through 6N+5. So, that would be banks 2-5 for level 0 (loaded from **Z0.L0.2.BIN** for zone 0, for example), banks 8-11 for level 1 and so on up to banks 56-59 for level 9. The palette for this bitmap will be written to palette offset N+1 (e.g. level 0 = palette offset 1) when the level's zone is loaded.
 * **music** - Filename of the level music VGM file. It is converted into a more X16-friendly format and stored in bank that it shares with sound effects in banked RAM. Using N for the level number, that bank number will be 6N+6. So, level 0 of zone 0 music and sound effects would be loaded from **Z0.L0.6.BIN** and stored in bank 6.
+* **init** -
+* **first** -
+* **text** -
+* **scroll** -
+* **line** -
+* **clear** -
 * **sprite_frames** - Defines an animation loop for a particular sprite. The value is a set of space delimited values, starting with the sprite index, followed by the palette offset to use for the sprite in this loop. The remaining values are an ordered list of sprite frame indexes (maximum of 31), appended with H and/or V if the frame needs to be flipped. The next movement for that sprite will step from frame to frame starting with the first listed, then throught he list and back to the beginning if there are enough movement steps before the next **sprite_frames** key with the same sprite index value. If there is only one sprite frame listed, then the sprite frame will not change until the next **sprite_frames** or **sprite_hide** key with the same sprite index value.
 * **sprite** - Displays a sprite at a specific screen location. The sprite will be its most recently defined frame. If preceded by a **sprite_frames** key, it will be the first frame specified in its list. The value is a set of up to 3 space delimited number values. The first number is the sprite index. The next two numbers in the value are the x and y screen coordinates, in that order. For game levels, the x coordinate should be between 0 and 304, and the y coordinate between 8 and 192, which will ensure the sprite is completely visible with no "overhang" past the level bitmap. Note that the coordinates will be for the upper-left corner of the sprite frame, not the center.
 * **sprite_hide** - Hides a sprite. The value is the sprite index. The specified sprite will not be visible again until the next **sprite** key with the same index. By default, all sprites are hidden, so this is only required for sprites that had already been made visible in the current level.
 * **tiles** - Displays a row of tiles starting from a specific location. Unlike sprites, tiles are not placed at arbitrary screen positions but at discrete positions within the 40x30 tile map. Rather than being moved or removed, they can only be replaced. By default, the entire game level bitmap area is tiled with all transparent tiles (index 0).  A single **tiles** key can display a single row of tiles with all the same palette offset, which is the first number in the key's space-delimited value. The next two numbers are the starting x and y coordinates of the tile row. The x coordinate must be between 0 and 39, and the y coordinate between 1 and 25 to be within the level bitmap area. The remaining values are an ordered list of tile indexes, appended with H and/or V if they are to be flipped. Note that if the number of tiles is greater than 40-x, then not all will be visible as the x coordinate of at least the rightmost tile will exceed 39. If any of the tiles need to be removed during the level, they need to be replaced with transparent tiles (index 0).
 * **wait** - Pauses a sequence for a specified number of "jiffys". A jiffy is 1/60 of a second, so a ```wait 60``` will pause for a whole second before executing any later keys in its sequence.  It will not stop the progress of a preceding key that is still executing (such as **sprite_move**). The wait time can be up to 255 jiffys, or 4.25 seconds.
 * **sprite_move** - Starts moving a sprite in a specified direction. Note that the sprite needs to be shown via a preceding **sprite** key in order for the movement to be visible. Its value contains exactly 5 space-delimited numbers. The first number specifies the sprite index (1-127, index 0 is reserved for the mouse cursor). The second number (1-255) is the number of jiffys in between each step of the movement (e.g. 2 jiffys between steps will produce 30 fps movement). The third number is the number of steps to execute (1-255), so the total duration of the movement will be the product of the second and third numbers (e.g. 30 steps at 2 jiffys per step will go on for a whole second before the movement stops). The fourth and fifth numbers are the x,y vector of the movement (x is 0-255, y is 0-208). This means that each step the sprite will move x pixels to the right and y pixels down. Leftward and upward movements require negative x and y values, respectively. The final position of the sprite will be its previous position plus the number of steps times the movement vector, so take care to make sure that the full range of movement will be valid sprite positions, as specified for the **sprite** key.
+* **go_level** - 
 
 #### VGM Files
 (TODO)
