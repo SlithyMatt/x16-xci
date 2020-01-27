@@ -1546,3 +1546,143 @@ ffffffff
 00001666
 00001666
 00001666
+
+# Tile 161: Coffee maker upper left
+00000000
+00ffffff
+00fccccc
+00fccccc
+00fccccc
+00fccccc
+00fccbbb
+00fccccc
+
+# Tile 162: Coffee maker upper right
+00000000
+fffff000
+ccccc200
+ccccc200
+ccccc000
+ccccc000
+bbbbbbb0
+cccc00b0
+
+# Tile 163: Coffee maker middle left - empty
+00fcc0bb
+00fcc00b
+00fcc000
+00fcc0bb
+00fcc001
+00fcc010
+00fcc100
+00fcc100
+
+# Tile 164: Coffee maker middle right - empty
+bbbb00b0
+bbb00000
+00000000
+bbbbbb00
+00100bb0
+000100b0
+000010b0
+00001000
+
+# Tile 165: Coffee maker lower left
+00fcc011
+0cfccccc
+c0fccccc
+c0ffffff
+00000000
+00000000
+00000000
+00000000
+
+# Tile 166: Coffee maker lower right
+11110000
+ccccc000
+cccccf00
+ffffff00
+00000000
+00000000
+00000000
+00000000
+
+# Tile 167: Coffee maker middle left - full
+00fcc0bb
+00fcc00b
+00fcc000
+00fcc0bb
+00fcc001
+00fcc019
+00fcc199
+00fcc199
+
+# Tile 168: Coffee maker middle right - full
+bbbb00b0
+bbb00000
+00000000
+bbbbbb00
+99100bb0
+999100b0
+999910b0
+99991000
+
+# Tile 169: Coffee cup top
+00000000
+00000000
+99999999
+11155111
+11555511
+11555511
+99999999
+09999990
+
+# Tile 170: Coffee cup bottom
+09999990
+01111110
+01111110
+01111110
+00000000
+00000000
+00000000
+00000000
+
+# Tile 171: Bananas upper left
+00000000
+00000000
+00000000
+00000000
+09777777
+00877777
+00088777
+00000888
+
+# Tile 172: Bananas upper right
+00000090
+00077dd0
+00778770
+77778778
+77787778
+77877778
+88777780
+77777780
+
+# Tile 173: Bananas lower left
+00977777
+00087777
+00008877
+00000088
+00000000
+00000000
+00000000
+00000000
+
+# Tile 174: Bananas lower right
+77777800
+77788000
+78800000
+80000000
+00000000
+00000000
+00000000
+00000000

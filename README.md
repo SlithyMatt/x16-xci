@@ -656,7 +656,7 @@ music zone0.vgm
 init
 sprite_frames 2  0  30 31 32 33 34 35 36 37 # Flag waving
 sprite 2  282 54                            # Top-right of pole
-sprite_move 1  6  100  0 0                  # Fixed position, 10 fps, 10 s
+sprite_move 2  6  100  0 0                  # Fixed position, 10 fps, 10 s
 sprite_frames 3  0  38  # Front of car
 sprite 3  86 170        # Parked, not moving
 sprite_frames 4  0  40  # Read of car
@@ -704,11 +704,13 @@ Technically, levels don't have any specifically required keys. Not even a bitmap
 * **first** - This key is placed at the beginning of the sequence that is run after initialization the very first time the level is loaded. This is good for exposition, explaining what the level is supposed to be.  This sequence will not be run when the level is re-visited. Has no values.
 * **set_state** - This key sets a state value to true. This key's only value is the name of the state, which must be a unique string identifier. The initial value of all states is false at the beginning of a game, so this must be called to set a state to true.
 * **clear_state** - This key sets a state value to false.  This key's only value is the name of the state.
-* **if** - This key is placed at the beginning of a sequence that will be executed if the specified state is set to true. It will be played immediately after the last preceding sequence that could be played is done. For example, a level could have three **if** sequences, and all three states are true the first time the level is visited. In that case, the **init** sequence is run first (if it exists), followed by the **first** sequence (if it exists), then each **if** sequence in the order in which they appear in the level file. The only value for this key is the name of the state.  If the state changes to true during the level, that will trigger this sequence to run once the current sequence is complete. The sequence can be run only once during each visit to the level.
+* **if** - This key is placed at the beginning of a sequence that will be executed if the specified state is set to true. It will be played immediately after the last preceding sequence that could be played is done. For example, a level could have three **if** sequences, and all three states are true the first time the level is visited. In that case, the **init** sequence is run first (if it exists), followed by the **first** sequence (if it exists), then each **if** sequence in the order in which they appear in the level file. The only value for this key is the name of the state.  An **if** sequence must end with an **end_if** key. You can place **if** sequences within other sequences, inclusing other **if** sequences, allowing you to define a hierarchy of outcomes based on different states.
 * **if_not** - This key is placed at the beginning of a sequence that will be executed if the specified state is set to false. It will be played immediately after the last preceding sequence that could be played is done. Their is no priority difference between **if** and **if_not** sequences, only their order in the level file. The only value for this key is the name of the state. If the state changes to false during the level, that will trigger this sequence to run once the current sequence is complete. The sequence can be run only once during each visit to the level.
-* **tool_trigger** - This key is placed at the beginning of a sequence that will be executed when a tool cursor is clicked on a specific tile range.  The first value is the name of the tool, which must be ```walk```, ```run```, ```look```, ```use```, ```talk``` or ```strike```. The next four value represent the tile range, in the order of X1, Y1, X2, Y2. The tile (or tile space -- there is no pixel-level triggering) at X1,Y1 is the upper left corner and X2,Y2 is the lower right corder. If the user clickes the specified tool cursor anywhere within that rectangle, the sequence will run as soon as the current sequence is done. These trigger areas can overlap each other to allow different sequences to run based on the currently selected tool. The first **tool_trigger** sequence defined for a tile will be the default action if no tool or item is selected before the mouse is clicked. This will also cause the tool cursor for that trigger to be displayed while the mouse hovers over that tile, allowing the user to automatically select the most likely needed tool without having to bring up the toolbar.
-* **item_trigger** - This key is placed at the beginning of a sequence that will be executed when an item cursor is clicked on a specific tile range. The first value is the name of the item, which must match a name found in the inventory file. The second value is the required quantity. If the player tries to activate this trigger with an insufficient quantity of that item in their inventory, the sequence will not be run. Instead, a text line will appear saying "You only have x, you need y", where x is the current quantity in the player's inventory and y is the required quantity. The next value is the cost, which is the number that will be deducted from the inventory quantity after this trigger. For example, most money transaction will have the same value for both required quantity and cost. However, an item that can be used repeatedly as a tool will probably just have a required quantity of one and a cost of zero. The next four values are the tile range, which works the same as in **tool_trigger**, except that an **item_trigger** can never be a default action. It always requires the player to select the item from the inventory first.
-* **text** - Places a line of text at the current position. When a level is loaded, the intiial position is the first line of the text area.  After that, the next line of text will appear directly below, on line 2 (unless a **scroll**, **line** or **clear** is specified first), then line 3 and finally line 4. If more text is added, the text in lines 2 through 4 will scroll up one line, and new text will continue on line 4. The first value after the key is the text style number, as defined in the menu file, so it can be 1, 2 or 3. A value of zero will use the menu text style. Any other value is invalid. After that, the remaining values are the words that will appear. Note that all whitespace will be rendered as a single space in the game. If you're the type of person who likes two spaces after a period, well, that's just too bad.
+**end_if** - Marks the end of the sequence that began with the last **if** or **if_not** that hasn't yet ended.
+* **tool_trigger** - This key is placed at the beginning of a sequence that will be executed when a tool cursor is clicked on a specific tile range.  The first value is the name of the tool, which must be ```walk```, ```run```, ```look```, ```use```, ```talk``` or ```strike```. The next four value represent the tile range, in the order of X1, Y1, X2, Y2. The tile (or tile space -- there is no pixel-level triggering) at X1,Y1 is the upper left corner and X2,Y2 is the lower right corder. If the user clicks the specified tool cursor anywhere within that rectangle, the sequence will run as soon as the current sequence is done. These trigger areas can overlap each other to allow different sequences to run based on the currently selected tool. The first **tool_trigger** sequence defined for a tile will be the default action if no tool or item is selected before the mouse is clicked. This will also cause the tool cursor for that trigger to be displayed while the mouse hovers over that tile, allowing the user to automatically select the most likely needed tool without having to bring up the toolbar. A **tool_trigger** sequence must end with a **end_trigger** key. It may not be placed within any other sequences, but it may contain **if** and **if_not** sequences.
+* **item_trigger** - This key is placed at the beginning of a sequence that will be executed when an item cursor is clicked on a specific tile range. The first value is the name of the item, which must match a name found in the inventory file. The second value is the required quantity. If the player tries to activate this trigger with an insufficient quantity of that item in their inventory, the sequence will not be run. Instead, a text line will appear saying "You only have x, you need y", where x is the current quantity in the player's inventory and y is the required quantity. The next value is the cost, which is the number that will be deducted from the inventory quantity after this trigger. For example, most money transaction will have the same value for both required quantity and cost. However, an item that can be used repeatedly as a tool will probably just have a required quantity of one and a cost of zero. The next four values are the tile range, which works the same as in **tool_trigger**, except that an **item_trigger** can never be a default action. It always requires the player to select the item from the inventory first. An **item_trigger** sequence must end with a **end_trigger** key. It may not be placed within any other sequences, but it may contain **if** and **if_not** sequences.
+* **end_trigger** - This key marks the end of the sequence that began with the last **tool_trigger** or **item_trigger** key.
+* **text** - Places a line of text at the current position. When a level is loaded, the intiial position is the first line of the text area.  After that, the next line of text will appear directly below, on line 2 (unless a **scroll**, **line** or **clear** is specified first), then line 3 and finally line 4. If more text is added, the text in lines 2 through 4 will scroll up one line, and new text will continue on line 4. The first value after the key is the text style number, as defined in the menu file, so it can be 1, 2 or 3. A value of zero will use the menu text style. Any other value is invalid. After that, the remaining values are the words that will appear. Note that all whitespace will be rendered as a single space in the game. If you're the type of person who likes two spaces after a period, well, that's just too bad. The total length of the text line (as it will be rendered on screen) should not exceed 38 characters to allow for a single-space margin on each side. Past 39 characters, text lines would be rendered off screen and never seen, so keep it brief or use multiple lines.
 * **scroll** - Scrolls the text field up the specified number of lines (1-4). The current position for new text will also scroll up with the earlier text.
 * **line** - Places a blank line at the current position, which then moves down a line, or forces an effective preceding ```scroll 1``` if the current position is already line 4. Has no values.
 * **clear** - Clears the text field and places the current position at line 1. Simply shorthand for ```scroll 4```. Has no values.
@@ -734,12 +736,149 @@ bitmap mygame_kitchen.data
 music zone0.vgm
 
 init
-
+# coffee maker
+tiles 0  18 10  161 162
+tiles 0  18 11  163 164
+tiles 0  18 12  165 166
+# steam loop
+sprite_frames 2  0  43 44 45 46
 
 first
+# coffee cup
+tiles 0  20 11  169
+tiles 0  20 12  170
+# bananas
+tiles 0  35 11  171 172
+tiles 0  35 12  173 174
+wait 30
+text 1  This is my kitchen. So modern!
+wait 60
+text 1  I am here, right behind you.
+wait 120
+text 1  Don't turn around!
+wait 60
+text 1  Just tell me what to do.
 
+# clicking on the coffee maker with use tool (default)
+tool_trigger use  18 10  19 12
+if_not coffee_made
+clear
+text 1  Ok, I'll make some coffee
+wait 60
+# show steam
+sprite 2  148 70
+sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
+wait 120
+# fill carafe
+tiles 0  18 11  167 168
+text 1  Done! Smells good...
+set_state coffee_made
+end_if # not coffee_made
+if coffee_made
+if_not holding_carafe
+clear
+text 1  Yes, nice fresh coffee.
+wait 60
+text 1  Let's find a good cup to pour it into
+set_state holding_carafe
+end_if # not holding_carafe
+if holding_carafe
+clear
+text 1  Let's not make more coffee with this
+text 1  fresh coffee. Perc sucks.
+wait 60
+text 1  Find a cup
+end_if # holding_carafe
+end_if # coffee_made
+end_trigger # use coffee maker
 
+# clicking on the coffee maker with look tool
+tool_trigger use  18 10  19 12
+if_not coffee_made
+clear
+text 1  That's my coffee maker.
+wait 60
+text 1  Need a little pick-me-up?
+end_if
+if coffee_made
+clear
+text 1  The coffee's still done.
+wait 60
+text 1  Gonna pour it?
+end_if
+end_trigger # look at coffee maker
 
+# clicking on the coffee maker with money
+item_trigger money  1  0  18 10  19 12
+clear
+text 1  It's my coffee maker.
+wait 60
+text 1  You can have a cup for free.
+end_trigger
+
+# clicking on the coffee cup with use tool (default)
+tool_trigger use  20 11  20 12
+if_not cup_taken
+if holding_carafe
+clear
+text 1  Sure, pour the whole pot.
+wait 60
+# empty carafe
+tiles 0  18 11  163 164
+clear_state holding_carafe
+set_state coffee_poured
+# move steam to over cup
+sprite 2  156 78
+sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
+end_if # holding_carafe
+if_not holding_carafe
+if coffee_poured
+clear
+text 1  Go ahead, take it with you.
+sprite_hide 2 # no more steam
+# remove cup
+tiles 0  20 11  0
+tiles 0  20 12  0
+get_item coffee 1 # add 1 coffee to inventory
+clear_state coffee_poured
+set_state cup_taken
+end_if # coffee_poured
+if_not coffee_poured
+clear
+text 1  It's an empty cup.
+wait 60
+text 1  You don't need one of those.
+wait 60
+text 1  Maybe you should fill it.
+end_if # not coffee_poured
+end_if # not cup_taken
+end_trigger # use coffee cup
+
+# clicking on the coffee cup with look tool
+tool_trigger look  20 11  20 12
+if_not cup_taken
+clear
+text 1  That's a coffee cup.
+if coffee_poured
+wait 60
+text 1  Maybe you should take it.
+end_if # coffee_poured
+if_not coffee_poured
+wait 60
+text 1 Conveniently placed, you think?
+end_if # not coffee_poured
+end_if # not cup_taken
+end_trigger # look at coffee cup
+
+# clicking on the bananas with use tool (default)
+
+# clicking on the bananas with look tool
+
+# clicking on the doorway with walk tool (default)
+
+# clicking on the doorway with run tool
+
+# clicking on the doorway with look tool
 
 ```
 
