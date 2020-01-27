@@ -68,6 +68,10 @@ int conv_bitmap_addr(const char *raw_fn, const char *xci_fn,
 
 #ifdef TEST
 void main(int argc, char **argv) {
+   int address;
+   uint8_t odata[2];
+   uint8_t pal[32];
+   FILE *ofp;
 
    if (argc < 3) {
       printf("Usage: %s [1ppb input] [4ppb output] [default load address]\n", argv[0]);
@@ -80,7 +84,14 @@ void main(int argc, char **argv) {
       // set default load address to 0x0000
       address = 0x0000;
    }
+   
+   conv_bitmap_addr(argv[1], argv[2], pal, address);
 
-   conv_bitmap_addr(argv[1], argv[2], address);
+   ofp = fopen("PAL.BIN","wb");
+   odata[0] = 0x00;
+   odata[1] = 0x10;
+   fwrite(odata,1,2,ofp);
+   fwrite(pal,1,32,ofp);
+   fclose(ofp);
 }
 #endif

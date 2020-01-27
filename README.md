@@ -43,6 +43,7 @@ Banked RAM ($A000-$BFFF): 6 banks per level, up to 10 levels per currently loade
 * Bank 60: Zone level 9 music and sound effects
 * Bank 61: Sprite animation sequences
 * Bank 62: Sprite movement progress and vectors
+* bank 63: State flags
 
 
 When transit from a level leads to a different zone, the new
@@ -731,6 +732,7 @@ Let's take a look at the next level (Zone 0, Level 1) to see game state and trig
 
 ```
 # Zone 0, level 1
+# Zone 0, level 1
 
 bitmap mygame_kitchen.data
 music zone0.vgm
@@ -761,6 +763,22 @@ text 1  Just tell me what to do.
 
 # clicking on the coffee maker with use tool (default)
 tool_trigger use  18 10  19 12
+if coffee_made
+if holding_carafe
+clear
+text 1  Let's not make more coffee with this
+text 1  fresh coffee. Perc sucks.
+wait 60
+text 1  Find a cup
+end_if # holding_carafe
+if_not holding_carafe
+clear
+text 1  Yes, nice fresh coffee.
+wait 60
+text 1  Let's find a good cup to pour it into
+set_state holding_carafe
+end_if # not holding_carafe
+end_if # coffee_made
 if_not coffee_made
 clear
 text 1  Ok, I'll make some coffee
@@ -774,22 +792,6 @@ tiles 0  18 11  167 168
 text 1  Done! Smells good...
 set_state coffee_made
 end_if # not coffee_made
-if coffee_made
-if_not holding_carafe
-clear
-text 1  Yes, nice fresh coffee.
-wait 60
-text 1  Let's find a good cup to pour it into
-set_state holding_carafe
-end_if # not holding_carafe
-if holding_carafe
-clear
-text 1  Let's not make more coffee with this
-text 1  fresh coffee. Perc sucks.
-wait 60
-text 1  Find a cup
-end_if # holding_carafe
-end_if # coffee_made
 end_trigger # use coffee maker
 
 # clicking on the coffee maker with look tool
@@ -819,6 +821,27 @@ end_trigger
 # clicking on the coffee cup with use tool (default)
 tool_trigger use  20 11  20 12
 if_not cup_taken
+if_not holding_carafe
+if_not coffee_poured
+clear
+text 1  It's an empty cup.
+wait 60
+text 1  You don't need one of those.
+wait 60
+text 1  Maybe you should fill it.
+end_if # not coffee_poured
+if coffee_poured
+clear
+text 1  Go ahead, take it with you.
+sprite_hide 2 # no more steam
+# remove cup
+tiles 0  20 11  0
+tiles 0  20 12  0
+get_item coffee 1 # add 1 coffee to inventory
+clear_state coffee_poured
+set_state cup_taken
+end_if # coffee_poured
+end_if # not holding_carafe
 if holding_carafe
 clear
 text 1  Sure, pour the whole pot.
@@ -831,26 +854,6 @@ set_state coffee_poured
 sprite 2  156 78
 sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
 end_if # holding_carafe
-if_not holding_carafe
-if coffee_poured
-clear
-text 1  Go ahead, take it with you.
-sprite_hide 2 # no more steam
-# remove cup
-tiles 0  20 11  0
-tiles 0  20 12  0
-get_item coffee 1 # add 1 coffee to inventory
-clear_state coffee_poured
-set_state cup_taken
-end_if # coffee_poured
-if_not coffee_poured
-clear
-text 1  It's an empty cup.
-wait 60
-text 1  You don't need one of those.
-wait 60
-text 1  Maybe you should fill it.
-end_if # not coffee_poured
 end_if # not cup_taken
 end_trigger # use coffee cup
 
@@ -871,16 +874,96 @@ end_if # not cup_taken
 end_trigger # look at coffee cup
 
 # clicking on the bananas with use tool (default)
+tool_trigger use  35 11  36 12
+if_not bananas_taken
+clear
+text 2  Go ahead and take the bananas. # make it yellow, because bananas
+wait 60
+# remove bananas
+tiles 0  35 11  0 0
+tiles 0  35 12  0 0
+get_item banana 3 # add 3 bananas to inventory
+set_state bananas_taken
+text 1  You may get hungry later.
+end_if # not bananas_taken
+end_trigger # use bananas
 
 # clicking on the bananas with look tool
+tool_trigger look  35 11  36 12
+if_not bananas_taken
+clear
+text 2  Those are my bananas. # make it yellow, because bananas
+wait 60
+text 1  You should take them in case
+text 1  you get hungry.
+end_if # not bananas_taken
+end_trigger # look at bananas
 
 # clicking on the doorway with walk tool (default)
+tool_trigger walk  2 6  6 23
+clear
+if_not cup_taken
+text 1  You look tired. Have some coffee.
+end_if
+if_not bananas_taken
+text 1  You'll get hungry later.
+wait 60
+text 1  Take my bananas.
+end_if
+if cup_taken
+if bananas_taken
+go_level 1 0 # go to zone 1, level 0
+end_if # bananas_taken
+end_if # cup_taken
+end_trigger # walk to doorway
 
 # clicking on the doorway with run tool
+tool_trigger run  2 6  6 23
+clear
+text 1  NO RUNNING IN THE KITCHEN!
+end_trigger # run to doorway
 
 # clicking on the doorway with look tool
+tool_trigger look  2 6  6 23
+clear
+text 1  That's the doorway to the
+text 1  living room.
+end_trigger # run to doorway
 
 ```
+
+Ok, so there's a lot to unpack here. This is more typical of how most game levels will be written, where the order in which the player's actions take place dictate their experience, including what they see in the scene and read in the text field. We'll go through this level in detail here. If you want to see a detailed breakdown of how the other example levels were written, check out the [appendix explaining the example](example/APPENDIX.md). For now, let's examine level 1 of zone 0, which makes use of all the keys that can be found in level files that weren't seen in the previous level.
+
+First are the bitmap and music source files, which is no different that the last level or the title screen. In fact, you can see that we are simply recycling the music that was used for the last level, called **zone0.vgm** because it's the music for all of zone 0.
+
+The **init** sequence places a coffee maker on the counter between the refrigerator and the stove, using the tiles that make it appear empty. Then, a frame sequence is defined for sprite 2, which will be some animated steam. With no **sprite** keys yet, the sprite won't be shown at the beginning.
+
+The **first** sequence adds in tiles for the items that won't be there if the level is revisited: the coffee cup and bananas. Then there is the intriductory text. You can see that there is a ```wait 30``` before the first text. This gives the scene the scene a half a second to be presented before the player's eyes are drawn to the text field. Each subsequent line has an other delay, which can be used to provide better timing, giving the developer jiffy-level precision to make text and graphics appear at the optimal time.
+
+The remaining top-level sequences are all triggers, so they could be executed in any order, depending on what the player clicks on using what tool or inventory item. Each trigger is defined for a particular tile range, so the first trigger defined for the tile area clicked on will be the one to be executed if a tool or item isnt' explicity selected first. For the coffee maker, that's the ```use``` tool. So, if the mouse is currently using the default cursor when hovering over those six tile areas containing the coffee maker, the cursor will automatically change to the **use** cursor specified in the menu file. Then clicking will execute the ```use``` trigger.
+
+At the top of the coffee maker ```use``` trigger sequence is an **if** key specifying the ```coffee_made``` state. Since this state has never been referenced before, the state value will be false, so the first time this trigger executes it will skip this sub-sequence. Instead, it will go into the following **if_not** sequence for the ```coffee_made``` state. Here we see it clear the text field and print ```Ok, I'll make some coffee```, then wait a second before placing an animated steam sprite over the coffee maker. The frame sequence was already defined, so we just need to set the sprite position with the **sprite** key to make it appear and then the **sprite_move** key to make it cycle through the frames at 5 fps for up to 30 seconds. Notice that like the flag in the last level, there is no X or Y movement of the sprite, just staying in place and going through the frames. Then 2 seconds after the steam first appears, the tiles defining the coffee maker's empty carafe are replaced with ones that appear to be filled with coffee. Finally, the **set_state** key sets ```coffee_made``` to true and the trigger sequence is done. You'll notice that I have comments after each **end_if** key. This is not required, of course, but can be helpful to make sure that you are structuring your sequences correctly.
+
+Now, if the coffee maker is clicked again with the use tool (still the default tool -- that can't change), the ```if coffee_made``` sub-sequence will be executed. Here we see another **if** key, meaning that there is yet another layer of sub-sequences.  So, if ```coffee_made``` and ```holding_carafe``` are true, that first sub-sub-sequence will be executed, but that won't be the case the first time.  Since ```holding_carafe``` is false by default, the next sub-sub-sequence, headed by ```if_not holding_carafe``` will be executed. Here some more text is displayed giving the user a hint for their next move to progress in the game, and the ```holding_carafe``` state is finally set to true. Here we see a way of having the player hold an item using only state and without having to place anything in the inventory, which would require additional graphics to be defined. In this case, the carafe will only be held in this level, just long enough for you to pour it into the cup.
+
+A this point, if the coffee maker is "used" for a consecutive third time, the ```if holding_carafe``` sub-sequence will run, giving the user a less subtle hint by making a joke at their expense. But that's it -- no change of state, only text. Now, we have gone through all the different ways this trigger can execute.
+
+The next trigger is for the same tile range over the coffee maker, so it can't be a default action. It requires the user to select the ```look``` tool first. Again, we have a pair of complementary **if** and **if_not** keys, causing the trigger to execute a different subsequence based on the ```coffee_made``` state. If the player "looks" at the coffee maker before the coffee is made, it makes a suggestion for making coffee. Otherwise, a more advanced suggestion is made to finally pour the coffee. Like most ```look``` triggers, this does not change any state. You want the player to trust that merely looking at something won't make any irreversable change, unless it's the head of Medusa or something.
+
+The last trigger for the coffee maker is an **item_trigger**. This is more of an easter egg, as it's not really expected behavior from the player. This is clearly not a barista or vending machine, so a simple message is given that the coffee is free, regardless of any state.
+
+The next two triggers are for the coffee cup, which will be the vessel for the player to have coffee in their inventory. The first is for the ```use``` tool, which makes it the default action. The entire **tool_trigger** sequence is contained within a single **if_not** sub-sequence for the the ```cup_taken``` state, meaning that the trigger will only result in an action if ```cup_taken``` is false, as it is by default. This sub-sequence is further divided into two complementary sub-sub-sequences based on the ```holding_carafe``` state. The first starts with ```if_not holding carafe```, which means that it will be executed be default, and that won't change until the player makes the coffee then "uses" the coffee maker again to take the carafe.  This contains yet another pair of sub-sub-sub-sequences based on the ```coffee_poured``` state. Finally, in the first of these has something to execute if all three of these states are false.
+In other words, we know the cup is empty, so we nudge the player to fill it. Otherwise, we move on to the ```if coffee_poured``` sub-sub-sub-sequence, which means that we aren't holding the carafe anymore because we already poured the coffee into the cup and it is waiting to be picked up. So, the steam animation is finally removed along with the cup tiles, and a coffee is added to the player's inventory. This is followed by setting ```coffee_poured``` to false, as we don't need that state anymore, and now the ```cup_taken``` state is set to true. This will prevent this trigger from executing anything anymore, as the cup is no longer visible on the screen.
+
+Stepping back a bit, if ```holding_carafe``` is still true, that means the player is ready to pour the coffee, but hasn't done so yet. So, we don't need to check for ```coffee_poured``` in this sub-sub-sequence because it must still be false. Instead, we go right ahead and pour the coffee into the cup. This means swapping the empyt carfe tiles back in, then setting ```holding_carafe``` to false and ```coffee_poured``` to true. Also, the steam is instantly moved from above the coffee maker to above the cup. This is done with a **sprite** specifying the news position, and a fresh **sprite_move** to keep the steam going another 30 seconds. This will effectively cancel the previous **sprite_move**. Now the game state is ready for the cup to be "used" again to add it to the inventory, as described above.
+
+The other trigger for the coffee cup is for the ```look``` tool, which gives a different message based on the states, guiding the player toward what their next step should be. If ```cup_taken``` is true, then the trigger will do nothing, as the cup should not be visible in the level.
+
+The next triggers are for the bananas on the counter, and like the coffee cup they will not do anything if the bananas are already taken, as expressed by setting the ```bananas_taken``` state to true. So each trigger sequence is entirely composed of ```if_not bananas_taken``` sub-sequences. The default trigger is for the ```use``` tool, as it comes first. All we want to do with the bananas is to take them, so we print out a little message (using text style 2, which was defined to be yellow in the menu file) and then clear the banana tiles and add 3 bananas to the inventory. Then the ```bananas_taken``` state is set to true to prevent any more banana triggers.
+
+The other banana trigger is for the ```look``` tool, which again throws up some yellow text, but doesn't modify any state or inventory quantities, just again gently guides the player into taking the bananas so that the game can continue.
+
+
 
 #### VGM Files
 (TODO)

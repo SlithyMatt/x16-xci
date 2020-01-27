@@ -8,3 +8,8 @@ all: $(ALL_OBJS) $(ALL_HDRS)
 
 clean:
 	rm -f xci.exe $(ALL_OBJS)
+
+test: bitmap_test
+
+bitmap_test: bitmap.h bitmap.c
+	gcc -o bitmap.exe -DTEST bitmap.c
