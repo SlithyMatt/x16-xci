@@ -93,5 +93,82 @@ word2bcd:   ; Input:
    cld
    rts
 
+byte2ascii: ; Input:
+            ;  A: binary byte
+            ;  ZP_PTR_2: address of buffer for ASCII string (up to 3 bytes)
+            ; Output:
+            ;  A: length of string at ZP_PTR_2
+            ;  (ZP_PTR_2): Decimal ASCII numerals
+            bra @start
+@bcd: .byte 0,0
+@start:
+   pha
+   lda #<@bcd
+   sta ZP_PTR_1
+   lda #>@bcd
+   sta ZP_PTR_1+1
+   pla
+   jsr byte2bcd
+   ldx #0
+   ldy #2
+@ascii_loop:
+   lda @bcd,x
+   and #$0F
+   ora #$30
+   sta (ZP_PTR_2),y
+   dey
+   bmi @get_length
+   lda @bcd,x
+   inx
+   and #$F0
+   lsr
+   lsr
+   lsr
+   lsr
+   ora #$30
+   sta (ZP_PTR_2),y
+   dey
+   bra @ascii_loop
+@get_length:
+   ldy #2
+@count_loop:
+   lda (ZP_PTR_2),y
+   cmp #$30
+   bne @return
+   dey
+   bne @count_loop
+@return:
+   iny
+   tya
+   rts
+
+byte2bcd:   ; Input:
+            ;  A: binary byte
+            ;  ZP_PTR_1: address of buffer for BCD number (up to 2 bytes)
+            ; Output:
+            ;  (ZP_PTR_1): BCD encoding of input
+   bra @start
+@bin: .byte 0
+@start:
+   sta @bin
+   sed
+   lda #0
+   sta (ZP_PTR_1)
+   ldy #1
+   sta (ZP_PTR_1),y
+   ldx #8
+@loop:
+   asl @bin
+   lda (ZP_PTR_1)
+   adc (ZP_PTR_1)
+   sta (ZP_PTR_1)
+   ldy #1
+   lda (ZP_PTR_1),y
+   adc (ZP_PTR_1),y
+   sta (ZP_PTR_1),y
+   dex
+   bne @loop
+   cld
+   rts
 
 .endif

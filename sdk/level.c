@@ -54,7 +54,7 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
    state_list_node_t *last_state = NULL;
    state_list_node_t *new_state = NULL;
    int bank;
-   char bin_fn[14];
+   char bin_fn[15];
    FILE *ofp;
 
    if (parse_config(cfg_fn, &cfg) < 0) {
@@ -75,7 +75,7 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
                return -1;
             }
             bank = level * 6 + 2;
-            sprintf(bin_fn,"Z%d.L%d.%d.BIN", zone, level, bank);
+            sprintf(bin_fn,"Z%03d.L%d.%02d.BIN", zone, level, bank);
             if (conv_bitmap(node->values->val, bin_fn, pal) < 0) {
                printf("parse_level_config: error converting bitmap\n");
                return -1;
@@ -87,7 +87,7 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
                return -1;
             }
             bank = level * 6 + 6;
-            sprintf(bin_fn,"Z%d.L%d.%d.BIN", zone, level, bank);
+            sprintf(bin_fn,"Z%03d.L%d.%02d.BIN", zone, level, bank);
             if (vgm2x16opm(node->values->val, bin_fn) < 0) {
                printf("parse_level_config: error converting music VGM file (%s)\n",
                       node->values->val);
@@ -211,7 +211,8 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
                last_state = new_state;
                num = state_index(node->values->val);
             }
-            bin[size++] = num;
+            bin[size++] = num & 0x00FF;
+            bin[size++] = (num & 0xFF00) >> 8;
             break;
 
          case GET_ITEM:
@@ -255,7 +256,7 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
    }
 
    bank = level * 6 + 1;
-   sprintf(bin_fn,"Z%d.L%d.%d.BIN", zone, level, bank);
+   sprintf(bin_fn,"Z%03d.L%d.%02d.BIN", zone, level, bank);
    ofp = fopen(bin_fn,"wb");
    fwrite(bin,1,size,ofp);
    fclose(ofp);
