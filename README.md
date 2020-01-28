@@ -693,6 +693,10 @@ go_level 0 1   # automatically go to zone 0, level 1
 
 So what's happening here? Well, after the background bitmap and music, we see two timelines. First is the timeline starting with the **init** key. This means that the animation immediately after is part of the initialization of the level, and will always be played every time the level is visited. Only after all the init instructions are executed will any other timelines be executed. That is why, like in this case, no waits are usually part of the init sequence so that the next animation can begin immediately. Hoever, kicking off a **sprite_move** is good for constant background animation, like the flag waving defined here (sprite 2). That movement will continue even after another timeline starts. Notice that a car is defined with sprites 3 and 4, rendered adjacently, but not moving as the car is parked. This is useful as we can re-use this background bitmap for another level, and the car doesn't have to be there, or could even be animated driving by the house.
 
+| ![bitmap](example/mygame_house.png) |
+|:--:|
+| *Zone 0: Level 0 Background* |
+
 The second timeline starts with the **first** key.  This is only executed the first time a level is visited, immediately after the init sequence is executed. If this level were to be re-visited, only the init sequence would play. But the first time we are given a little introduction by the narrator, John Doe, the fictional author and protagonist of this game. Here we see the ways that text can be displayed below the scene. Each **text** key writes a line of text at the current position, which starts at the top of the 4-line text field, and then continues to the next line until the bottom is reached, and then new text appears at the bottom while the preceding text scrolls upward. This example also shows how that behavior can be adjusted by doing explicit scrolling, line feeding, and clearing of the text field.  FInally, at the end of this timeline, there is an unconditional transition to another level, by way of the **go_level** key.
 
 Technically, levels don't have any specifically required keys. Not even a bitmap or music is required. However, there needs to be something defined that will let the player continue and not just fall into a black hole. The next section will describe how all the supported keys work.
@@ -934,11 +938,16 @@ end_trigger # run to doorway
 
 Ok, so there's a lot to unpack here. This is more typical of how most game levels will be written, where the order in which the player's actions take place dictate their experience, including what they see in the scene and read in the text field. We'll go through this level in detail here. If you want to see a detailed breakdown of how the other example levels were written, check out the [appendix explaining the example](example/APPENDIX.md). For now, let's examine level 1 of zone 0, which makes use of all the keys that can be found in level files that weren't seen in the previous level.
 
+| ![bitmap](example/mygame_kitchen.png) |
+|:--:|
+| *Zone 0: Level 1 Background* |
+
+
 First are the bitmap and music source files, which is no different that the last level or the title screen. In fact, you can see that we are simply recycling the music that was used for the last level, called **zone0.vgm** because it's the music for all of zone 0.
 
 The **init** sequence places a coffee maker on the counter between the refrigerator and the stove, using the tiles that make it appear empty. Then, a frame sequence is defined for sprite 2, which will be some animated steam. With no **sprite** keys yet, the sprite won't be shown at the beginning.
 
-The **first** sequence adds in tiles for the items that won't be there if the level is revisited: the coffee cup and bananas. Then there is the intriductory text. You can see that there is a ```wait 30``` before the first text. This gives the scene the scene a half a second to be presented before the player's eyes are drawn to the text field. Each subsequent line has an other delay, which can be used to provide better timing, giving the developer jiffy-level precision to make text and graphics appear at the optimal time.
+The **first** sequence adds in tiles for the items that won't be there if the level is revisited: the coffee cup and bananas. Then there is the introductory text. You can see that there is a ```wait 30``` before the first text. This gives the scene the scene a half a second to be presented before the player's eyes are drawn to the text field. Each subsequent line has an other delay, which can be used to provide better timing, giving the developer jiffy-level precision to make text and graphics appear at the optimal time.
 
 The remaining top-level sequences are all triggers, so they could be executed in any order, depending on what the player clicks on using what tool or inventory item. Each trigger is defined for a particular tile range, so the first trigger defined for the tile area clicked on will be the one to be executed if a tool or item isnt' explicity selected first. For the coffee maker, that's the ```use``` tool. So, if the mouse is currently using the default cursor when hovering over those six tile areas containing the coffee maker, the cursor will automatically change to the **use** cursor specified in the menu file. Then clicking will execute the ```use``` trigger.
 
@@ -963,7 +972,9 @@ The next triggers are for the bananas on the counter, and like the coffee cup th
 
 The other banana trigger is for the ```look``` tool, which again throws up some yellow text, but doesn't modify any state or inventory quantities, just again gently guides the player into taking the bananas so that the game can continue.
 
+The last triggers are for the doorway, starting with the default tool: ```walk```.  Here, we can enforce state requirements for leaving a level. In this case, we can prevent the player from continuing until they add both coffee and bananas to their inventory. The sequence starts with an unconditional **clear** key so that it doesn't have to be in any of the sub-sequences. Then there are **if_not** sequences for each required state, gently hinting that the player should acuire the items before they leave the kitchen. Then the last sub-sequence is led by **if** keys for each required state and simply goes to level 0 of zone 1 (a.k.a. the living room) immediately with no further animation or text.
 
+The other doorway triggers are for the ```run``` and ```look``` tools. In levels where there is an animated player avatar, it might mike sense to run to a location to shorten the animation time, but since the level transition is both instantaneous and has no avatar to move, we can have a little joke. And finally, as before, looking at something can give a helpful hint or just a little exposition.
 
 #### VGM Files
 (TODO)
