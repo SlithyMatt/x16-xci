@@ -43,7 +43,7 @@ Banked RAM ($A000-$BFFF): 6 banks per level, up to 10 levels per currently loade
 * Bank 60: Zone level 9 music and sound effects
 * Bank 61: Sprite animation sequences
 * Bank 62: Sprite movement progress and vectors
-* bank 63: State flags
+* Bank 63: State flags
 
 
 When transit from a level leads to a different zone, the new
@@ -116,8 +116,8 @@ Wow, that's a lot of files! But most of them are 32kB or smaller. Each zone woul
 
 The following are the required keys for the main file. Any keys outside of these will be ignored. If any of these are missing from the main file or have values that are formatted incorrectly, the game will fail to build. Please note that your development platform may have a case-sensitive file system (e.g. Linux, Mac), so the capitalization of filename values matters. Meanwhile all keys are not case-sensitive, but they must be spelled correctly and be immediately followed only by whitespace and then the value. This is the case for all XCI configuration files.
 
-* **title** - Title of the game, will be printed to console when graphics data is loading. The maximum length is 255 characters, and it will be placed at the very beginning of **MAIN.BIN**.
-* **author** - Author of the game, which will also be printed to the console.  The maximum length is 255 characters, and it will be placed 256 bytes into **MAIN.BIN**, after the space reserved for the title. The title and author will also be the main meta data to discriminate between different instances of **MAIN.BIN**.
+* **title** - Title of the game, will be printed to console when graphics data is loading. The maximum length is 255 characters, and it will be placed at the very beginning of **MAIN.BIN**. It is recommended that this include a version number, as a modified game configuration will most likely break compatibility with older saved game files.  When loading a saved game, the engine will verify that the title in the game file matches the current configuration.
+* **author** - Author of the game, which will also be printed to the console.  The maximum length is 255 characters, and it will be placed 256 bytes into **MAIN.BIN**, after the space reserved for the title. The title and author will also be the main meta data to discriminate between different instances of **MAIN.BIN**. When loading a saved game, the engine will verify that the author matches the current configuration.
 * **palette** - Filename of the hex file containing the initial palette. The format of this file will be explained in the [Palette Hex File](#palette-hex-file) section. This file must be in the same directory as the main file, or the value must contain the path to the file. This applies to all filename values in XCI configuration source files.
 * **tiles_hex** - Filename of the hex file containing the tile definitions. The format of this file will be explained in the [Tiles Hex File](#tiles-hex-file) section.
 * **sprites_hex** - Filename of the hex file containing the sprite definitions. The format of this file will be explained in the [Sprites Hex File](#sprites-hex-file) section.
@@ -651,7 +651,7 @@ So, levels can go a number of different ways, and can be cateogrically different
 ```
 # Zone 0, level 0
 
-bitmap mygame_z0_level0.data
+bitmap mygame_house.data
 music zone0.vgm
 
 init
@@ -662,6 +662,7 @@ sprite_frames 3  0  38  # Front of car
 sprite 3  86 170        # Parked, not moving
 sprite_frames 4  0  40  # Read of car
 sprite 4  102 170       # Parked, not moving
+end_anim
 
 first
 wait 30
@@ -689,6 +690,7 @@ wait 60
 text 1  I'm already waiting there for you!
 wait 60
 go_level 0 1   # automatically go to zone 0, level 1
+end_anim
 ```
 
 So what's happening here? Well, after the background bitmap and music, we see two timelines. First is the timeline starting with the **init** key. This means that the animation immediately after is part of the initialization of the level, and will always be played every time the level is visited. Only after all the init instructions are executed will any other timelines be executed. That is why, like in this case, no waits are usually part of the init sequence so that the next animation can begin immediately. Hoever, kicking off a **sprite_move** is good for constant background animation, like the flag waving defined here (sprite 2). That movement will continue even after another timeline starts. Notice that a car is defined with sprites 3 and 4, rendered adjacently, but not moving as the car is parked. This is useful as we can re-use this background bitmap for another level, and the car doesn't have to be there, or could even be animated driving by the house.
@@ -707,14 +709,15 @@ Technically, levels don't have any specifically required keys. Not even a bitmap
 * **music** - Filename of the level music VGM file. It is converted into a more X16-friendly format and stored in bank that it shares with sound effects in banked RAM. Using N for the level number, that bank number will be 6N+6. So, level 0 of zone 0 music and sound effects would be loaded from **Z0.L0.6.BIN** and stored in bank 6.
 * **init** - This key is placed at the beginning of the level initialization sequence. It will always be the first sequence run when the level is loaded. Has no values.
 * **first** - This key is placed at the beginning of the sequence that is run after initialization the very first time the level is loaded. This is good for exposition, explaining what the level is supposed to be.  This sequence will not be run when the level is re-visited. Has no values.
+* **end_anim** - Marks the end of of an **init** or **first** animation sequence. Has no values.
 * **set_state** - This key sets a state value to true. This key's only value is the name of the state, which must be a unique string identifier. The initial value of all states is false at the beginning of a game, so this must be called to set a state to true.
 * **clear_state** - This key sets a state value to false.  This key's only value is the name of the state.
 * **if** - This key is placed at the beginning of a sequence that will be executed if the specified state is set to true. It will be played immediately after the last preceding sequence that could be played is done. For example, a level could have three **if** sequences, and all three states are true the first time the level is visited. In that case, the **init** sequence is run first (if it exists), followed by the **first** sequence (if it exists), then each **if** sequence in the order in which they appear in the level file. The only value for this key is the name of the state.  An **if** sequence must end with an **end_if** key. You can place **if** sequences within other sequences, inclusing other **if** sequences, allowing you to define a hierarchy of outcomes based on different states.
 * **if_not** - This key is placed at the beginning of a sequence that will be executed if the specified state is set to false. It will be played immediately after the last preceding sequence that could be played is done. Their is no priority difference between **if** and **if_not** sequences, only their order in the level file. The only value for this key is the name of the state. If the state changes to false during the level, that will trigger this sequence to run once the current sequence is complete. The sequence can be run only once during each visit to the level.
-**end_if** - Marks the end of the sequence that began with the last **if** or **if_not** that hasn't yet ended.
+* **end_if** - Marks the end of the sequence that began with the last **if** or **if_not** that hasn't yet ended. Has no values.
 * **tool_trigger** - This key is placed at the beginning of a sequence that will be executed when a tool cursor is clicked on a specific tile range.  The first value is the name of the tool, which must be ```walk```, ```run```, ```look```, ```use```, ```talk``` or ```strike```. The next four value represent the tile range, in the order of X1, Y1, X2, Y2. The tile (or tile space -- there is no pixel-level triggering) at X1,Y1 is the upper left corner and X2,Y2 is the lower right corder. If the user clicks the specified tool cursor anywhere within that rectangle, the sequence will run as soon as the current sequence is done. These trigger areas can overlap each other to allow different sequences to run based on the currently selected tool. The first **tool_trigger** sequence defined for a tile will be the default action if no tool or item is selected before the mouse is clicked. This will also cause the tool cursor for that trigger to be displayed while the mouse hovers over that tile, allowing the user to automatically select the most likely needed tool without having to bring up the toolbar. A **tool_trigger** sequence must end with a **end_trigger** key. It may not be placed within any other sequences, but it may contain **if** and **if_not** sequences.
 * **item_trigger** - This key is placed at the beginning of a sequence that will be executed when an item cursor is clicked on a specific tile range. The first value is the name of the item, which must match a name found in the inventory file. The second value is the required quantity. If the player tries to activate this trigger with an insufficient quantity of that item in their inventory, the sequence will not be run. Instead, a text line will appear saying "You only have x, you need y", where x is the current quantity in the player's inventory and y is the required quantity. The next value is the cost, which is the number that will be deducted from the inventory quantity after this trigger. For example, most money transaction will have the same value for both required quantity and cost. However, an item that can be used repeatedly as a tool will probably just have a required quantity of one and a cost of zero. The next four values are the tile range, which works the same as in **tool_trigger**, except that an **item_trigger** can never be a default action. It always requires the player to select the item from the inventory first. An **item_trigger** sequence must end with a **end_trigger** key. It may not be placed within any other sequences, but it may contain **if** and **if_not** sequences.
-* **end_trigger** - This key marks the end of the sequence that began with the last **tool_trigger** or **item_trigger** key.
+* **end_trigger** - This key marks the end of the sequence that began with the last **tool_trigger** or **item_trigger** key. Has no values.
 * **text** - Places a line of text at the current position. When a level is loaded, the intiial position is the first line of the text area.  After that, the next line of text will appear directly below, on line 2 (unless a **scroll**, **line** or **clear** is specified first), then line 3 and finally line 4. If more text is added, the text in lines 2 through 4 will scroll up one line, and new text will continue on line 4. The first value after the key is the text style number, as defined in the menu file, so it can be 1, 2 or 3. A value of zero will use the menu text style. Any other value is invalid. After that, the remaining values are the words that will appear. Note that all whitespace will be rendered as a single space in the game. If you're the type of person who likes two spaces after a period, well, that's just too bad. The total length of the text line (as it will be rendered on screen) must not exceed 38 characters to allow for a single-space margin on each side.
 * **scroll** - Scrolls the text field up the specified number of lines (1-4). The current position for new text will also scroll up with the earlier text.
 * **line** - Places a blank line at the current position, which then moves down a line, or forces an effective preceding ```scroll 1``` if the current position is already line 4. Has no values.
@@ -748,6 +751,7 @@ tiles 0  18 11  163 164
 tiles 0  18 12  165 166
 # steam loop
 sprite_frames 2  0  43 44 45 46
+end_anim
 
 first
 # coffee cup
@@ -764,6 +768,7 @@ wait 120
 text 1  Don't turn around!
 wait 60
 text 1  Just tell me what to do.
+end_anim
 
 # clicking on the coffee maker with use tool (default)
 tool_trigger use  18 10  19 12

@@ -1,6 +1,6 @@
 # Zone 0, level 0
 
-bitmap mygame_z0_level0.data
+bitmap mygame_house.data
 music zone0.vgm
 
 init
@@ -11,6 +11,7 @@ sprite_frames 3  0  38  # Front of car
 sprite 3  86 170        # Parked, not moving
 sprite_frames 4  0  40  # Read of car
 sprite 4  102 170       # Parked, not moving
+end_anim
 
 first
 wait 30
@@ -38,3 +39,4 @@ wait 60
 text 1  I'm already waiting there for you!
 wait 60
 go_level 0 1   # automatically go to zone 0, level 1
+end_anim

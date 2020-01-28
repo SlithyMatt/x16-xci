@@ -30,7 +30,7 @@ int parse_config (const char *cfg_fn, xci_config_t *cfg) {
    while (!feof(ifp)) {
       if (fgets(line, MAX_LINE, ifp) != NULL) {
          if (line[0] != '#') {
-            tok = strtok(line, " \t");
+            tok = strtok(line, " \t\n\r");
             pos = 0;
             while ((tok != NULL) && (tok[0] != '#')) {
                if (pos == 0) {

@@ -3,6 +3,8 @@
 #include "animation.h"
 #include "menu.h"
 #include "inventory.h"
+#include "bitmap.h"
+#include "vgm2x16opm.h"
 #include <stdio.h>
 #include <stdint.h>
 #include <stdlib.h>
@@ -18,7 +20,7 @@ typedef struct state_list_node {
 
 state_list_node_t *state_list = NULL;
 
-int state_index(const char* label){
+int state_index(const char* label) {
    char label_lc[MAX_STATE_LABEL+1];
    state_list_node_t *node = state_list;
    int i = 0;
@@ -38,10 +40,11 @@ int state_index(const char* label){
 
 int parse_level_config(int zone, int level, const char *cfg_fn) {
    uint8_t *bin = calloc(MAX_LEVEL_SIZE,1);
+   uint8_t *pal = &bin[2];
    xci_config_t cfg;
    xci_config_node_t *node;
    xci_val_list_t *val;
-   int size = 0;
+   int size = 34; // address header and 16-color palette for the level
    text_line_t *text_bin;
    go_level_t *go_level_bin;
    tool_trigger_t *tool_trigger_bin;
@@ -50,29 +53,63 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
    int num;
    state_list_node_t *last_state = NULL;
    state_list_node_t *new_state = NULL;
+   int bank;
+   char bin_fn[14];
+   FILE *ofp;
 
    if (parse_config(cfg_fn, &cfg) < 0) {
       printf("parse_level_config: error parsing config source (%s)\n", cfg_fn);
       return -1;
    }
+
+   // Header with load address
+   bin[0] = 0x00;
+   bin[1] = 0xC0;
+
    node = cfg.nodes;
    while (node != NULL) {
       switch (node->key) {
-         case INIT:
-         case FIRST:
-         case LINE:
-         case CLEAR:
+         case BITMAP:
+            if (node->num_values < 1) {
+               printf("parse_level_config: no filename specified for bitmap\n");
+               return -1;
+            }
+            bank = level * 6 + 2;
+            sprintf(bin_fn,"Z%d.L%d.%d.BIN", zone, level, bank);
+            if (conv_bitmap(node->values->val, bin_fn, pal) < 0) {
+               printf("parse_level_config: error converting bitmap\n");
+               return -1;
+            }
+            break;
+         case MUSIC:
+            if (node->num_values < 1) {
+               printf("parse_level_config: no filename specified for music\n");
+               return -1;
+            }
+            bank = level * 6 + 6;
+            sprintf(bin_fn,"Z%d.L%d.%d.BIN", zone, level, bank);
+            if (vgm2x16opm(node->values->val, bin_fn) < 0) {
+               printf("parse_level_config: error converting music VGM file (%s)\n",
+                      node->values->val);
+               return -1;
+            }
+            break;
+         case INIT_LEVEL:
+         case FIRST_VISIT:
+         case END_ANIM:
+         case LINE_SKIP:
+         case CLEAR_TEXT:
          case END_TRIGGER:
          case END_IF:
             bin[size++] = node->key;
             break;
-         case TEXT:
+         case TEXT_LINE:
             if (node->num_values < 2) {
                printf("parse_level_config: text requires at least 2 values\n");
                return -1;
             }
             text_bin = (text_line_t *)&bin[size];
-            text_bin->key = TEXT;
+            text_bin->key = TEXT_LINE;
             val = node->values;
             text_bin->style = atoi(val->val);
             val = val->next;
@@ -211,13 +248,30 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
                    idx2key(node->key));
 
       }
+      if (size > MAX_LEVEL_SIZE) {
+         printf("parse_level_config: Level configuration is too large\n");
+      }
       node = node->next;
    }
 
-
-
+   bank = level * 6 + 1;
+   sprintf(bin_fn,"Z%d.L%d.%d.BIN", zone, level, bank);
+   ofp = fopen(bin_fn,"wb");
+   fwrite(bin,1,size,ofp);
+   fclose(ofp);
 
    free(bin);
 
    return 0;
+}
+
+void delete_state_list_node(state_list_node_t *node) {
+   if (node != NULL) {
+      delete_state_list_node(node->next);
+      free(node);
+   }
+}
+
+void delete_state_list() {
+   delete_state_list_node(state_list);
 }

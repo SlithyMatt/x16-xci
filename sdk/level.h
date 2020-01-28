@@ -6,7 +6,7 @@
 #define MAX_TEXT_LINE 38
 
 typedef struct text_line {
-   uint8_t key; // must be xci_key_t::TEXT
+   uint8_t key; // must be xci_key_t::TEXT_LINE
    uint8_t style;
    uint8_t text[MAX_TEXT_LINE];
 } text_line_t;
@@ -45,5 +45,8 @@ typedef struct get_item {
 
 int parse_level_config(int zone, int level, const char *cfg_fn);
 
+int state_index(const char* label);
+
+void delete_state_list();
 
 #endif // LEVEL_H

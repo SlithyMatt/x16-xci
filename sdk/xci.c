@@ -1,4 +1,6 @@
 #include "game_config.h"
+#include "inventory.h"
+#include "level.h"
 #include <stdio.h>
 
 void main(int argc, char **argv) {
@@ -8,4 +10,7 @@ void main(int argc, char **argv) {
    }
 
    parse_game_config(argv[1]);
+
+   delete_inv_list();
+   delete_state_list();
 }

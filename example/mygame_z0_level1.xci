@@ -11,6 +11,7 @@ tiles 0  18 11  163 164
 tiles 0  18 12  165 166
 # steam loop
 sprite_frames 2  0  43 44 45 46
+end_anim
 
 first
 # coffee cup
@@ -27,6 +28,7 @@ wait 120
 text 1  Don't turn around!
 wait 60
 text 1  Just tell me what to do.
+end_anim
 
 # clicking on the coffee maker with use tool (default)
 tool_trigger use  18 10  19 12
