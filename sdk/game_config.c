@@ -19,32 +19,6 @@
 
 uint8_t init_pal[OUT_PAL_SIZE];
 
-int concat_string_val(const xci_val_list_t *vals, uint8_t *str) {
-   const xci_val_list_t *val = vals;
-   int i = 0;
-   char temp_str[STRING_LEN_MAX*2] = ""; // contain possible overflow
-
-   while (val != NULL) {
-      strcat(temp_str, val->val);
-      i += strlen(val->val);
-      if (val->next != NULL) {
-         strcat(temp_str, " ");
-         i++;
-      }
-      if (i > STRING_LEN_MAX) {
-         printf("concat_string_val: string too long");
-         return -1;
-      }
-      val = val->next;
-   }
-
-   for (i = 0; i < STRING_LEN_MAX; i++) {
-      str[i] = (uint8_t)temp_str[i];
-   }
-
-   return 0;
-}
-
 void fill_pal() {
    int i;
    // copy palette offset 0 to offsets 1-14
@@ -83,13 +57,13 @@ int parse_game_config(const char *cfg_fn) {
    while (node != NULL) {
       switch (node->key) {
          case TITLE:
-            if (concat_string_val(node->values, cfg_bin->title) < 0) {
+            if (concat_string_val(node->values, cfg_bin->title, STRING_LEN_MAX) < 0) {
                printf("parse_game_config: Error parsing game title");
                return -1;
             }
             break;
          case AUTHOR:
-            if (concat_string_val(node->values, cfg_bin->author) < 0) {
+            if (concat_string_val(node->values, cfg_bin->author, STRING_LEN_MAX) < 0) {
                printf("parse_game_config: Error parsing game author");
                return -1;
             }

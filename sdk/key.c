@@ -60,7 +60,23 @@ const char xci_key_strings[NUM_XCI_KEYS][MAX_KEY_LENGTH] = {
    "inv_item",
    "level",
    "end_anim",
-   "sprite_hide"
+   "sprite_hide",
+   "init",
+   "first",
+   "text",
+   "scroll",
+   "line",
+   "clear",
+   "go_level",
+   "tool_trigger",
+   "item_trigger",
+   "end_trigger",
+   "if",
+   "if_not",
+   "end_if",
+   "set_state",
+   "clear_state",
+   "get_item"
 };
 
 void strn_tolower(char *dest, int max, const char *source) {

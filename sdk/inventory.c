@@ -166,9 +166,9 @@ int parse_inv_config(const char *cfg_fn, inventory_config_t *cfg_bin) {
                return -1;
             }
             item_cfg = (inventory_item_cfg_t *)&bin[size];
-            strcpy(item_cfg->label, val->val);
+            strn_tolower(item_cfg->label, MAX_ITEM_LABEL+1, val->val);
             new_item = malloc(sizeof(inv_list_node_t));
-            strcpy(new_item->label, val->val);
+            strn_tolower(new_item->label, MAX_ITEM_LABEL+1, val->val);
             new_item->next = NULL;
             if (last_item == NULL) {
                inv_list = new_item;

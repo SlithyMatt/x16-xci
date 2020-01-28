@@ -1,7 +1,7 @@
 #ifndef KEY_H
 #define KEY_H
 
-enum xci_key {
+typedef enum xci_key {
    TITLE = 0,
    AUTHOR,
    PALETTE_HEX,
@@ -60,10 +60,25 @@ enum xci_key {
    LEVEL,
    END_ANIM,
    SPRITE_HIDE,
+   INIT,
+   FIRST,
+   TEXT,
+   SCROLL,
+   LINE,
+   CLEAR,
+   GO_LEVEL,
+   TOOL_TRIGGER,
+   ITEM_TRIGGER,
+   END_TRIGGER,
+   IF,
+   IF_NOT,
+   END_IF,
+   SET_STATE,
+   CLEAR_STATE,
+   GET_ITEM,
 
    NUM_XCI_KEYS
-};
-typedef enum xci_key xci_key_t;
+} xci_key_t;
 
 #define MAX_KEY_LENGTH 31
 

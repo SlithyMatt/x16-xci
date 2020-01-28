@@ -94,6 +94,33 @@ void delete_config(xci_config_t *cfg) {
    delete_config_node(cfg->nodes);
 }
 
+int concat_string_val(const xci_val_list_t *vals, uint8_t *str, int max) {
+   const xci_val_list_t *val = vals;
+   int i = 0;
+   char temp_str[MAX_LINE] = ""; // contain possible overflow
+
+   while (val != NULL) {
+      strcat(temp_str, val->val);
+      i += strlen(val->val);
+      if (val->next != NULL) {
+         strcat(temp_str, " ");
+         i++;
+      }
+      if (i > max) {
+         printf("concat_string_val: string too long");
+         return -1;
+      }
+      val = val->next;
+   }
+
+   for (i = 0; i < max; i++) {
+      str[i] = (uint8_t)temp_str[i];
+   }
+
+   return 0;
+}
+
+
 #ifdef TEST
 void main(int argc, char **argv) {
    xci_config_t cfg;

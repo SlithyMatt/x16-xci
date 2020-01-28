@@ -2,6 +2,7 @@
 #define CONFIG_H
 
 #include "key.h"
+#include <stdint.h>
 
 typedef struct xci_val_list {
    char *val;
@@ -27,5 +28,7 @@ int parse_config (const char* cfg_fn, xci_config_t* cfg);
 // If cfg is allocated on the heap, it is safe to free it after
 // calling this function.
 void delete_config(xci_config_t* cfg);
+
+int concat_string_val(const xci_val_list_t *vals, uint8_t *str, int max);
 
 #endif // CONFIG_H
