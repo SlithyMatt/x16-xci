@@ -12,6 +12,17 @@ WAIT_KEY             = 43
 SPRITE_MOVE_KEY      = 44
 END_ANIM_KEY         = 56
 SPRITE_HIDE_KEY      = 57
+TEXT_LINE            = 60
+SCROLL               = 61
+LINE_SKIP            = 62
+CLEAR_TEXT           = 63
+GO_LEVEL             = 64
+IF_STATE             = 67
+IF_NOT_STATE         = 68
+END_IF               = 69
+SET_STATE            = 70
+CLEAR_STATE          = 71
+GET_ITEM             = 72
 
 NUM_SPRITES          = 128
 

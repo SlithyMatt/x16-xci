@@ -7,19 +7,8 @@ LEVEL_INC = 1
 
 INIT_LEVEL     = 58
 FIRST_VISIT    = 59
-TEXT_LINE      = 60
-SCROLL         = 61
-LINE_SKIP      = 62
-CLEAR_TEXT     = 63
-GO_LEVEL       = 64
 TOOL_TRIGGER   = 65
 ITEM_TRIGGER   = 66
-IF_STATE       = 67
-IF_NOT_STATE   = 68
-END_IF         = 69
-SET_STATE      = 70
-CLEAR_STATE    = 71
-GET_ITEM       = 72
 
 __level_playing:        .byte 0
 
@@ -30,9 +19,9 @@ __level_num_triggers:   .byte 0
 
 __level_triggers:
 .word 0     ; address
-.byte 0     ; key
 .dword 0    ; rectangle
-.byte 0     ; tool
+.byte 0     ; key
+.byte 0     ; tool/item
 .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0
 .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -116,8 +105,11 @@ load_level:
    cmp #0
    bne @find_triggers
    lda ZP_PTR_1
+   clc
+   adc #1
    sta __level_first
    lda ZP_PTR_1+1
+   adc #0
    sta __level_first+1
    lda #1
    sta __level_has_first
@@ -142,17 +134,21 @@ load_level:
    rol __level_trigger_offset+1
    asl __level_trigger_offset
    rol __level_trigger_offset+1
-   lda __level_triggers
+   lda #<__level_triggers
    clc
    adc __level_trigger_offset
    sta ZP_PTR_2
-   lda __level_triggers+1
+   lda #>__level_triggers
    adc __level_trigger_offset+1
    sta ZP_PTR_2+1
-   lda ZP_PTR_1
-   sta (ZP_PTR_2)
-   lda ZP_PTR_1+1
+   lda (ZP_PTR_1)
+   ldy #6
+   sta (ZP_PTR_2),y  ; set key
    ldy #1
+   lda (ZP_PTR_1),y
+   ldy #7
+   sta (ZP_PTR_2),y  ; set tool/item
+   ldy #2
    sta (ZP_PTR_2),y
    iny
    lda (ZP_PTR_1),y
@@ -166,37 +162,188 @@ load_level:
    iny
    lda (ZP_PTR_1),y
    sta (ZP_PTR_2),y  ; set y_max
-   lda (ZP_PTR_1)
-   cmp #TOOL_TRIGGER
-   beq @tool_trigger
-   bra @item_trigger
-@tool_trigger:
-   ldy #1
-   lda (ZP_PTR_1),y
-   ldy #7
-   sta (ZP_PTR_2),y  ; set tool
-   bra @next_trigger
-@item_trigger:
-   lda #0
-   ldy #7
-   sta (ZP_PTR_2),y  ; clear tool
 @next_trigger:
    inc __level_num_triggers
    bra @trigger_loop
 
    ; intialize music
 @init_music:
+   lda anim_bank
+   clc
+   adc #5
+   sta music_bank
+   jsr init_music
+   jsr start_music
 
    ; load bitmap
+   stz VERA_ctrl
+   VERA_SET_ADDR VRAM_BITMAP,1
+   lda anim_bank
+   inc            ; bitmap in 4 banks following level config
+   pha
+   ldx #0
+   ldy #0
+   jsr bank2vram
+   pla
+   inc
+   pha
+   ldx #0
+   ldy #0
+   jsr bank2vram
+   pla
+   inc
+   pha
+   ldx #0
+   ldy #0
+   jsr bank2vram
+   pla
+   inc
+   pha
+   ldx #0
+   ldy #0
+   jsr bank2vram
+   lda #LAYER_BM_OFFSET       ; set palette offset
+   sta VERA_addr_low
+   lda #>VRAM_layer0
+   sta VERA_addr_high
+   lda #(^VRAM_layer0 | $10)
+   sta VERA_addr_bank
+   lda level
+   clc
+   adc #LEVEL0_PO
+   sta VERA_data0
 
+   jsr level_continue
    rts
 
-__level_next_seq:
+__level_next_seq: ; Input/Output: ZP_PTR_1 - address of start of sequence
+@loop:
+   lda (ZP_PTR)
+   cmp #END_ANIM
+   beq @next
+   lda ZP_PTR_1
+   clc
+   adc #1
+   sta ZP_PTR_1
+   lda ZP_PTR_1+1
+   adc #0
+   sta ZP_PTR_1+1
+   bra @loop
+@next:
+   lda ZP_PTR_1
+   clc
+   adc #1
+   sta ZP_PTR_1
+   lda ZP_PTR_1+1
+   adc #0
+   sta ZP_PTR_1+1
+   rts
 
+level_pause:
+   stz __level_playing
+   jsr stop_anim
+   rts
+
+level_continue:
+   lda #1
+   sta __level_playing
+   jsr start_anim
    rts
 
 level_tick:
+   lda __level_playing
+   bne @check_done
+   jmp @return
+@check_done:
+   lda anim_seq_done
+   bne @next_seq
+   jmp @return
+@next_seq:
+   lda __level_has_first
+   beq @check_go_level
+   lda __level_first
+   sta ANIM_PTR
+   lda __level_first+1
+   sta ANIM_PTR+1
+   stz __level_has_first
+   stz anim_seq_done
+   jmp @return
+@check_go_level:
+   lda (ANIM_PTR)
+   cmp #GO_LEVEL
+   bne @check_trigger
+   INC_ANIM_PTR
+   lda (ANIM_PTR)
+   cmp zone
+   beq @get_level
+   sta zone
+   jsr load_zone
+@get_level:
+   INC_ANIM_PTR
+   lda (ANIM_PTR)
+   sta level
+   jsr load_level
+   jmp @return
+@check_trigger:
+   stz __level_trigger_offset
+   stz __level_trigger_offset+1
+   ldx #0
+@trigger_loop:
+   cpx __level_num_triggers
+   beq @return
+   phx
+   lda __level_triggers
+   clc
+   adc __level_trigger_offset
+   sta ZP_PTR_1
+   lda __level_triggers+1
+   adc __level_trigger_offset+1
+   sta ZP_PTR_1+1
+   lda mouse_tile_x
+   ldy #2
+   cmp (ZP_PTR_1),y
+   bmi @next
+   ldy #4
+   dec
+   cmp (ZP_PTR_1),y
+   bpl @next
+   lda mouse_tile_y
+   ldy #3
+   cmp (ZP_PTR_1),y
+   bmi @next
+   ldy #5
+   dec
+   cmp (ZP_PTR_1),y
+   bpl @next
+   ldy #6
+   lda (ZP_PTR_1),y
+   cmp #ITEM_TRIGGER
+   bne @check_tool
+   lda mouse_left_click
+   beq @next
+   lda current_item
+   ldy #7
+   cmp (ZP_PTR_1),y
+   beq @exec_trigger
+   bra @next
+@check_tool:
+   
 
+@exec_trigger:
+
+
+@next:
+   plx
+   inx
+   lda __level_trigger_offset
+   clc
+   adc #8
+   sta __level_trigger_offset
+   lda __level_trigger_offset+1
+   adc #0
+   sta __level_trigger_offset+1
+   bra @trigger_loop
+@return:
    rts
 
 
