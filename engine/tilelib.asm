@@ -366,6 +366,22 @@ tile_restore:
    bne @row_loop
    rts
 
+tile_clear:
+   lda #<__tile_backup_map
+   sta r0L
+   lda #>__tile_backup_map
+   sta r0H
+   lda #<TILE_BACKUP_MAP_SIZE
+   sta r1L
+   lda #>TILE_BACKUP_MAP_SIZE
+   sta r1H
+   lda #KERNAL_ROM_BANK
+   sta ROM_BANK
+   lda #0
+   jsr MEMORY_FILL
+   jsr tile_restore
+   rts
+
 __tile_backup_map:
 __tile_row0:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 __tile_row1:   .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -430,4 +446,5 @@ __tile_backup_row_table:
 .word __tile_row28
 .word __tile_row29
 
+TILE_BACKUP_MAP_SIZE = __tile_backup_row_table - __tile_backup_map
 .endif

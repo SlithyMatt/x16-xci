@@ -69,7 +69,6 @@ typedef enum xci_key {
    GO_LEVEL,
    TOOL_TRIGGER,
    ITEM_TRIGGER,
-   END_TRIGGER,
    IF,
    IF_NOT,
    END_IF,

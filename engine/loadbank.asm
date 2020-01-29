@@ -5,7 +5,7 @@ LOADBANK_INC = 1
 .include "filenames.asm"
 
 loadbank:
-   lda #0
+   lda #KERNAL_ROM_BANK
    sta ROM_BANK
    lda #1
    ldx #8

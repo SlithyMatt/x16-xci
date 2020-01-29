@@ -61,7 +61,7 @@ tiles 0  18 11  167 168
 text 1  Done! Smells good...
 set_state coffee_made
 end_if # not coffee_made
-end_trigger # use coffee maker
+end_anim # use coffee maker
 
 # clicking on the coffee maker with look tool
 tool_trigger use  18 10  19 12
@@ -77,7 +77,7 @@ text 1  The coffee's still done.
 wait 60
 text 1  Gonna pour it?
 end_if
-end_trigger # look at coffee maker
+end_anim # look at coffee maker
 
 # clicking on the coffee maker with money
 item_trigger money  1  0  18 10  19 12
@@ -85,7 +85,7 @@ clear
 text 1  It's my coffee maker.
 wait 60
 text 1  You can have a cup for free.
-end_trigger
+end_anim
 
 # clicking on the coffee cup with use tool (default)
 tool_trigger use  20 11  20 12
@@ -124,7 +124,7 @@ sprite 2  156 78
 sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
 end_if # holding_carafe
 end_if # not cup_taken
-end_trigger # use coffee cup
+end_anim # use coffee cup
 
 # clicking on the coffee cup with look tool
 tool_trigger look  20 11  20 12
@@ -140,7 +140,7 @@ wait 60
 text 1 Conveniently placed, you think?
 end_if # not coffee_poured
 end_if # not cup_taken
-end_trigger # look at coffee cup
+end_anim # look at coffee cup
 
 # clicking on the bananas with use tool (default)
 tool_trigger use  35 11  36 12
@@ -155,7 +155,7 @@ get_item banana 3 # add 3 bananas to inventory
 set_state bananas_taken
 text 1  You may get hungry later.
 end_if # not bananas_taken
-end_trigger # use bananas
+end_anim # use bananas
 
 # clicking on the bananas with look tool
 tool_trigger look  35 11  36 12
@@ -166,7 +166,7 @@ wait 60
 text 1  You should take them in case
 text 1  you get hungry.
 end_if # not bananas_taken
-end_trigger # look at bananas
+end_anim # look at bananas
 
 # clicking on the doorway with walk tool (default)
 tool_trigger walk  2 6  6 23
@@ -184,17 +184,17 @@ if bananas_taken
 go_level 1 0 # go to zone 1, level 0
 end_if # bananas_taken
 end_if # cup_taken
-end_trigger # walk to doorway
+end_anim # walk to doorway
 
 # clicking on the doorway with run tool
 tool_trigger run  2 6  6 23
 clear
 text 1  NO RUNNING IN THE KITCHEN!
-end_trigger # run to doorway
+end_anim # run to doorway
 
 # clicking on the doorway with look tool
 tool_trigger look  2 6  6 23
 clear
 text 1  That's the doorway to the
 text 1  living room.
-end_trigger # run to doorway
+end_anim # run to doorway

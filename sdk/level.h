@@ -29,12 +29,12 @@ typedef struct tool_trigger {
 typedef struct item_trigger {
    uint8_t key; // must be xci_key_t::ITEM_TRIGGER
    uint8_t item;
-   uint8_t required[2];
-   uint8_t cost[2];
    uint8_t x_min;
    uint8_t y_min;
    uint8_t x_max;
    uint8_t y_max;
+   uint8_t required[2];
+   uint8_t cost[2];
 } item_trigger_t;
 
 typedef struct get_item {

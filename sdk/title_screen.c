@@ -18,7 +18,6 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
    xci_config_node_t *node;
    xci_val_list_t *val;
    int num;
-   end_anim_t *end;
 
    if (parse_config(cfg_fn, &cfg) < 0) {
       printf("parse_title_screen_config: error parsing config source (%s)\n", cfg_fn);
@@ -81,10 +80,7 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
 
    delete_config(&cfg);
 
-   end = (end_anim_t *)&bin[size];
-   end->key = END_ANIM;
-   end->loops = 0;
-   size += sizeof(end_anim_t);
+   bin[size++] += END_ANIM;
 
    return size;
 }

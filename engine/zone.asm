@@ -6,9 +6,11 @@ ZONE_INC = 1
 .include "toolbar.asm"
 .include "state.asm"
 .include "bin2dec.asm"
+.include "level.asm"
 
 __zone_filename: .asciiz "Z000.L0.00.BIN"
-__zone_fn_length: .byte __zone_fn_length-__zone_filename-1
+__zone_bank: .byte 0
+ZONE_FN_LENGTH = __zone_bank - __zone_filename - 1
 
 __zone_num_string: .byte 0,0,0
 
@@ -18,9 +20,16 @@ new_game:
    jsr init_state
    jsr load_zone
    jsr init_toolbar
+   jsr load_level
    rts
 
 load_zone:
+   lda #KERNAL_ROM_BANK
+   sta ROM_BANK
+   lda #1
+   ldx #8
+   ldy #0
+   jsr SETLFS                 ; SetFileParams(LogNum=1,DevNum=8,SA=0)
    lda #<(__zone_filename+1)  ; overwrite zone number in filename
    sta ZP_PTR_2
    lda #>(__zone_filename+1)
@@ -28,26 +37,87 @@ load_zone:
    lda zone
    jsr byte2ascii
    ldx #0
-@loop:
+@level_loop:
    lda #<__zone_num_string    ; overwrite level number in filename
    sta ZP_PTR_2
    lda #>__zone_num_string
    sta ZP_PTR_2+1
    txa
+   phx
    jsr byte2ascii
+   plx
    lda __zone_num_string+2
    sta __zone_filename+6
-
-   lda level                  ; overwrite bank number in filename
-   ldy zone
-
-
+   ldy #6
+   phx
+   jsr byte_mult
+   inc
+   sta __zone_bank            ; level config bank = level * 6 + 1
+   jsr __zone_load_file
+   inc __zone_bank            ; bitmap start bank = config bank + 1
+   jsr __zone_load_file
+   lda __zone_bank
+   clc
+   adc #4
+   sta __zone_bank            ; music/sfx bank = bitmap bank + 4
+   jsr __zone_load_file
+   stz VERA_ctrl              ; load level palette offset (level + 1)
+   lda #(^VRAM_palette | $10)
+   sta VERA_addr_bank
+   lda #>VRAM_palette
+   sta VERA_addr_high
+   plx
+   txa
+   clc
+   adc #1
+   asl
+   asl
+   asl
+   asl
+   sta VERA_addr_low
+   ldy #0
+   lda __zone_bank
+   sec
+   sbc #5         ; go back to level config bank
+   sta RAM_BANK
+   lda #<RAM_WIN
+   sta ZP_PTR_1
+   lda #>RAM_WIN
+   sta ZP_PTR_1+1
+@pal_loop:
+   lda (ZP_PTR_1),y
+   iny
+   cpy #32
+   bne @pal_loop
    inx
    txa
    ldy zone
    cmp (ZL_COUNT_PTR),y
-   bne @loop 
+   bne @level_loop
 @return:
+   rts
+
+__zone_load_file:
+   lda #<__zone_num_string    ; overwrite bank number in filename
+   sta ZP_PTR_2
+   lda #>__zone_num_string
+   sta ZP_PTR_2+1
+   lda __zone_bank
+   jsr byte2ascii
+   lda __zone_num_string+1
+   sta __zone_filename+8
+   lda __zone_num_string+2
+   sta __zone_filename+9
+   lda #ZONE_FN_LENGTH
+   ldx #<__zone_filename
+   ldy #>__zone_filename
+   jsr SETNAM                 ; SetFileName(__zone_filename)
+   lda __zone_bank
+   sta RAM_BANK
+   lda #0
+   ldx #<RAM_WIN
+   ldy #>RAM_WIN
+   jsr LOAD                   ; LoadFile(Verify=0,Address=RAM_WIN)
    rts
 
 .endif

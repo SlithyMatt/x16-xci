@@ -21,10 +21,9 @@ SPRITE_Z             = $0C
 SPRITE_Z_MASK        = $F3
 SPRITE_DIM           = $50
 
+anim_seq_done:    .byte 0
 __anim_playing:   .byte 0
 __anim_waiting:   .byte 0
-__anim_start:     .word 0
-__anim_loops:     .byte 0
 __sprite_idx:     .byte 0
 __pal_offset:     .byte 0
 __sprite_frame:   .word 0
@@ -45,13 +44,8 @@ __vec_y:          .byte 0
 .endmacro
 
 start_anim:
-   lda ANIM_PTR
-   sta __anim_start
-   lda ANIM_PTR+1
-   sta __anim_start+1
    lda #1
    sta __anim_playing
-   stz __anim_loops
    rts
 
 stop_anim:
@@ -60,8 +54,12 @@ stop_anim:
 
 anim_tick:
    lda __anim_playing
-   bne @check_wait
+   bne @check_done
    jmp @return
+@check_done:
+   lda anim_seq_done
+   beq @check_wait
+   jmp @move_all_sprites
 @check_wait:
    lda __anim_waiting
    beq @play
@@ -110,15 +108,8 @@ anim_tick:
    jsr __anim_new_sprite_move
    jmp @play
 @end_anim:
-   lda (ANIM_PTR,x)
-   cmp __anim_loops
-   beq @stop
-   inc __anim_loops
-   lda __anim_start
-   sta ANIM_PTR
-   lda __anim_start+1
-   sta ANIM_PTR+1
-   bra @return
+   lda #1
+   sta anim_seq_done
 @move_all_sprites:
    jsr __anim_move_sprites
    bra @return

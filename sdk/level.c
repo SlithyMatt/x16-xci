@@ -12,6 +12,7 @@
 
 #define MAX_LEVEL_SIZE 8192
 #define MAX_STATE_LABEL 63
+#define MAX_TRIGGERS 64
 
 typedef struct state_list_node {
    char label[MAX_STATE_LABEL+1];
@@ -51,6 +52,7 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
    item_trigger_t *item_trigger_bin;
    get_item_t *get_item_bin;
    int num;
+   int num_triggers = 0;
    state_list_node_t *last_state = NULL;
    state_list_node_t *new_state = NULL;
    int bank;
@@ -99,7 +101,6 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
          case END_ANIM:
          case LINE_SKIP:
          case CLEAR_TEXT:
-         case END_TRIGGER:
          case END_IF:
             bin[size++] = node->key;
             break;
@@ -141,6 +142,12 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
             size += sizeof(go_level_t);
             break;
          case TOOL_TRIGGER:
+            num_triggers++;
+            if (num_triggers > MAX_TRIGGERS) {
+               printf("parse_level_config: too many triggers (max: %d)\n",
+                      MAX_TRIGGERS);
+               return -1;
+            }
             if (node->num_values < 5) {
                printf("parse_level_config: tool_trigger requires 5 values\n");
                return -1;
@@ -161,6 +168,12 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
             break;
 
          case ITEM_TRIGGER:
+            num_triggers++;
+            if (num_triggers > MAX_TRIGGERS) {
+               printf("parse_level_config: too many triggers (max: %d)\n",
+                      MAX_TRIGGERS);
+               return -1;
+            }
             if (node->num_values < 7) {
                printf("parse_level_config: tool_trigger requires 7 values\n");
                return -1;

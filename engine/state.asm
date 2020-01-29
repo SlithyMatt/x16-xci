@@ -14,6 +14,8 @@ init_state:
    sta r1L
    lda #>RAM_WIN_SIZE
    sta r1H
+   lda #KERNAL_ROM_BANK
+   sta ROM_BANK
    lda #0
    jsr MEMORY_FILL
    rts

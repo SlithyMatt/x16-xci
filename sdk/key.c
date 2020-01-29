@@ -70,7 +70,6 @@ const char xci_key_strings[NUM_XCI_KEYS][MAX_KEY_LENGTH] = {
    "go_level",
    "tool_trigger",
    "item_trigger",
-   "end_trigger",
    "if",
    "if_not",
    "end_if",

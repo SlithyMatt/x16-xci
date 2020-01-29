@@ -9,6 +9,7 @@ GAME_INC = 1
 .include "title_screen.asm"
 .include "mouse.asm"
 .include "inventory.asm"
+.include "level.asm"
 
 init_game:
    jsr init_music
@@ -26,6 +27,7 @@ game_tick:        ; called after every VSYNC detected (60 Hz)
    jsr mouse_tick
    jsr music_tick
    jsr menu_tick
+   jsr level_tick
    jsr anim_tick
    jsr inv_tick
    jsr toolbar_tick
