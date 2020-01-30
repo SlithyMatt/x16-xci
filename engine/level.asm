@@ -253,6 +253,12 @@ level_continue:
    rts
 
 level_tick:
+   lda req_load_level
+   beq @check_playing
+   jsr level_pause
+   jsr load_level
+   stz req_load_level
+@check_playing:
    lda __level_playing
    bne @check_done
    jmp @return

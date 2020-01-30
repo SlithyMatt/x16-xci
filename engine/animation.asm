@@ -49,6 +49,8 @@ TEXT_LINE_1 = TEXT_LINE_0 + 64*2
 TEXT_LINE_2 = TEXT_LINE_1 + 64*2
 TEXT_LINE_3 = TEXT_LINE_2 + 64*2
 
+TEXT_LINE_LENGTH  = 38
+
 VRAM_TILEMAP_BANK = $10 | ^VRAM_TILEMAP
 __anim_text_addr:
 .word TEXT_LINE_0 & $FFFF
@@ -464,13 +466,48 @@ __anim_new_sprite_move:
    rts
 
 __anim_text_instruction:
+   bra @start
+@byte2: .byte 0
+@start:
+   lda tb_visible
+   ora inv_visible
+   bne @return       ; text field blocked
    lda __anim_text_line
    cmp #4
    bmi @print
    lda #1
    jsr __anim_scroll
 @print:
-
+   lda (ANIM_PTR)
+   adc #MENU_PO
+   asl
+   asl
+   asl
+   asl
+   sta @byte2
+   stz VERA_ctrl
+   lda #VRAM_TILEMAP_BANK
+   sta VERA_addr_bank
+   lda __anim_text_line
+   asl
+   tax
+   lda __anim_text_addr,x
+   sta VERA_addr_low
+   inx
+   lda __anim_text_addr,x
+   inx
+   sta VERA_addr_high
+   INC_ANIM_PTR
+   ldx #TEXT_LINE_LENGTH
+@loop:
+   lda (ANIM_PTR)
+   sta VERA_data0
+   lda @byte2
+   sta VERA_data0
+   INC_ANIM_PTR
+   dex
+   bne @loop
+@return:
    rts
 
 __anim_scroll: ; A: lines to scroll
@@ -478,9 +515,10 @@ __anim_scroll: ; A: lines to scroll
    bpl @clear
    ldx #0
    tay
-@line_loop:
+@scroll_line_loop:
    cpy #0
    beq @return
+   dec __anim_text_line
    stz VERA_ctrl
    lda #VRAM_TILEMAP_BANK
    sta VERA_addr_bank
@@ -504,55 +542,275 @@ __anim_scroll: ; A: lines to scroll
    lda __anim_text_addr,x
    sta VERA_addr_high
    ldx #0
-@data_loop:
+@scroll_data_loop:
    lda VERA_data1
    sta VERA_data0
    inx
-   cpx #40
-   bne @data_loop
+   cpx #TEXT_LINE_LENGTH
+   bne @scroll_data_loop
    plx
    dey
-   bra @line_loop
+   jmp @scroll_line_loop
+   lda __anim_text_line    ; clear current line and all below
+   asl
+   tax
+@clear_line_loop:
+   stz VERA_ctrl
+   lda #VRAM_TILEMAP_BANK
+   sta VERA_addr_bank
+   lda __anim_text_addr,x
+   sta VERA_addr_low
+   inx
+   lda __anim_text_addr,x
+   sta VERA_addr_high
+   inx
+   ldy #(TEXT_LINE_LENGTH*2)
+@clear_data_loop:
+   stz VERA_data0
+   dey
+   bne @clear_data_loop
+   cpx #8
+   bmi @clear_line_loop
 @clear:
    jsr __anim_clear_text
 @return:
    rts
 
 __anim_scroll_instruction:
-
+   lda tb_visible
+   ora inv_visible
+   bne @return       ; text field blocked
+   lda (ANIM_PTR)
+   jsr __anim_scroll
+   INC_ANIM_PTR
+@return:
    rts
 
 __anim_line_skip:
-
+   lda tb_visible
+   ora inv_visible
+   bne @return       ; text field blocked
+   inc __anim_text_line
+   cmp #4
+   bne @return
+   lda #1
+   jsr __anim_scroll
+@return:
    rts
 
 __anim_clear_text:
-
+   lda tb_visible
+   ora inv_visible
+   bne @return       ; text field blocked
+   stz VERA_ctrl
+   VERA_SET_ADDR TEXT_LINE_0, 1
+   ldx #(TEXT_LINE_LENGTH*2)
+@loop0:
+   stz VERA_data0
+   dex
+   bne @loop0
+   VERA_SET_ADDR TEXT_LINE_1, 1
+   ldx #(TEXT_LINE_LENGTH*2)
+@loop1:
+   stz VERA_data0
+   dex
+   bne @loop1
+   VERA_SET_ADDR TEXT_LINE_2, 1
+   ldx #(TEXT_LINE_LENGTH*2)
+@loop2:
+   stz VERA_data0
+   dex
+   bne @loop2
+   VERA_SET_ADDR TEXT_LINE_3, 1
+   ldx #(TEXT_LINE_LENGTH*2)
+@loop3:
+   stz VERA_data0
+   dex
+   bne @loop3
+@return:
    rts
 
 __anim_go_level:
-
+   lda (ANIM_PTR)
+   cmp zone
+   beq @level
+   sta zone
+   jsr load_zone
+@level:
+   INC_ANIM_PTR
+   lda (ANIM_PTR)
+   sta level
+   lda #1
+   sta req_load_level
    stz __anim_text_line
+   INC_ANIM_PTR
    rts
 
 __anim_if:
-
+   lda (ANIM_PTR)
+   tax
+   INC_ANIM_PTR
+   lda (ANIM_PTR)
+   tay
+   INC_ANIM_PTR
+   jsr get_state
+   bne @return ; state is set, just continue executing after IF
+   jsr __anim_seek_endif
+@return:
    rts
 
 __anim_if_not:
+   lda (ANIM_PTR)
+   tax
+   INC_ANIM_PTR
+   lda (ANIM_PTR)
+   tay
+   INC_ANIM_PTR
+   jsr get_state
+   beq @return ; state is clear, just continue executing after IF_NOT
+   jsr __anim_seek_endif
+@return:
+   rts
 
+__anim_seek_endif:
+   bra @start
+@depth: .byte 0
+@start:
+   stz @depth
+@loop:
+   lda (ANIM_PTR)
+   cmp #END_IF
+   beq @check_depth
+   cmp #IF_STATE
+   beq @level_down
+   cmp #IF_NOT_STATE
+   beq @level_down
+   bra @next
+@level_down:
+   inc @depth
+   jsr __anim_seek_next_instruction
+   bra @next
+@check_depth:
+   lda @depth
+   beq @return
+   dec @depth
+@next:
+   jsr __anim_seek_next_instruction
+   bra @loop
+@return:
+   jsr __anim_seek_next_instruction
+   rts
+
+__anim_seek_next_instruction:
+   lda (ANIM_PTR)
+   cmp #SPRITE_FRAMES_KEY
+   beq @sprite_frames
+   cmp #SPRITE_KEY
+   beq @seek5
+   cmp #TILES_KEY
+   beq @tiles
+   cmp #WAIT_KEY
+   bne @check_sprite_move
+   jmp @seek2
+@check_sprite_move:
+   cmp #SPRITE_MOVE_KEY
+   beq @seek6
+   cmp #SPRITE_HIDE_KEY
+   bne @check_text_line
+   jmp @seek2
+@check_text_line:
+   cmp #TEXT_LINE
+   beq @seek40
+   cmp #SCROLL_KEY
+   beq @seek2
+   cmp #GO_LEVEL
+   beq @seek3
+   cmp #IF_STATE
+   beq @seek3
+   cmp #IF_NOT_STATE
+   beq @seek3
+   cmp #SET_STATE
+   beq @seek3
+   cmp #CLEAR_STATE
+   beq @seek3
+   cmp #GET_ITEM
+   beq @seek4
+   jmp @seek1     ; all other keys are single-byte instructions
+@sprite_frames:   ; SPRITE_FRAMES same binary format as TILES
+@tiles:
+   lda ANIM_PTR
+   clc
+   adc #3
+   sta ANIM_PTR
+   lda ANIM_PTR+1
+   adc #0
+   sta ANIM_PTR+1
+   lda (ANIM_PTR)
+   asl
+   clc
+   adc ANIM_PTR
+   sta ANIM_PTR
+   lda ANIM_PTR+1
+   adc #0
+   sta ANIM_PTR+1
+   bra @return
+@seek40:
+   lda ANIM_PTR
+   clc
+   adc #40
+   sta ANIM_PTR
+   lda ANIM_PTR+1
+   adc #0
+   sta ANIM_PTR+1
+   bra @return
+@seek6:
+   INC_ANIM_PTR
+@seek5:
+   INC_ANIM_PTR
+@seek4:
+   INC_ANIM_PTR
+@seek3:
+   INC_ANIM_PTR
+@seek2:
+   INC_ANIM_PTR
+@seek1:
+   INC_ANIM_PTR
+@return:
    rts
 
 __anim_set_state:
-
+   lda (ANIM_PTR)
+   tax
+   INC_ANIM_PTR
+   lda (ANIM_PTR)
+   tay
+   INC_ANIM_PTR
+   lda #1
+   jsr set_state
    rts
 
 __anim_clear_state:
-
+   lda (ANIM_PTR)
+   tax
+   INC_ANIM_PTR
+   lda (ANIM_PTR)
+   tay
+   INC_ANIM_PTR
+   lda #0
+   jsr set_state
    rts
 
 __anim_get_item:
-
+   lda (ANIM_PTR)
+   pha
+   INC_ANIM_PTR
+   lda (ANIM_PTR)
+   tax
+   INC_ANIM_PTR
+   lda (ANIM_PTR)
+   tay
+   pla
+   jsr inv_add_item
    rts
 
 __anim_move_sprites:

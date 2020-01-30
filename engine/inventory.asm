@@ -356,7 +356,7 @@ inv_hide:
    bra @start
 @y: .byte 0
 @start:
-   lda inv_start_y
+   lda #START_TEXT_Y ; clear whole text field
    sta @y
 @row_loop:
    lda #1

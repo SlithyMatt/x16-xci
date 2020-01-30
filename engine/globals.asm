@@ -145,6 +145,8 @@ MOUSE_idx      = 0
 
 NO_ITEM        = $FF
 
+START_TEXT_Y   = 26
+
 ; --------- Global Variables ---------
 vsync_trig: .byte 0
 frame_num:  .byte 0
@@ -164,7 +166,7 @@ inv_visible:   .byte 0
 inv_start_y:   .byte 0
 current_item:  .byte NO_ITEM
 
-
+req_load_level:   .byte 0
 
 mouse_tile_x:  .byte 0
 mouse_tile_y:  .byte 0
