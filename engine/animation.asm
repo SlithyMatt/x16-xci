@@ -13,7 +13,7 @@ SPRITE_MOVE_KEY      = 44
 END_ANIM_KEY         = 56
 SPRITE_HIDE_KEY      = 57
 TEXT_LINE            = 60
-SCROLL               = 61
+SCROLL_KEY           = 61
 LINE_SKIP            = 62
 CLEAR_TEXT           = 63
 GO_LEVEL             = 64
@@ -43,6 +43,20 @@ __sprite_x:       .word 0
 __sprite_y:       .byte 0
 __vec_x:          .byte 0
 __vec_y:          .byte 0
+
+TEXT_LINE_0 = VRAM_TILEMAP + 64*2*26 + 2
+TEXT_LINE_1 = TEXT_LINE_0 + 64*2
+TEXT_LINE_2 = TEXT_LINE_1 + 64*2
+TEXT_LINE_3 = TEXT_LINE_2 + 64*2
+
+VRAM_TILEMAP_BANK = $10 | ^VRAM_TILEMAP
+__anim_text_addr:
+.word TEXT_LINE_0 & $FFFF
+.word TEXT_LINE_1 & $FFFF
+.word TEXT_LINE_2 & $FFFF
+.word TEXT_LINE_3 & $FFFF
+__anim_text_line: .byte 0
+
 
 .macro INC_ANIM_PTR
    lda ANIM_PTR
@@ -97,6 +111,28 @@ anim_tick:
    beq @wait
    cmp #SPRITE_MOVE_KEY
    beq @sprite_move
+   cmp #TEXT_LINE
+   beq @text_line
+   cmp #SCROLL_KEY
+   beq @scroll
+   cmp #LINE_SKIP
+   beq @line_skip
+   cmp #CLEAR_TEXT
+   beq @clear_text
+   cmp #GO_LEVEL
+   beq @go_level
+   cmp #IF_STATE
+   beq @if_state
+   cmp #IF_NOT_STATE
+   beq @if_not_state
+   cmp #END_IF
+   beq @play
+   cmp #SET_STATE
+   beq @set_state
+   cmp #CLEAR_STATE
+   beq @clear_state
+   cmp #GET_ITEM
+   beq @get_item
    cmp #END_ANIM_KEY
    beq @end_anim
    jmp @stop ; unrecognized key, just stop
@@ -117,6 +153,36 @@ anim_tick:
    jmp @move_all_sprites
 @sprite_move:
    jsr __anim_new_sprite_move
+   jmp @play
+@text_line:
+   jsr __anim_text_instruction
+   jmp @play
+@scroll:
+   jsr __anim_scroll_instruction
+   jmp @play
+@line_skip:
+   jsr __anim_line_skip
+   jmp @play
+@clear_text:
+   jsr __anim_clear_text
+   jmp @play
+@go_level:
+   jsr __anim_go_level
+   jmp @return
+@if_state:
+   jsr __anim_if
+   jmp @play
+@if_not_state:
+   jsr __anim_if_not
+   jmp @play
+@set_state:
+   jsr __anim_set_state
+   jmp @play
+@clear_state:
+   jsr __anim_clear_state
+   jmp @play
+@get_item:
+   jsr __anim_get_item
    jmp @play
 @end_anim:
    lda #1
@@ -395,6 +461,98 @@ __anim_new_sprite_move:
    sta (ZP_PTR_1),y
    INC_ANIM_PTR
    ; two spare bytes for future use
+   rts
+
+__anim_text_instruction:
+   lda __anim_text_line
+   cmp #4
+   bmi @print
+   lda #1
+   jsr __anim_scroll
+@print:
+
+   rts
+
+__anim_scroll: ; A: lines to scroll
+   cmp __anim_text_line
+   bpl @clear
+   ldx #0
+   tay
+@line_loop:
+   cpy #0
+   beq @return
+   stz VERA_ctrl
+   lda #VRAM_TILEMAP_BANK
+   sta VERA_addr_bank
+   phx
+   txa
+   asl
+   tax
+   lda __anim_text_addr,x
+   sta VERA_addr_low
+   inx
+   lda __anim_text_addr,x
+   inx
+   sta VERA_addr_high
+   lda #1
+   sta VERA_ctrl
+   lda #VRAM_TILEMAP_BANK
+   sta VERA_addr_bank
+   lda __anim_text_addr,x
+   sta VERA_addr_low
+   inx
+   lda __anim_text_addr,x
+   sta VERA_addr_high
+   ldx #0
+@data_loop:
+   lda VERA_data1
+   sta VERA_data0
+   inx
+   cpx #40
+   bne @data_loop
+   plx
+   dey
+   bra @line_loop
+@clear:
+   jsr __anim_clear_text
+@return:
+   rts
+
+__anim_scroll_instruction:
+
+   rts
+
+__anim_line_skip:
+
+   rts
+
+__anim_clear_text:
+
+   rts
+
+__anim_go_level:
+
+   stz __anim_text_line
+   rts
+
+__anim_if:
+
+   rts
+
+__anim_if_not:
+
+   rts
+
+__anim_set_state:
+
+   rts
+
+__anim_clear_state:
+
+   rts
+
+__anim_get_item:
+
    rts
 
 __anim_move_sprites:

@@ -50,6 +50,8 @@ __tb_pin_width:      .byte 0
 __tb_pin_tiles_ptr:  .word 0
 __tb_pinned:         .byte 0
 
+__tb_cursor:         .word 0
+
 
 init_toolbar:
    bra @start
@@ -201,7 +203,6 @@ __tb_set_cursor:  ; A: tool ID
    bra @start
 @id:           .byte 0
 @cursor_table: .byte 0
-@cursor:       .word 0
 @start:
    sta @id
    txa
@@ -249,21 +250,21 @@ __tb_set_cursor:  ; A: tool ID
    ldy #TB_STRIKE_CURSOR
 @copy:
    lda (TB_PTR),y
-   sta @cursor
+   sta __tb_cursor
    iny
    lda (TB_PTR),y
-   sta @cursor+1
-   asl @cursor       ; mutliply cursor index by 4 to get VRAM address
-   rol @cursor+1
-   asl @cursor
-   rol @cursor+1
-   lda @cursor+1
+   sta __tb_cursor+1
+   asl __tb_cursor       ; mutliply cursor index by 4 to get VRAM address
+   rol __tb_cursor+1
+   asl __tb_cursor
+   rol __tb_cursor+1
+   lda __tb_cursor+1
    ora #(^VRAM_SPRITES << 3) ; Add bank
-   sta @cursor+1
-   lda @cursor
+   sta __tb_cursor+1
+   lda __tb_cursor
    ldy @cursor_table
    sta __tb_tools,y
-   lda @cursor+1
+   lda __tb_cursor+1
    iny
    sta __tb_tools,y
 @return:
@@ -351,7 +352,6 @@ __tb_show:
 __tb_click:
    bra @start
 @index: .byte 0
-@cursor: .word 0
 @start:
    stz @index
 @loop:
@@ -384,11 +384,11 @@ __tb_click:
    sta current_tool
    inx
    lda __tb_tools,x
-   sta @cursor
+   sta __tb_cursor
    inx
    lda __tb_tools,x
-   sta @cursor+1
-   SET_MOUSE_CURSOR @cursor
+   sta __tb_cursor+1
+   SET_MOUSE_CURSOR __tb_cursor
    bra @return
 @inventory:
    stz __tb_pinned
@@ -485,6 +485,20 @@ __tb_pin:
    bne @loop
    lda #1
    sta __tb_pinned
+   rts
+
+tool_set_cursor:  ; A: tool index
+   asl
+   asl
+   inc
+   inc
+   tax
+   lda __tb_tools,x
+   sta __tb_cursor
+   inx
+   lda __tb_tools,x
+   sta __tb_cursor+1
+   SET_MOUSE_CURSOR __tb_cursor
    rts
 
 .endif

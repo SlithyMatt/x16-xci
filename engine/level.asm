@@ -29,6 +29,8 @@ __level_triggers:
 
 __level_trigger_offset: .word 0
 
+__level_quant: .word 0
+
 load_level:
    ; blackout bitmap
    stz VERA_ctrl
@@ -218,8 +220,8 @@ load_level:
 
 __level_next_seq: ; Input/Output: ZP_PTR_1 - address of start of sequence
 @loop:
-   lda (ZP_PTR)
-   cmp #END_ANIM
+   lda (ZP_PTR_1)
+   cmp #END_ANIM_KEY
    beq @next
    lda ZP_PTR_1
    clc
@@ -290,7 +292,9 @@ level_tick:
    ldx #0
 @trigger_loop:
    cpx __level_num_triggers
-   beq @return
+   bne @check_next_trigger
+   jmp @return
+@check_next_trigger:
    phx
    lda __level_triggers
    clc
@@ -302,36 +306,108 @@ level_tick:
    lda mouse_tile_x
    ldy #2
    cmp (ZP_PTR_1),y
-   bmi @next
+   bpl @check_x_max
+   jmp @next
+@check_x_max:
    ldy #4
    dec
    cmp (ZP_PTR_1),y
-   bpl @next
+   bmi @check_y
+   jmp @next
+@check_y:
    lda mouse_tile_y
    ldy #3
    cmp (ZP_PTR_1),y
-   bmi @next
+   bpl @check_y_max
+   jmp @next
+@check_y_max:
    ldy #5
    dec
    cmp (ZP_PTR_1),y
-   bpl @next
+   bmi @check_key
+   jmp @next
+@check_key:
    ldy #6
    lda (ZP_PTR_1),y
    cmp #ITEM_TRIGGER
    bne @check_tool
    lda mouse_left_click
-   beq @next
+   bne @check_item_index
+   jmp @next
+@check_item_index:
    lda current_item
    ldy #7
    cmp (ZP_PTR_1),y
-   beq @exec_trigger
-   bra @next
+   beq @check_item_quant
+   jmp @next
+@check_item_quant:
+   jsr inv_get_quant
+   stx __level_quant
+   sty __level_quant+1
+   lda (ZP_PTR_1)
+   sta ZP_PTR_2
+   ldy #1
+   lda (ZP_PTR_1),y
+   sta ZP_PTR_2+1
+   ldy #7
+   lda (ZP_PTR_2),y
+   cmp __level_quant+1
+   bpl @check_high_neq
+   jmp @next
+@check_high_neq:
+   bne @debit
+   dey
+   lda (ZP_PTR_2),y
+   cmp __level_quant
+   bpl @debit
+   jmp @next
+@debit:
+   ldy #8
+   lda (ZP_PTR_2),y
+   tax
+   iny
+   lda (ZP_PTR_2),y
+   tay
+   lda current_item
+   jsr inv_lose_item
+   lda #NO_ITEM
+   sta current_item
+   SET_MOUSE_CURSOR def_cursor
+   bra @exec_trigger
 @check_tool:
-   
-
+   lda current_tool
+   bne @check_match
+   ldy #7
+   lda (ZP_PTR_1),y
+   jsr tool_set_cursor
+   bra @check_click
+@check_match:
+   ldy #7
+   lda (ZP_PTR_1),y
+   cmp current_tool
+   bne @next
+@check_click:
+   lda mouse_left_click
+   beq @next
+   stz current_tool
+   SET_MOUSE_CURSOR def_cursor
 @exec_trigger:
-
-
+   ldy #6
+   lda (ZP_PTR_1),y
+   cmp #TOOL_TRIGGER
+   beq @set_anim_ptr
+   iny
+   iny
+@set_anim_ptr:
+   tya
+   clc
+   adc (ZP_PTR_1)
+   sta ANIM_PTR
+   ldy #1
+   lda (ZP_PTR_1),y
+   adc #0
+   sta ANIM_PTR+1
+   bra @return
 @next:
    plx
    inx
@@ -342,10 +418,9 @@ level_tick:
    lda __level_trigger_offset+1
    adc #0
    sta __level_trigger_offset+1
-   bra @trigger_loop
+   jmp @trigger_loop
 @return:
    rts
-
 
 
 .endif

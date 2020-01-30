@@ -41,6 +41,8 @@ __inv_item_quant_width: .byte 0
 __inv_scroll_x:         .byte 0
 __inv_item_cfg_size:    .byte 0
 
+__inv_quant:            .word 0
+
 __inv_order:   ; position to index map
 .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 .dword 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
@@ -578,12 +580,88 @@ inv_get_quant: ; Input: A - item index
 
 inv_add_item:  ; A: item index
                ; X/Y: quantity
-   ; TODO
+   stx __inv_quant
+   sty __inv_quant+1
+   sta current_item
+   asl
+   tax
+   lda __inv_cfg_map,x
+   sta ZP_PTR_1
+   inx
+   lda __inv_cfg_map,x
+   sta ZP_PTR_1+1
+   ldy #INV_ITEM_QUANT
+   lda (ZP_PTR_1),y
+   clc
+   adc __inv_quant
+   sta (ZP_PTR_1),y
+   iny
+   lda (ZP_PTR_1),y
+   adc __inv_quant+1
+   sta (ZP_PTR_1),y
+   ldx #0
+@loop:
+   cpx __inv_num_items
+   beq @add
+   lda __inv_order,x
+   cmp current_item
+   beq @return
+   bra @loop
+@add:
+   lda current_item
+   sta __inv_order,x
+   inc __inv_num_items
+@return:
+   stz current_item
    rts
 
 inv_lose_item: ; A: item index
                ; X/Y: quantity
-   ; TODO
+   stx __inv_quant
+   sty __inv_quant+1
+   sta current_item
+   asl
+   tax
+   lda __inv_cfg_map,x
+   sta ZP_PTR_1
+   inx
+   lda __inv_cfg_map,x
+   sta ZP_PTR_1+1
+   ldy #INV_ITEM_QUANT
+   lda (ZP_PTR_1),y
+   sec
+   sbc __inv_quant
+   sta (ZP_PTR_1),y
+   iny
+   lda (ZP_PTR_1),y
+   sbc __inv_quant+1
+   sta (ZP_PTR_1),y
+   bne @return
+   dey
+   lda (ZP_PTR_1),y
+   bne @return
+   ldx #0
+@loop:
+   lda __inv_order,x
+   cmp current_item
+   beq @remove
+   inx
+   cpx __inv_num_items
+   beq @return
+   bra @loop
+@remove:
+   inx
+   cpx __inv_num_items
+   beq @done_shift
+   lda __inv_order,x
+   dex
+   sta __inv_order,x
+   inx
+   bra @remove
+@done_shift:
+   dec __inv_num_items
+@return:
+   stz current_item
    rts
 
 
