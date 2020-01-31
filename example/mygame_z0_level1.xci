@@ -6,20 +6,20 @@ music zone0.vgm
 
 init
 # coffee maker
-tiles 0  18 10  161 162
-tiles 0  18 11  163 164
-tiles 0  18 12  165 166
+tiles 0  19 11  162 163
+tiles 0  19 12  164 165
+tiles 0  19 13  166 167
 # steam loop
 sprite_frames 2  0  43 44 45 46
 end_anim
 
 first
 # coffee cup
-tiles 0  20 11  169
-tiles 0  20 12  170
+tiles 0  21 12  170
+tiles 0  21 13  171
 # bananas
-tiles 0  35 11  171 172
-tiles 0  35 12  173 174
+tiles 0  35 12  172 173
+tiles 0  35 13  174 175
 wait 30
 text 1  This is my kitchen. So modern!
 wait 60
@@ -57,7 +57,7 @@ sprite 2  148 70
 sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
 wait 120
 # fill carafe
-tiles 0  18 11  167 168
+tiles 0  18 11  168 169
 text 1  Done! Smells good...
 set_state coffee_made
 end_if # not coffee_made
@@ -116,7 +116,7 @@ clear
 text 1  Sure, pour the whole pot.
 wait 60
 # empty carafe
-tiles 0  18 11  163 164
+tiles 0  18 11  164 165
 clear_state holding_carafe
 set_state coffee_poured
 # move steam to over cup
