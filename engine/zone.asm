@@ -15,6 +15,32 @@ ZONE_FN_LENGTH = __zone_bank - __zone_filename - 1
 __zone_num_string: .byte 0,0,0
 
 new_game:
+   ; clear background header and footer
+   stz VERA_ctrl
+   VERA_SET_ADDR VRAM_BITMAP, 2
+   ldx #<LEVEL_BITMAP_OFFSET
+   ldy #>LEVEL_BITMAP_OFFSET
+@header_loop:
+   stz VERA_data0
+   dex
+   bne @header_loop
+   dey
+   bne @header_loop
+   cpx #0
+   bne @header_loop
+   stz VERA_ctrl
+   VERA_SET_ADDR VRAM_TEXTFIELD_BITMAP_BG, 2
+   ldx #<TEXTFIELD_BITMAP_BG_SIZE
+   ldy #>TEXTFIELD_BITMAP_BG_SIZE
+@footer_loop:
+   stz VERA_data0
+   dex
+   bne @footer_loop
+   dey
+   bne @footer_loop
+   cpx #0
+   bne @footer_loop
+
    stz zone
    stz level
    jsr init_state
@@ -64,8 +90,6 @@ load_zone:
    stz VERA_ctrl              ; load level palette offset (level + 1)
    lda #(^VRAM_palette | $10)
    sta VERA_addr_bank
-   lda #>VRAM_palette
-   sta VERA_addr_high
    plx
    txa
    clc
@@ -74,7 +98,11 @@ load_zone:
    asl
    asl
    asl
+   asl
    sta VERA_addr_low
+   lda #>VRAM_palette
+   adc #0
+   sta VERA_addr_high
    ldy #0
    lda __zone_bank
    sec
@@ -86,6 +114,7 @@ load_zone:
    sta ZP_PTR_1+1
 @pal_loop:
    lda (ZP_PTR_1),y
+   sta VERA_data0
    iny
    cpy #32
    bne @pal_loop

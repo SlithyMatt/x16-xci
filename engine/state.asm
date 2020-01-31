@@ -2,22 +2,12 @@
 STATE_INC = 1
 
 STATE_BANK = 63
-STATE_VISITED  = $C000
-STATE_FLAGS    = $C200
+STATE_VISITED  = RAM_WIN
+STATE_FLAGS    = RAM_WIN + $200
 
 init_state:
-   lda #<RAM_WIN
-   sta r0L
-   lda #>RAM_WIN
-   sta r0H
-   lda #<RAM_WIN_SIZE
-   sta r1L
-   lda #>RAM_WIN_SIZE
-   sta r1H
-   lda #KERNAL_ROM_BANK
-   sta ROM_BANK
-   lda #0
-   jsr MEMORY_FILL
+   lda #STATE_BANK
+   jsr reset_bank
    rts
 
 __state_mask: .byte 0
@@ -28,6 +18,8 @@ __get_visited_addr:  ; Input:
                      ; Output:
                      ;  A: visited bit mask
                      ;  ZP_PTR_1: address of byte containing visited bit
+   lda #STATE_BANK
+   sta RAM_BANK
    lda #<STATE_VISITED
    sta ZP_PTR_1
    lda #>STATE_VISITED
@@ -71,6 +63,8 @@ check_visited: ; Input:
                ;  Y: Zone
                ; Output:
                ;  A: 0 = not visited, 1 = visited
+   lda #STATE_BANK
+   sta RAM_BANK
    jsr __get_visited_addr
    sta __state_mask
    lda (ZP_PTR_1)
@@ -82,6 +76,8 @@ check_visited: ; Input:
 
 set_visited:   ;  X: Level
                ;  Y: Zone
+   lda #STATE_BANK
+   sta RAM_BANK
    jsr __get_visited_addr
    sta __state_mask
    lda (ZP_PTR_1)
@@ -134,6 +130,8 @@ __get_state_addr: ; Input:
 
 get_state:  ; Input: X/Y - state index
             ; Ouput: A - state value: 0 = clear, 1 = set
+   lda #STATE_BANK
+   sta RAM_BANK
    jsr __get_state_addr
    sta __state_mask
    lda (ZP_PTR_1)
@@ -149,6 +147,8 @@ set_state:  ;  A: value: 0 = clear, 1+ = set
 @set: .byte 0
 @start:
    sta @set
+   lda #STATE_BANK
+   sta RAM_BANK
    jsr __get_state_addr
    sta __state_mask
    lda @set

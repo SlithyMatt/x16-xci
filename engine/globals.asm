@@ -102,6 +102,24 @@ byte_mult:  ; Input: X,Y - factors
 @return:
    rts
 
+reset_bank: ; A: bank to set to all zeros
+   pha
+   lda #<RAM_WIN
+   sta r0L
+   lda #>RAM_WIN
+   sta r0H
+   lda #<RAM_WIN_SIZE
+   sta r1L
+   lda #>RAM_WIN_SIZE
+   sta r1H
+   lda #KERNAL_ROM_BANK
+   sta ROM_BANK
+   pla
+   sta RAM_BANK
+   lda #0
+   jsr MEMORY_FILL
+   rts
+
 ; ---------- Build Options ----------
 
 ; ------------ Constants ------------
@@ -122,6 +140,12 @@ VRAM_BITMAP    = $00000 ; 4bpp 320x240
 VRAM_TILEMAP   = $09600 ; 64x32 (40x30 visible)
 VRAM_TILES     = $0A600 ; 720 4bpp 8x8 tiles
 VRAM_SPRITES   = $10000 ; 512 4bpp 16x16 frames
+
+LEVEL_BITMAP_OFFSET        = 8*320/2
+VRAM_LEVEL_BITMAP          = VRAM_BITMAP + LEVEL_BITMAP_OFFSET
+LEVEL_BITMAP_SIZE          = 200*320/2
+VRAM_TEXTFIELD_BITMAP_BG   = VRAM_LEVEL_BITMAP + LEVEL_BITMAP_SIZE
+TEXTFIELD_BITMAP_BG_SIZE   = 32*320/2
 
 TILEMAP_SIZE   = VRAM_TILES - VRAM_TILEMAP
 

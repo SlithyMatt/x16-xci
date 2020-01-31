@@ -62,7 +62,7 @@ load_level:
    bne @clear_sprite_loop
 
    ; intialize animation
-   stz anim_seq_done
+   jsr anim_reset
    stz __level_has_first
    jsr start_anim
    ldx level
@@ -94,11 +94,13 @@ load_level:
 @init_seq:
    INC_ANIM_PTR
    lda ANIM_PTR
-   sta ZP_PTR_1
+   sta ZP_PTR_3
    lda ANIM_PTR+1
-   sta ZP_PTR_1
+   sta ZP_PTR_3+1
    jsr __level_next_seq
-   lda (ZP_PTR_1)
+   lda anim_bank
+   sta RAM_BANK
+   lda (ZP_PTR_3)
    cmp #FIRST_VISIT
    bne @find_triggers
    ldx level
@@ -106,11 +108,11 @@ load_level:
    jsr check_visited
    cmp #0
    bne @find_triggers
-   lda ZP_PTR_1
+   lda ZP_PTR_3
    clc
    adc #1
    sta __level_first
-   lda ZP_PTR_1+1
+   lda ZP_PTR_3+1
    adc #0
    sta __level_first+1
    lda #1
@@ -119,7 +121,9 @@ load_level:
    stz __level_num_triggers
 @trigger_loop:
    jsr __level_next_seq
-   lda (ZP_PTR_1)
+   lda anim_bank
+   sta RAM_BANK
+   lda (ZP_PTR_3)
    cmp #TOOL_TRIGGER
    beq @trigger
    cmp #ITEM_TRIGGER
@@ -143,26 +147,28 @@ load_level:
    lda #>__level_triggers
    adc __level_trigger_offset+1
    sta ZP_PTR_2+1
-   lda (ZP_PTR_1)
+   lda anim_bank
+   sta RAM_BANK
+   lda (ZP_PTR_3)
    ldy #6
    sta (ZP_PTR_2),y  ; set key
    ldy #1
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_3),y
    ldy #7
    sta (ZP_PTR_2),y  ; set tool/item
    ldy #2
    sta (ZP_PTR_2),y
    iny
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_3),y
    sta (ZP_PTR_2),y  ; set x_min
    iny
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_3),y
    sta (ZP_PTR_2),y  ; set y_min
    iny
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_3),y
    sta (ZP_PTR_2),y  ; set x_max
    iny
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_3),y
    sta (ZP_PTR_2),y  ; set y_max
 @next_trigger:
    inc __level_num_triggers
@@ -179,7 +185,7 @@ load_level:
 
    ; load bitmap
    stz VERA_ctrl
-   VERA_SET_ADDR VRAM_BITMAP,1
+   VERA_SET_ADDR VRAM_LEVEL_BITMAP, 1
    lda anim_bank
    inc            ; bitmap in 4 banks following level config
    pha
@@ -200,7 +206,6 @@ load_level:
    jsr bank2vram
    pla
    inc
-   pha
    ldx #0
    ldy #0
    jsr bank2vram
@@ -218,27 +223,29 @@ load_level:
    jsr level_continue
    rts
 
-__level_next_seq: ; Input/Output: ZP_PTR_1 - address of start of sequence
+__level_next_seq: ; Input/Output: ZP_PTR_3 - address of start of sequence
 @loop:
-   lda (ZP_PTR_1)
+   lda anim_bank
+   sta RAM_BANK
+   lda (ZP_PTR_3)
    cmp #END_ANIM_KEY
    beq @next
-   lda ZP_PTR_1
+   lda ZP_PTR_3
    clc
    adc #1
-   sta ZP_PTR_1
-   lda ZP_PTR_1+1
+   sta ZP_PTR_3
+   lda ZP_PTR_3+1
    adc #0
-   sta ZP_PTR_1+1
+   sta ZP_PTR_3+1
    bra @loop
 @next:
-   lda ZP_PTR_1
+   lda ZP_PTR_3
    clc
    adc #1
-   sta ZP_PTR_1
-   lda ZP_PTR_1+1
+   sta ZP_PTR_3
+   lda ZP_PTR_3+1
    adc #0
-   sta ZP_PTR_1+1
+   sta ZP_PTR_3+1
    rts
 
 level_pause:
@@ -268,29 +275,13 @@ level_tick:
    jmp @return
 @next_seq:
    lda __level_has_first
-   beq @check_go_level
+   beq @check_trigger
    lda __level_first
    sta ANIM_PTR
    lda __level_first+1
    sta ANIM_PTR+1
    stz __level_has_first
    stz anim_seq_done
-   jmp @return
-@check_go_level:
-   lda (ANIM_PTR)
-   cmp #GO_LEVEL
-   bne @check_trigger
-   INC_ANIM_PTR
-   lda (ANIM_PTR)
-   cmp zone
-   beq @get_level
-   sta zone
-   jsr load_zone
-@get_level:
-   INC_ANIM_PTR
-   lda (ANIM_PTR)
-   sta level
-   jsr load_level
    jmp @return
 @check_trigger:
    stz __level_trigger_offset
@@ -305,36 +296,36 @@ level_tick:
    lda __level_triggers
    clc
    adc __level_trigger_offset
-   sta ZP_PTR_1
+   sta ZP_PTR_3
    lda __level_triggers+1
    adc __level_trigger_offset+1
-   sta ZP_PTR_1+1
+   sta ZP_PTR_3+1
    lda mouse_tile_x
    ldy #2
-   cmp (ZP_PTR_1),y
+   cmp (ZP_PTR_3),y
    bpl @check_x_max
    jmp @next
 @check_x_max:
    ldy #4
    dec
-   cmp (ZP_PTR_1),y
+   cmp (ZP_PTR_3),y
    bmi @check_y
    jmp @next
 @check_y:
    lda mouse_tile_y
    ldy #3
-   cmp (ZP_PTR_1),y
+   cmp (ZP_PTR_3),y
    bpl @check_y_max
    jmp @next
 @check_y_max:
    ldy #5
    dec
-   cmp (ZP_PTR_1),y
+   cmp (ZP_PTR_3),y
    bmi @check_key
    jmp @next
 @check_key:
    ldy #6
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_3),y
    cmp #ITEM_TRIGGER
    bne @check_tool
    lda mouse_left_click
@@ -343,17 +334,17 @@ level_tick:
 @check_item_index:
    lda current_item
    ldy #7
-   cmp (ZP_PTR_1),y
+   cmp (ZP_PTR_3),y
    beq @check_item_quant
    jmp @next
 @check_item_quant:
    jsr inv_get_quant
    stx __level_quant
    sty __level_quant+1
-   lda (ZP_PTR_1)
+   lda (ZP_PTR_3)
    sta ZP_PTR_2
    ldy #1
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_3),y
    sta ZP_PTR_2+1
    ldy #7
    lda (ZP_PTR_2),y
@@ -384,12 +375,12 @@ level_tick:
    lda current_tool
    bne @check_match
    ldy #7
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_3),y
    jsr tool_set_cursor
    bra @check_click
 @check_match:
    ldy #7
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_3),y
    cmp current_tool
    bne @next
 @check_click:
@@ -399,7 +390,7 @@ level_tick:
    SET_MOUSE_CURSOR def_cursor
 @exec_trigger:
    ldy #6
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_3),y
    cmp #TOOL_TRIGGER
    beq @set_anim_ptr
    iny
@@ -407,10 +398,10 @@ level_tick:
 @set_anim_ptr:
    tya
    clc
-   adc (ZP_PTR_1)
+   adc (ZP_PTR_3)
    sta ANIM_PTR
    ldy #1
-   lda (ZP_PTR_1),y
+   lda (ZP_PTR_3),y
    adc #0
    sta ANIM_PTR+1
    bra @return
