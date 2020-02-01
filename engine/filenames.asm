@@ -1,7 +1,11 @@
 .ifndef FILENAMES_INC
 FILENAMES_INC = 1
 
-.include "globals.asm"
+.include "charmap.inc"
+
+.ifndef TTL_MUS_BANK
+TTL_MUS_BANK = 1
+.endif
 
 filenames:
 main_fn:       .asciiz "MAIN.BIN"

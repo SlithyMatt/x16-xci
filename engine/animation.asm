@@ -76,6 +76,8 @@ anim_reset:
    lda #SPRITE_MOVEMENT_BANK
    jsr reset_bank
    stz anim_seq_done
+   stz __anim_waiting
+   stz __anim_text_line
    rts
 
 start_anim:
@@ -531,6 +533,7 @@ __anim_text_instruction:
    lda anim_bank
    sta RAM_BANK
    lda (ANIM_PTR)
+   clc
    adc #MENU_PO
    asl
    asl
@@ -559,17 +562,20 @@ __anim_text_instruction:
    INC_ANIM_PTR
    dex
    bne @loop
+   inc __anim_text_line
 @return:
    rts
 
 __anim_scroll: ; A: lines to scroll
+   cmp #0
+   beq @return
    cmp __anim_text_line
    bpl @clear
    ldx #0
    tay
 @scroll_line_loop:
    cpy #0
-   beq @return
+   beq @clear_lines
    dec __anim_text_line
    stz VERA_ctrl
    lda #VRAM_TILEMAP_BANK
@@ -603,6 +609,7 @@ __anim_scroll: ; A: lines to scroll
    plx
    dey
    jmp @scroll_line_loop
+@clear_lines:
    lda __anim_text_line    ; clear current line and all below
    asl
    tax
@@ -623,6 +630,7 @@ __anim_scroll: ; A: lines to scroll
    bne @clear_data_loop
    cpx #8
    bmi @clear_line_loop
+   bra @return
 @clear:
    jsr __anim_clear_text
 @return:
@@ -653,6 +661,7 @@ __anim_line_skip:
    rts
 
 __anim_clear_text:
+   stz __anim_text_line
    lda tb_visible
    ora inv_visible
    bne @return       ; text field blocked

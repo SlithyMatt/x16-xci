@@ -157,9 +157,9 @@ start:
    lda (MENU_PTR),y
    adc #>RAM_CONFIG
    sta HELP_ABOUT_PTR+1
-   lda cfg_zone_levels
+   lda #<cfg_zone_levels
    sta ZL_COUNT_PTR
-   lda cfg_zone_levels+1
+   lda #>cfg_zone_levels
    sta ZL_COUNT_PTR+1
    asl cfg_cursor    ; convert sprite frame number to VRAM address
    rol cfg_cursor+1  ; by just multiplying by 4

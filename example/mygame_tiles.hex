@@ -1507,7 +1507,7 @@ ffffffff
 10000001
 11111111
 
-# Tile 157: Menu checkbox - cleared
+# Tile 158: Menu checkbox - cleared
 11111111
 10000001
 10111101
@@ -1517,7 +1517,7 @@ ffffffff
 10000001
 11111111
 
-# Tile 158: Text box corner
+# Tile 159: Text box corner
 00000000
 00000000
 00000000
@@ -1527,7 +1527,7 @@ ffffffff
 00001666
 00001666
 
-# Tile 159: Text box top/bottom
+# Tile 160: Text box top/bottom
 00000000
 00000000
 00000000
@@ -1537,7 +1537,7 @@ ffffffff
 66666666
 66666666
 
-# Tile 160: Text box left/right side
+# Tile 161: Text box left/right side
 00001666
 00001666
 00001666
@@ -1547,7 +1547,7 @@ ffffffff
 00001666
 00001666
 
-# Tile 161: Coffee maker upper left
+# Tile 162: Coffee maker upper left
 00000000
 00ffffff
 00fccccc
@@ -1557,7 +1557,7 @@ ffffffff
 00fccbbb
 00fccccc
 
-# Tile 162: Coffee maker upper right
+# Tile 163: Coffee maker upper right
 00000000
 fffff000
 ccccc200
@@ -1567,7 +1567,7 @@ ccccc000
 bbbbbbb0
 cccc00b0
 
-# Tile 163: Coffee maker middle left - empty
+# Tile 164: Coffee maker middle left - empty
 00fcc0bb
 00fcc00b
 00fcc000
@@ -1577,7 +1577,7 @@ cccc00b0
 00fcc100
 00fcc100
 
-# Tile 164: Coffee maker middle right - empty
+# Tile 165: Coffee maker middle right - empty
 bbbb00b0
 bbb00000
 00000000
@@ -1587,7 +1587,7 @@ bbbbbb00
 000010b0
 00001000
 
-# Tile 165: Coffee maker lower left
+# Tile 166: Coffee maker lower left
 00fcc011
 0cfccccc
 c0fccccc
@@ -1597,7 +1597,7 @@ c0ffffff
 00000000
 00000000
 
-# Tile 166: Coffee maker lower right
+# Tile 167: Coffee maker lower right
 11110000
 ccccc000
 cccccf00
@@ -1607,7 +1607,7 @@ ffffff00
 00000000
 00000000
 
-# Tile 167: Coffee maker middle left - full
+# Tile 168: Coffee maker middle left - full
 00fcc0bb
 00fcc00b
 00fcc000
@@ -1617,7 +1617,7 @@ ffffff00
 00fcc199
 00fcc199
 
-# Tile 168: Coffee maker middle right - full
+# Tile 169: Coffee maker middle right - full
 bbbb00b0
 bbb00000
 00000000
@@ -1627,7 +1627,7 @@ bbbbbb00
 999910b0
 99991000
 
-# Tile 169: Coffee cup top
+# Tile 170: Coffee cup top
 00000000
 00000000
 99999999
@@ -1637,7 +1637,7 @@ bbbbbb00
 99999999
 09999990
 
-# Tile 170: Coffee cup bottom
+# Tile 171: Coffee cup bottom
 09999990
 01111110
 01111110
@@ -1647,7 +1647,7 @@ bbbbbb00
 00000000
 00000000
 
-# Tile 171: Bananas upper left
+# Tile 172: Bananas upper left
 00000000
 00000000
 00000000
@@ -1657,7 +1657,7 @@ bbbbbb00
 00088777
 00000888
 
-# Tile 172: Bananas upper right
+# Tile 173: Bananas upper right
 00000090
 00077dd0
 00778770
@@ -1667,7 +1667,7 @@ bbbbbb00
 88777780
 77777780
 
-# Tile 173: Bananas lower left
+# Tile 174: Bananas lower left
 00977777
 00087777
 00008877
@@ -1677,7 +1677,7 @@ bbbbbb00
 00000000
 00000000
 
-# Tile 174: Bananas lower right
+# Tile 175: Bananas lower right
 77777800
 77788000
 78800000

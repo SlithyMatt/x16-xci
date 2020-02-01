@@ -15,9 +15,13 @@ ZONE_FN_LENGTH = __zone_bank - __zone_filename - 1
 __zone_num_string: .byte 0,0,0
 
 new_game:
+   stz zone
+   stz level
+   jsr init_state
+
    ; clear background header and footer
    stz VERA_ctrl
-   VERA_SET_ADDR VRAM_BITMAP, 2
+   VERA_SET_ADDR VRAM_BITMAP, 1
    ldx #<LEVEL_BITMAP_OFFSET
    ldy #>LEVEL_BITMAP_OFFSET
 @header_loop:
@@ -29,7 +33,7 @@ new_game:
    cpx #0
    bne @header_loop
    stz VERA_ctrl
-   VERA_SET_ADDR VRAM_TEXTFIELD_BITMAP_BG, 2
+   VERA_SET_ADDR VRAM_TEXTFIELD_BITMAP_BG, 1
    ldx #<TEXTFIELD_BITMAP_BG_SIZE
    ldy #>TEXTFIELD_BITMAP_BG_SIZE
 @footer_loop:
@@ -41,9 +45,6 @@ new_game:
    cpx #0
    bne @footer_loop
 
-   stz zone
-   stz level
-   jsr init_state
    jsr load_zone
    jsr init_toolbar
    jsr load_level
@@ -92,8 +93,7 @@ load_zone:
    sta VERA_addr_bank
    plx
    txa
-   clc
-   adc #1
+   inc
    asl
    asl
    asl
