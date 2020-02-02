@@ -147,6 +147,21 @@ load_level:
    lda #>__level_triggers
    adc __level_trigger_offset+1
    sta ZP_PTR_2+1
+   lda (ZP_PTR_3)
+   cmp #TOOL_TRIGGER
+   beq @tool_offset
+   lda #10
+   bra @set_offset
+@tool_offset:
+   lda #6
+@set_offset:
+   clc
+   adc ZP_PTR_3
+   sta (ZP_PTR_2)    ; set address of sequence start
+   lda ZP_PTR_3+1
+   adc #0
+   ldy #1
+   sta (ZP_PTR_2),y
    lda anim_bank
    sta RAM_BANK
    lda (ZP_PTR_3)
@@ -157,8 +172,6 @@ load_level:
    ldy #7
    sta (ZP_PTR_2),y  ; set tool/item
    ldy #2
-   sta (ZP_PTR_2),y
-   iny
    lda (ZP_PTR_3),y
    sta (ZP_PTR_2),y  ; set x_min
    iny
@@ -172,7 +185,7 @@ load_level:
    sta (ZP_PTR_2),y  ; set y_max
 @next_trigger:
    inc __level_num_triggers
-   bra @trigger_loop
+   jmp @trigger_loop
 
    ; intialize music
 @init_music:
@@ -293,11 +306,11 @@ level_tick:
    jmp @return
 @check_next_trigger:
    phx
-   lda __level_triggers
+   lda #<__level_triggers
    clc
    adc __level_trigger_offset
    sta ZP_PTR_3
-   lda __level_triggers+1
+   lda #>__level_triggers
    adc __level_trigger_offset+1
    sta ZP_PTR_3+1
    lda mouse_tile_x
@@ -347,6 +360,8 @@ level_tick:
    lda (ZP_PTR_3),y
    sta ZP_PTR_2+1
    ldy #7
+   lda anim_bank
+   sta RAM_BANK
    lda (ZP_PTR_2),y
    cmp __level_quant+1
    bpl @check_high_neq
@@ -389,21 +404,13 @@ level_tick:
    stz current_tool
    SET_MOUSE_CURSOR def_cursor
 @exec_trigger:
-   ldy #6
-   lda (ZP_PTR_3),y
-   cmp #TOOL_TRIGGER
-   beq @set_anim_ptr
-   iny
-   iny
-@set_anim_ptr:
-   tya
-   clc
-   adc (ZP_PTR_3)
+   lda (ZP_PTR_3)
    sta ANIM_PTR
    ldy #1
    lda (ZP_PTR_3),y
-   adc #0
    sta ANIM_PTR+1
+   stz anim_seq_done
+   pla ; clear stack
    bra @return
 @next:
    plx

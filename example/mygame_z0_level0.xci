@@ -6,7 +6,7 @@ music zone0.vgm
 init
 sprite_frames 2  0  30 31 32 33 34 35 36 37 # Flag waving
 sprite 2  282 50                            # Top-right of pole
-sprite_move 2  6  100  0 0                  # Fixed position, 10 fps, 10 s
+sprite_move 2  6  120  0 0                  # Fixed position, 10 fps, 12 s
 sprite_frames 3  0  38  # Front of car
 sprite 3  86 170        # Parked, not moving
 sprite_frames 4  0  40  # Read of car
@@ -32,12 +32,11 @@ tiles 11  16 23  159   160  160  160  160  160  160  160  160 159H
 tiles 11  16 24  161    77  121   32   72  111  117  115  101 161H
 tiles 11  16 25  159V 160V 160V 160V 160V 160V 160V 160V 160V 159HV
 wait 60
-clear
 text 1  This is where my game starts.
 wait 60
 text 1  But first we need to go inside.
 wait 60
 text 1  I'm already waiting there for you!
-wait 180
+wait 120
 go_level 0 1   # automatically go to zone 0, level 1
 end_anim

@@ -567,16 +567,27 @@ __anim_text_instruction:
    rts
 
 __anim_scroll: ; A: lines to scroll
+   bra @start
+@lines: .byte 0
+@start:
+   sta @lines
    cmp #0
-   beq @return
+   bne @check_clear
+   jmp @return
+@check_clear:
    cmp __anim_text_line
-   bpl @clear
+   bmi @start_scroll
+   jmp @clear
+@start_scroll:
    ldx #0
+   lda __anim_text_line
+   sec
+   sbc @lines
+   sta __anim_text_line
    tay
 @scroll_line_loop:
    cpy #0
    beq @clear_lines
-   dec __anim_text_line
    stz VERA_ctrl
    lda #VRAM_TILEMAP_BANK
    sta VERA_addr_bank
@@ -588,8 +599,13 @@ __anim_scroll: ; A: lines to scroll
    sta VERA_addr_low
    inx
    lda __anim_text_addr,x
-   inx
    sta VERA_addr_high
+   pla
+   pha
+   clc
+   adc @lines
+   asl
+   tax
    lda #1
    sta VERA_ctrl
    lda #VRAM_TILEMAP_BANK
@@ -604,9 +620,10 @@ __anim_scroll: ; A: lines to scroll
    lda VERA_data1
    sta VERA_data0
    inx
-   cpx #TEXT_LINE_LENGTH
+   cpx #(TEXT_LINE_LENGTH*2)
    bne @scroll_data_loop
    plx
+   inx
    dey
    jmp @scroll_line_loop
 @clear_lines:
@@ -890,6 +907,7 @@ __anim_get_item:
    tay
    pla
    jsr inv_add_item
+   INC_ANIM_PTR
    rts
 
 __anim_move_sprites:

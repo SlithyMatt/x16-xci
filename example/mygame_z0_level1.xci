@@ -31,7 +31,7 @@ text 1  Just tell me what to do.
 end_anim
 
 # clicking on the coffee maker with use tool (default)
-tool_trigger use  18 10  19 12
+tool_trigger use  19 11  20 13
 if coffee_made
 if holding_carafe
 clear
@@ -53,18 +53,18 @@ clear
 text 1  Ok, I'll make some coffee
 wait 60
 # show steam
-sprite 2  148 70
+sprite 2  153 76
 sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
 wait 120
 # fill carafe
-tiles 0  18 11  168 169
+tiles 0  19 12  168 169
 text 1  Done! Smells good...
 set_state coffee_made
 end_if # not coffee_made
 end_anim # use coffee maker
 
 # clicking on the coffee maker with look tool
-tool_trigger use  18 10  19 12
+tool_trigger use  19 11  20 13
 if_not coffee_made
 clear
 text 1  That's my coffee maker.
@@ -80,7 +80,7 @@ end_if
 end_anim # look at coffee maker
 
 # clicking on the coffee maker with money
-item_trigger money  1  0  18 10  19 12
+item_trigger money  1  0  19 11  20 13
 clear
 text 1  It's my coffee maker.
 wait 60
@@ -88,7 +88,7 @@ text 1  You can have a cup for free.
 end_anim
 
 # clicking on the coffee cup with use tool (default)
-tool_trigger use  20 11  20 12
+tool_trigger use  21 12  21 13
 if_not cup_taken
 if_not holding_carafe
 if_not coffee_poured
@@ -116,7 +116,7 @@ clear
 text 1  Sure, pour the whole pot.
 wait 60
 # empty carafe
-tiles 0  18 11  164 165
+tiles 0  19 12  164 165
 clear_state holding_carafe
 set_state coffee_poured
 # move steam to over cup
@@ -127,7 +127,7 @@ end_if # not cup_taken
 end_anim # use coffee cup
 
 # clicking on the coffee cup with look tool
-tool_trigger look  20 11  20 12
+tool_trigger look  21 12  21 13
 if_not cup_taken
 clear
 text 1  That's a coffee cup.
@@ -143,14 +143,14 @@ end_if # not cup_taken
 end_anim # look at coffee cup
 
 # clicking on the bananas with use tool (default)
-tool_trigger use  35 11  36 12
+tool_trigger use  35 12  36 13
 if_not bananas_taken
 clear
 text 2  Go ahead and take the bananas. # make it yellow, because bananas
 wait 60
 # remove bananas
-tiles 0  35 11  0 0
 tiles 0  35 12  0 0
+tiles 0  35 13  0 0
 get_item banana 3 # add 3 bananas to inventory
 set_state bananas_taken
 text 1  You may get hungry later.
@@ -158,7 +158,7 @@ end_if # not bananas_taken
 end_anim # use bananas
 
 # clicking on the bananas with look tool
-tool_trigger look  35 11  36 12
+tool_trigger look  35 12  36 13
 if_not bananas_taken
 clear
 text 2  Those are my bananas. # make it yellow, because bananas
