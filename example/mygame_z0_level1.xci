@@ -50,6 +50,7 @@ end_if # not holding_carafe
 end_if # coffee_made
 if_not coffee_made
 clear
+gif_start
 text 1  Ok, I'll make some coffee
 wait 60
 # show steam
@@ -101,6 +102,7 @@ text 1  Maybe you should fill it.
 end_if # not coffee_poured
 if coffee_poured
 clear
+gif_pause
 text 1  Go ahead, take it with you.
 sprite_hide 2 # no more steam
 # remove cup
@@ -120,7 +122,7 @@ tiles 0  19 12  164 165
 clear_state holding_carafe
 set_state coffee_poured
 # move steam to over cup
-sprite 2  156 78
+sprite 2  164 86
 sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
 end_if # holding_carafe
 end_if # not cup_taken

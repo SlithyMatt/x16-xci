@@ -23,6 +23,9 @@ END_IF               = 69
 SET_STATE            = 70
 CLEAR_STATE          = 71
 GET_ITEM             = 72
+GIF_START            = 73
+GIF_PAUSE            = 74
+GIF_FRAME            = 75
 
 NUM_SPRITES          = 128
 
@@ -145,6 +148,12 @@ anim_tick:
    beq @clear_state
    cmp #GET_ITEM
    beq @get_item
+   cmp #GIF_START
+   beq @gif_start
+   cmp #GIF_PAUSE
+   beq @gif_pause
+   cmp #GIF_FRAME
+   beq @gif_frame
    cmp #END_ANIM_KEY
    beq @end_anim
    jmp @stop ; unrecognized key, just stop
@@ -196,6 +205,18 @@ anim_tick:
 @get_item:
    jsr __anim_get_item
    jmp @play
+@gif_start:
+   lda #2
+   sta GIF_ctrl
+   jmp @play
+@gif_pause:
+   lda #0
+   sta GIF_ctrl
+   jmp @play
+@gif_frame:
+   lda #1
+   sta GIF_ctrl
+   jmp @play
 @end_anim:
    lda #1
    sta anim_seq_done
@@ -219,13 +240,17 @@ __anim_sprite_frames:
    lda __sprite_idx
    jsr __get_sprite_frame_addr
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR) ; number of frames
+   cli
    pha
    lda #SPRITE_FRAME_SEQ_BANK
+   sei
    sta RAM_BANK
    pla
    sta (ZP_PTR_1)
+   cli
    tax ; words to copy = number of frames
    INC_ANIM_PTR
    ldy #1
@@ -234,11 +259,13 @@ __anim_sprite_frames:
    beq @set
    dex
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
    sta __sprite_frame
    INC_ANIM_PTR
    lda (ANIM_PTR)
+   cli
    sta __sprite_frame+1
    and #FRAME_FLIP
    sta __sprite_flip
@@ -248,6 +275,7 @@ __anim_sprite_frames:
    asl __sprite_frame
    rol __sprite_frame+1
    lda #SPRITE_FRAME_SEQ_BANK
+   sei
    sta RAM_BANK
    lda __sprite_frame
    sta (ZP_PTR_1),y
@@ -256,6 +284,7 @@ __anim_sprite_frames:
    ora #(^VRAM_SPRITES << 3)
    ora __sprite_flip
    sta (ZP_PTR_1),y
+   cli
    iny
    jmp @loop
 @set:
@@ -263,6 +292,7 @@ __anim_sprite_frames:
    jsr __sprattr     ; set the current frame to the first one
    ldy #1
    lda #SPRITE_FRAME_SEQ_BANK
+   sei
    sta RAM_BANK
    lda (ZP_PTR_1),y
    sta VERA_data0
@@ -275,6 +305,7 @@ __anim_sprite_frames:
    lda VERA_data0
    lda VERA_data0
    lda (ZP_PTR_1),y
+   cli
    and #FRAME_FLIP
    asl
    rol
@@ -344,6 +375,7 @@ __sprattr:  ; A: sprite index
 
 __anim_sprite:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR) ; sprite index
    jsr __sprattr
@@ -357,6 +389,7 @@ __anim_sprite:
    sta VERA_data0
    INC_ANIM_PTR
    lda (ANIM_PTR) ; y[0]
+   cli
    sta VERA_data0
    INC_ANIM_PTR
    stz VERA_data0 ; y[1] = 0 since max y = 240
@@ -377,8 +410,10 @@ __anim_sprite:
 
 __anim_sprite_hide:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR) ; sprite index
+   cli
    jsr __sprattr  ; load current sprite flipping
    lda VERA_data0 ; ignore first 6 bytes
    lda VERA_data0
@@ -407,6 +442,7 @@ __anim_tiles:
 @width: .byte 0
 @start:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
    sta @tilex
@@ -438,18 +474,22 @@ __anim_tiles:
    INC_ANIM_PTR
    bra @loop
 @return:
+   cli
    rts
 
 __anim_wait:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
+   cli
    sta __anim_waiting
    INC_ANIM_PTR
    rts
 
 __anim_new_sprite_move:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
    sta __sprite_idx
@@ -515,6 +555,7 @@ __anim_new_sprite_move:
    sta (ZP_PTR_1),y
    INC_ANIM_PTR
    ; two spare bytes for future use
+   cli
    rts
 
 __anim_text_instruction:
@@ -531,6 +572,7 @@ __anim_text_instruction:
    jsr __anim_scroll
 @print:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
    clc
@@ -562,6 +604,7 @@ __anim_text_instruction:
    INC_ANIM_PTR
    dex
    bne @loop
+   cli
    inc __anim_text_line
 @return:
    rts
@@ -658,8 +701,10 @@ __anim_scroll_instruction:
    ora inv_visible
    bne @return       ; text field blocked
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
+   cli
    jsr __anim_scroll
    INC_ANIM_PTR
 @return:
@@ -712,6 +757,7 @@ __anim_clear_text:
 
 __anim_go_level:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
    cmp zone
@@ -721,6 +767,7 @@ __anim_go_level:
 @level:
    INC_ANIM_PTR
    lda (ANIM_PTR)
+   cli
    sta level
    lda #1
    sta req_load_level
@@ -730,11 +777,13 @@ __anim_go_level:
 
 __anim_if:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
    tax
    INC_ANIM_PTR
    lda (ANIM_PTR)
+   cli
    tay
    INC_ANIM_PTR
    jsr get_state
@@ -745,11 +794,13 @@ __anim_if:
 
 __anim_if_not:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
    tax
    INC_ANIM_PTR
    lda (ANIM_PTR)
+   cli
    tay
    INC_ANIM_PTR
    jsr get_state
@@ -764,6 +815,7 @@ __anim_seek_endif:
 @start:
    stz @depth
    lda anim_bank
+   sei
    sta RAM_BANK
 @loop:
    lda (ANIM_PTR)
@@ -787,11 +839,11 @@ __anim_seek_endif:
    bra @loop
 @return:
    jsr __anim_seek_next_instruction
+   cli
    rts
 
 __anim_seek_next_instruction:
-   lda anim_bank
-   sta RAM_BANK
+   ; Requires: animation RAM bank selected and interrupts disabled
    lda (ANIM_PTR)
    cmp #SPRITE_FRAMES_KEY
    beq @sprite_frames
@@ -870,11 +922,13 @@ __anim_seek_next_instruction:
 
 __anim_set_state:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
    tax
    INC_ANIM_PTR
    lda (ANIM_PTR)
+   cli
    tay
    INC_ANIM_PTR
    lda #1
@@ -883,11 +937,13 @@ __anim_set_state:
 
 __anim_clear_state:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
    tax
    INC_ANIM_PTR
    lda (ANIM_PTR)
+   cli
    tay
    INC_ANIM_PTR
    lda #0
@@ -896,6 +952,7 @@ __anim_clear_state:
 
 __anim_get_item:
    lda anim_bank
+   sei
    sta RAM_BANK
    lda (ANIM_PTR)
    pha
@@ -904,6 +961,7 @@ __anim_get_item:
    tax
    INC_ANIM_PTR
    lda (ANIM_PTR)
+   cli
    tay
    pla
    jsr inv_add_item
@@ -920,6 +978,7 @@ __anim_move_sprites:
    sta ZP_PTR_2
    lda #>RAM_WIN
    sta ZP_PTR_2+1
+   sei
 @loop:
    inc __sprite_idx
    lda __sprite_idx
@@ -969,10 +1028,10 @@ __anim_move_sprites:
    iny
    lda (ZP_PTR_2),y
    sta __vec_y
-   lda #SPRITE_FRAME_SEQ_BANK
-   sta RAM_BANK
    lda __sprite_idx
    jsr __get_sprite_frame_addr
+   lda #SPRITE_FRAME_SEQ_BANK
+   sta RAM_BANK
    lda (ZP_PTR_1)
    sta @num_frames
    ply
@@ -1065,6 +1124,7 @@ __anim_move_sprites:
    lda __sprite_flip
    sta VERA_data0
 @return:
+   cli
    rts
 
 .endif

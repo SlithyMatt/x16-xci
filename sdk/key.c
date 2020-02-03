@@ -75,7 +75,10 @@ const char xci_key_strings[NUM_XCI_KEYS][MAX_KEY_LENGTH] = {
    "end_if",
    "set_state",
    "clear_state",
-   "get_item"
+   "get_item",
+   "gif_start",
+   "gif_pause",
+   "gif_frame"
 };
 
 void strn_tolower(char *dest, int max, const char *source) {

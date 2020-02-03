@@ -606,6 +606,7 @@ inv_add_item:  ; A: item index
    lda __inv_order,x
    cmp current_item
    beq @return
+   inx
    bra @loop
 @add:
    lda current_item

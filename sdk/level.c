@@ -102,6 +102,9 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
          case LINE_SKIP:
          case CLEAR_TEXT:
          case END_IF:
+         case GIF_START:
+         case GIF_PAUSE:
+         case GIF_FRAME:
             bin[size++] = node->key;
             break;
          case TEXT_LINE:

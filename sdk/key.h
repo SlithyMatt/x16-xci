@@ -75,6 +75,9 @@ typedef enum xci_key {
    SET_STATE,
    CLEAR_STATE,
    GET_ITEM,
+   GIF_START,
+   GIF_PAUSE,
+   GIF_FRAME,
 
    NUM_XCI_KEYS
 } xci_key_t;
