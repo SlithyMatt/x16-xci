@@ -55,7 +55,8 @@ __inv_cfg_map: ; index to config address map
 
 init_inv:
    stz inv_visible
-   stz current_item
+   lda #NO_ITEM
+   sta current_item
    stz __inv_num_items
    stz __inv_page_start
    ldy #INV_START_X
@@ -145,7 +146,7 @@ init_inv:
    bra @loop
 @return:
    lda #NO_ITEM
-   stz current_item
+   sta current_item
    rts
 
 show_inv:
@@ -385,6 +386,9 @@ inv_hide:
 inv_tick:
    lda inv_visible
    beq @return
+   lda mouse_tile_y
+   cmp #START_TEXT_Y    ; hide if mouse is in level
+   bmi @hide
    lda mouse_left_click
    beq @return
    lda mouse_tile_y
@@ -457,6 +461,8 @@ __inv_click:
    adc @x
    clc
    adc __inv_page_start
+   tax
+   lda __inv_order,x
    sta current_item
    jsr __inv_set_item_cursor
    bra @return
@@ -613,7 +619,8 @@ inv_add_item:  ; A: item index
    sta __inv_order,x
    inc __inv_num_items
 @return:
-   stz current_item
+   lda #NO_ITEM
+   sta current_item
    rts
 
 inv_lose_item: ; A: item index
@@ -662,7 +669,8 @@ inv_lose_item: ; A: item index
 @done_shift:
    dec __inv_num_items
 @return:
-   stz current_item
+   lda #NO_ITEM
+   sta current_item
    rts
 
 

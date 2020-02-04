@@ -589,7 +589,7 @@ __anim_text_instruction:
 @start:
    lda tb_visible
    ora inv_visible
-   bne @return       ; text field blocked
+   bne @skip            ; text field blocked
    lda __anim_text_line
    cmp #4
    bmi @print
@@ -631,6 +631,15 @@ __anim_text_instruction:
    bne @loop
    cli
    inc __anim_text_line
+   bra @return
+@skip:
+   lda ANIM_PTR
+   clc
+   adc #39
+   sta ANIM_PTR
+   lda ANIM_PTR+1
+   adc #0
+   sta ANIM_PTR+1
 @return:
    rts
 
@@ -724,14 +733,15 @@ __anim_scroll: ; A: lines to scroll
 __anim_scroll_instruction:
    lda tb_visible
    ora inv_visible
-   bne @return       ; text field blocked
+   bne @skip       ; text field blocked
    lda anim_bank
    sei
    sta RAM_BANK
    lda (ANIM_PTR)
    cli
    jsr __anim_scroll
-   INC_ANIM_PTR
+@skip:
+   INC_ANIM_PTR   
 @return:
    rts
 

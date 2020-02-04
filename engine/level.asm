@@ -50,7 +50,8 @@ load_level:
    stz tb_visible
    stz current_tool
    stz inv_visible
-   stz current_item
+   lda #NO_ITEM
+   sta current_item
 
    ; disable all sprites except mouse cursor
    VERA_SET_ADDR $F500E, 4 ; sprite 1 byte 6, stride of 8
@@ -307,8 +308,9 @@ level_tick:
 @trigger_loop:
    cpx __level_num_triggers
    bne @check_next_trigger
-   lda current_tool
-   ora current_item
+   lda current_item
+   inc
+   ora current_tool
    bne @keep_cursor
    SET_MOUSE_CURSOR def_cursor
 @keep_cursor:
@@ -377,25 +379,29 @@ level_tick:
    sei
    sta RAM_BANK
    lda (ZP_PTR_3)
+   sec
+   sbc #4
    sta ZP_PTR_2
    ldy #1
    lda (ZP_PTR_3),y
    cli
+   sbc #0
    sta ZP_PTR_2+1
-   ldy #7
+   ldy #1
    lda (ZP_PTR_2),y
    cmp __level_quant+1
-   bpl @check_high_neq
+   bmi @debit
+   beq @check_low_quant
    jmp @next
-@check_high_neq:
-   bne @debit
+@check_low_quant:
    dey
    lda (ZP_PTR_2),y
    cmp __level_quant
-   bpl @debit
+   bmi @debit
+   beq @debit
    jmp @next
 @debit:
-   ldy #8
+   ldy #2
    lda (ZP_PTR_2),y
    tax
    iny
@@ -408,6 +414,9 @@ level_tick:
    SET_MOUSE_CURSOR def_cursor
    bra @exec_trigger
 @check_tool:
+   lda current_item
+   cmp #NO_ITEM
+   bne @next
    lda current_tool
    bne @check_match
    ldy #7

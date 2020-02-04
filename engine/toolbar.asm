@@ -271,6 +271,8 @@ __tb_set_cursor:  ; A: tool ID
    rts
 
 toolbar_tick:
+   lda inv_visible
+   bne @return
    lda __tb_enabled
    beq @return
    lda tb_visible
@@ -353,6 +355,8 @@ __tb_click:
    bra @start
 @index: .byte 0
 @start:
+   lda #NO_ITEM
+   sta current_item
    stz @index
 @loop:
    lda @index
