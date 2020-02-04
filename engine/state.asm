@@ -64,10 +64,12 @@ check_visited: ; Input:
                ; Output:
                ;  A: 0 = not visited, 1 = visited
    lda #STATE_BANK
+   sei
    sta RAM_BANK
    jsr __get_visited_addr
    sta __state_mask
    lda (ZP_PTR_1)
+   cli
    and __state_mask
    beq @return
    lda #1
@@ -77,12 +79,14 @@ check_visited: ; Input:
 set_visited:   ;  X: Level
                ;  Y: Zone
    lda #STATE_BANK
+   sei
    sta RAM_BANK
    jsr __get_visited_addr
    sta __state_mask
    lda (ZP_PTR_1)
    ora __state_mask
    sta (ZP_PTR_1)
+   cli
    rts
 
 __get_state_addr: ; Input:
@@ -109,6 +113,7 @@ __get_state_addr: ; Input:
    ror @bit
    ror @bit
    ror @bit
+   ror @bit
    ror @bit       ; offset % 8
    lda #<STATE_FLAGS
    clc
@@ -131,10 +136,12 @@ __get_state_addr: ; Input:
 get_state:  ; Input: X/Y - state index
             ; Ouput: A - state value: 0 = clear, 1 = set
    lda #STATE_BANK
+   sei
    sta RAM_BANK
    jsr __get_state_addr
    sta __state_mask
    lda (ZP_PTR_1)
+   cli
    and __state_mask
    beq @return
    lda #1
@@ -148,6 +155,7 @@ set_state:  ;  A: value: 0 = clear, 1+ = set
 @start:
    sta @set
    lda #STATE_BANK
+   sei
    sta RAM_BANK
    jsr __get_state_addr
    sta __state_mask
@@ -164,6 +172,7 @@ set_state:  ;  A: value: 0 = clear, 1+ = set
    and __state_mask
 @return:
    sta (ZP_PTR_1)
+   cli
    rts
 
 

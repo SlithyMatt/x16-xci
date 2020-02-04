@@ -656,8 +656,8 @@ music zone0.vgm
 
 init
 sprite_frames 2  0  30 31 32 33 34 35 36 37 # Flag waving
-sprite 2  282 54                            # Top-right of pole
-sprite_move 2  6  100  0 0                  # Fixed position, 10 fps, 10 s
+sprite 2  282 50                            # Top-right of pole
+sprite_move 2  6  120  0 0                  # Fixed position, 10 fps, 12 s
 sprite_frames 3  0  38  # Front of car
 sprite 3  86 170        # Parked, not moving
 sprite_frames 4  0  40  # Read of car
@@ -679,16 +679,16 @@ wait 30
 text 1  This is my house.
 wait 60
 text 1  See?
-tiles 11  10 27  158   159  159  159  159  159  159  159  159 158H
-tiles 11  10 28  160    77  121   32   72  111  117  115  101 160H
-tiles 11  10 29  158V 159V 159V 159V 159V 159V 159V 159V 159V 158HV
+tiles 11  16 23  159   160  160  160  160  160  160  160  160 159H
+tiles 11  16 24  161    77  121   32   72  111  117  115  101 161H
+tiles 11  16 25  159V 160V 160V 160V 160V 160V 160V 160V 160V 159HV
 wait 60
 text 1  This is where my game starts.
 wait 60
 text 1  But first we need to go inside.
 wait 60
 text 1  I'm already waiting there for you!
-wait 60
+wait 120
 go_level 0 1   # automatically go to zone 0, level 1
 end_anim
 ```
@@ -748,20 +748,20 @@ music zone0.vgm
 
 init
 # coffee maker
-tiles 0  18 10  161 162
-tiles 0  18 11  163 164
-tiles 0  18 12  165 166
+tiles 0  19 11  162 163
+tiles 0  19 12  164 165
+tiles 0  19 13  166 167
 # steam loop
 sprite_frames 2  0  43 44 45 46
 end_anim
 
 first
 # coffee cup
-tiles 0  20 11  169
-tiles 0  20 12  170
+tiles 0  21 12  170
+tiles 0  21 13  171
 # bananas
-tiles 0  35 11  171 172
-tiles 0  35 12  173 174
+tiles 0  35 12  172 173
+tiles 0  35 13  174 175
 wait 30
 text 1  This is my kitchen. So modern!
 wait 60
@@ -773,7 +773,7 @@ text 1  Just tell me what to do.
 end_anim
 
 # clicking on the coffee maker with use tool (default)
-tool_trigger use  18 10  19 12
+tool_trigger use  19 11  20 13
 if coffee_made
 if holding_carafe
 clear
@@ -792,21 +792,22 @@ end_if # not holding_carafe
 end_if # coffee_made
 if_not coffee_made
 clear
+gif_start
 text 1  Ok, I'll make some coffee
 wait 60
 # show steam
-sprite 2  148 70
+sprite 2  153 76
 sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
 wait 120
 # fill carafe
-tiles 0  18 11  167 168
+tiles 0  19 12  168 169
 text 1  Done! Smells good...
 set_state coffee_made
 end_if # not coffee_made
 end_anim # use coffee maker
 
 # clicking on the coffee maker with look tool
-tool_trigger use  18 10  19 12
+tool_trigger look  19 11  20 13
 if_not coffee_made
 clear
 text 1  That's my coffee maker.
@@ -822,7 +823,7 @@ end_if
 end_anim # look at coffee maker
 
 # clicking on the coffee maker with money
-item_trigger money  1  0  18 10  19 12
+item_trigger money  1  0  19 11  20 13
 clear
 text 1  It's my coffee maker.
 wait 60
@@ -830,7 +831,7 @@ text 1  You can have a cup for free.
 end_anim
 
 # clicking on the coffee cup with use tool (default)
-tool_trigger use  20 11  20 12
+tool_trigger use  21 12  21 13
 if_not cup_taken
 if_not holding_carafe
 if_not coffee_poured
@@ -846,8 +847,8 @@ clear
 text 1  Go ahead, take it with you.
 sprite_hide 2 # no more steam
 # remove cup
-tiles 0  20 11  0
-tiles 0  20 12  0
+tiles 0  21 12  0
+tiles 0  21 13  0
 get_item coffee 1 # add 1 coffee to inventory
 clear_state coffee_poured
 set_state cup_taken
@@ -858,18 +859,19 @@ clear
 text 1  Sure, pour the whole pot.
 wait 60
 # empty carafe
-tiles 0  18 11  163 164
+tiles 0  19 12  164 165
 clear_state holding_carafe
+clear_state coffee_made
 set_state coffee_poured
 # move steam to over cup
-sprite 2  156 78
+sprite 2  164 86
 sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
 end_if # holding_carafe
 end_if # not cup_taken
 end_anim # use coffee cup
 
 # clicking on the coffee cup with look tool
-tool_trigger look  20 11  20 12
+tool_trigger look  21 12  21 13
 if_not cup_taken
 clear
 text 1  That's a coffee cup.
@@ -885,14 +887,14 @@ end_if # not cup_taken
 end_anim # look at coffee cup
 
 # clicking on the bananas with use tool (default)
-tool_trigger use  35 11  36 12
+tool_trigger use  35 12  36 13
 if_not bananas_taken
 clear
 text 2  Go ahead and take the bananas. # make it yellow, because bananas
 wait 60
 # remove bananas
-tiles 0  35 11  0 0
 tiles 0  35 12  0 0
+tiles 0  35 13  0 0
 get_item banana 3 # add 3 bananas to inventory
 set_state bananas_taken
 text 1  You may get hungry later.
@@ -900,7 +902,7 @@ end_if # not bananas_taken
 end_anim # use bananas
 
 # clicking on the bananas with look tool
-tool_trigger look  35 11  36 12
+tool_trigger look  35 12  36 13
 if_not bananas_taken
 clear
 text 2  Those are my bananas. # make it yellow, because bananas
@@ -912,6 +914,7 @@ end_anim # look at bananas
 
 # clicking on the doorway with walk tool (default)
 tool_trigger walk  2 6  6 23
+gif_pause
 clear
 if_not cup_taken
 text 1  You look tired. Have some coffee.
@@ -937,10 +940,8 @@ end_anim # run to doorway
 # clicking on the doorway with look tool
 tool_trigger look  2 6  6 23
 clear
-text 1  That's the doorway to the
-text 1  living room.
+text 1  That's the doorway to the living room.
 end_anim # run to doorway
-
 ```
 
 Ok, so there's a lot to unpack here. This is more typical of how most game levels will be written, where the order in which the player's actions take place dictate their experience, including what they see in the scene and read in the text field. We'll go through this level in detail here. If you want to see a detailed breakdown of how the other example levels were written, check out the [appendix explaining the example](example/APPENDIX.md). For now, let's examine level 1 of zone 0, which makes use of all the keys that can be found in level files that weren't seen in the previous level.

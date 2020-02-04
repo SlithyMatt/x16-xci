@@ -8,9 +8,9 @@ loadbank:
    lda #KERNAL_ROM_BANK
    sta ROM_BANK
    lda #1
-   ldx #8
+   ldx #DISK_DEVICE
    ldy #0
-   jsr SETLFS        ; SetFileParams(LogNum=1,DevNum=8,SA=0)
+   jsr SETLFS        ; SetFileParams(LogNum=1,DevNum=DISK_DEVICE,SA=0)
    lda #<bankparams
    sta ZP_PTR_1
    lda #>bankparams

@@ -15,6 +15,7 @@ ZONE_FN_LENGTH = __zone_bank - __zone_filename - 1
 __zone_num_string: .byte 0,0,0
 
 new_game:
+   jsr load_main_cfg ; reload main config file
    stz zone
    stz level
    jsr init_state
@@ -54,9 +55,9 @@ load_zone:
    lda #KERNAL_ROM_BANK
    sta ROM_BANK
    lda #1
-   ldx #8
+   ldx #DISK_DEVICE
    ldy #0
-   jsr SETLFS                 ; SetFileParams(LogNum=1,DevNum=8,SA=0)
+   jsr SETLFS                 ; SetFileParams(LogNum=1,DevNum=DISK_DEVICE,SA=0)
    lda #<(__zone_filename+1)  ; overwrite zone number in filename
    sta ZP_PTR_2
    lda #>(__zone_filename+1)

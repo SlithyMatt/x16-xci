@@ -414,6 +414,7 @@ __anim_sprite_hide:
    sta RAM_BANK
    lda (ANIM_PTR) ; sprite index
    cli
+   sta __sprite_idx
    jsr __sprattr  ; load current sprite flipping
    lda VERA_data0 ; ignore first 6 bytes
    lda VERA_data0
@@ -424,6 +425,7 @@ __anim_sprite_hide:
    lda VERA_data0
    and #SPRITE_Z_MASK
    sta __sprite_flip
+   lda __sprite_idx
    jsr __sprattr  ; clear Z-depth
    lda VERA_data0 ; ignore first 6 bytes
    lda VERA_data0
@@ -433,6 +435,29 @@ __anim_sprite_hide:
    lda VERA_data0
    lda __sprite_flip
    sta VERA_data0
+   INC_ANIM_PTR
+   lda __sprite_idx              ; stop any current animation
+   sta ZP_PTR_1
+   stz ZP_PTR_1+1
+   asl ZP_PTR_1
+   rol ZP_PTR_1+1
+   asl ZP_PTR_1
+   rol ZP_PTR_1+1
+   asl ZP_PTR_1
+   rol ZP_PTR_1+1
+   lda ZP_PTR_1
+   clc
+   adc #<RAM_WIN
+   sta ZP_PTR_1
+   lda ZP_PTR_1+1
+   adc #>RAM_WIN
+   sta ZP_PTR_1+1
+   lda #SPRITE_MOVEMENT_BANK
+   sei
+   sta RAM_BANK
+   lda #0
+   sta (ZP_PTR_1)
+   cli
    rts
 
 __anim_tiles:
@@ -787,6 +812,7 @@ __anim_if:
    tay
    INC_ANIM_PTR
    jsr get_state
+   cmp #0
    bne @return ; state is set, just continue executing after IF
    jsr __anim_seek_endif
 @return:
@@ -804,6 +830,7 @@ __anim_if_not:
    tay
    INC_ANIM_PTR
    jsr get_state
+   cmp #0
    beq @return ; state is clear, just continue executing after IF_NOT
    jsr __anim_seek_endif
 @return:
@@ -828,7 +855,6 @@ __anim_seek_endif:
    bra @next
 @level_down:
    inc @depth
-   jsr __anim_seek_next_instruction
    bra @next
 @check_depth:
    lda @depth

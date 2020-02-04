@@ -66,6 +66,25 @@ reset_bank: ; A: bank to set to all zeros
 @return:
    rts
 
+RAM_CONFIG     = $6000
+
+load_main_cfg:
+   lda #0
+   sta ROM_BANK
+   lda #1
+   ldx #DISK_DEVICE
+   ldy #0
+   jsr SETLFS        ; SetFileParams(LogNum=1,DevNum=DISK_DEVICE,SA=0)
+   lda #(main_fn_end-main_fn-1)
+   ldx #<main_fn
+   ldy #>main_fn
+   jsr SETNAM        ; SetFileName(main_fn)
+   lda #0
+   ldx #<RAM_CONFIG
+   ldy #>RAM_CONFIG
+   jsr LOAD          ; LoadFile(Verify=0,Address=RAM_CONFIG)
+   rts
+
 ; ---------- Build Options ----------
 
 ; ------------ Constants ------------
@@ -94,8 +113,6 @@ VRAM_TEXTFIELD_BITMAP_BG   = VRAM_LEVEL_BITMAP + LEVEL_BITMAP_SIZE
 TEXTFIELD_BITMAP_BG_SIZE   = 32*320/2
 
 TILEMAP_SIZE   = VRAM_TILES - VRAM_TILEMAP
-
-RAM_CONFIG     = $6000
 
 .ifndef TTL_MUS_BANK
 TTL_MUS_BANK            = 1

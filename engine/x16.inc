@@ -3,6 +3,11 @@ X16_INC  = 1
 
 __CX16__ = 1
 
+SD_DEVICE   = 1
+HOST_DEVICE = 8
+DISK_DEVICE = HOST_DEVICE
+
+
 ; RAM Addresses
 
 ; Kernal Registers

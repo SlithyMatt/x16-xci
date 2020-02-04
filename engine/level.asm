@@ -307,6 +307,11 @@ level_tick:
 @trigger_loop:
    cpx __level_num_triggers
    bne @check_next_trigger
+   lda current_tool
+   ora current_item
+   bne @keep_cursor
+   SET_MOUSE_CURSOR def_cursor
+@keep_cursor:
    jmp @return
 @check_next_trigger:
    phx
@@ -424,7 +429,7 @@ level_tick:
    bne @next
 @check_click:
    lda mouse_left_click
-   beq @next
+   beq @clear_stack
    stz current_tool
    SET_MOUSE_CURSOR def_cursor
 @exec_trigger:
@@ -438,8 +443,7 @@ level_tick:
    cli
    sta ANIM_PTR+1
    stz anim_seq_done
-   pla ; clear stack
-   bra @return
+   bra @clear_stack
 @next:
    cli
    plx
@@ -452,6 +456,8 @@ level_tick:
    adc #0
    sta __level_trigger_offset+1
    jmp @trigger_loop
+@clear_stack:
+   plx
 @return:
    rts
 

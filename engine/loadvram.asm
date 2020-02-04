@@ -15,9 +15,9 @@ loadvram:   ; A = VRAM address (19:12)
    lda #0
    sta ROM_BANK
    lda #1
-   ldx #8
+   ldx #DISK_DEVICE
    ldy #0
-   jsr SETLFS         ; SetFileParams(SD Card to VRAM bank)
+   jsr SETLFS         ; SetFileParams(DISK_DEVICE to VRAM bank)
    ldx ZP_PTR_1+1     ; X = low byte of filename address
    stx ZP_PTR_2
    ldy #>filenames    ; Y = high byte of filename address
