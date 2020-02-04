@@ -987,7 +987,9 @@ The last triggers are for the doorway, starting with the default tool: ```walk``
 The other doorway triggers are for the ```run``` and ```look``` tools. In levels where there is an animated player avatar, it might mike sense to run to a location to shorten the animation time, but since the level transition is both instantaneous and has no avatar to move, we can have a little joke. And finally, as before, looking at something can give a helpful hint or just a little exposition.
 
 #### VGM Files
-(TODO)
+VGM (Video Game Music) files are based on an open standard for "chiptune" authoring and playback. It supports most sound chips from the 8-bit and 16-bit eras of gaming, so you can exactly replicate the sound tracks from arcade, console and home computer games. It is well suited to work with both emulation and real hardware, and can be used to define hwat will be played on the target machine. For example, a VGM file can be created with just YM2151 voices, using all 8 voices available on a single chip.  Within the VGM file format are the actual chip register writes that are required to play the music on the hardware, which makes transformation into a format that the X16 can use trivial.
+
+For more information on the definition of the VGM format, see the [official standard](http://vgmrips.net/wiki/VGM_Specification). For creating original VGM files (rather than rips from old games), I recommend [Deflemask Tracker](http://www.deflemask.com), which is an open-source multi-platform application that can help you define and collect chiptune "instruments" and then track out a music loop.
 
 #### Sound Effects Files
 (TODO)
