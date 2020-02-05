@@ -9,7 +9,6 @@ OPM_DELAY_REG   = 2
 OPM_DONE_REG    = 4
 
 __music_delay:    .byte 0
-__music_enabled:  .byte 1
 __music_playing:  .byte 1
 
 .macro INC_MUSIC_PTR
@@ -45,17 +44,17 @@ stop_music:
 
 enable_music:
    lda #1
-   sta __music_enabled
+   sta music_enabled
    jsr start_music
    rts
 
 disable_music:
    jsr stop_music
-   stz __music_enabled
+   stz music_enabled
    rts
 
 start_music:
-   lda __music_enabled
+   lda music_enabled
    beq @return
    lda #1
    sta __music_playing

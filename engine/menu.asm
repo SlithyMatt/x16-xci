@@ -8,6 +8,7 @@ MENU_INC = 1
 .include "music.asm"
 .include "help.asm"
 .include "tilelib.asm"
+.include "sfx.asm"
 
 MENU_ASCII_BYTE2  = MENU_PO << 4
 
@@ -636,7 +637,7 @@ __menu_toggle_sfx:
    lda (MENU_PTR),y
    ldy #1
    sta (ZP_PTR_1),y
-   ; TODO - enable sound effects
+   jsr enable_sfx
    bra @return
 @stop:
    stz __menu_sfx_check
@@ -647,7 +648,7 @@ __menu_toggle_sfx:
    lda (MENU_PTR),y
    ldy #1
    sta (ZP_PTR_1),y
-   ; TODO - disable sound effects
+   jsr disable_sfx
 @return:
    rts
 

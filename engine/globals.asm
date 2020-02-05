@@ -119,6 +119,7 @@ TTL_MUS_BANK            = 1
 
 SPRITE_FRAME_SEQ_BANK   = 61
 SPRITE_MOVEMENT_BANK    = 62
+STATE_BANK = 63
 
 ; palette offsets
 DEFAULT_PO     = 0
@@ -158,6 +159,8 @@ inv_visible:   .byte 0
 inv_start_y:   .byte 0
 current_item:  .byte NO_ITEM
 help_visible:  .byte 0
+music_enabled: .byte 1
+sfx_enabled:   .byte 1
 
 req_load_level:   .byte 0
 
