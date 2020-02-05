@@ -95,11 +95,10 @@ ANIM_PTR       = $2A
 MENU_PTR       = $2C
 TB_PTR         = $2E
 INV_PTR        = $30
-HELP_CTRLS_PTR = $32
-HELP_ABOUT_PTR = $34
-ZL_COUNT_PTR   = $36
-MOUSE_X        = $38
-MOUSE_Y        = $3A
+HELP_PTR       = $32
+ZL_COUNT_PTR   = $34
+MOUSE_X        = $36
+MOUSE_Y        = $38
 
 VRAM_BITMAP    = $00000 ; 4bpp 320x240
 VRAM_TILEMAP   = $09600 ; 64x32 (40x30 visible)
@@ -148,6 +147,9 @@ ts_playing: .byte 1
 ts_dur:     .word 0
 music_bank: .byte TTL_MUS_BANK
 anim_bank:  .byte 0
+
+help_controls_ptr:   .word 0
+help_about_ptr:      .word 0
 
 tb_visible:    .byte 0
 tb_start_y:    .byte 0

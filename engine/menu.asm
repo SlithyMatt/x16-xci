@@ -409,9 +409,14 @@ menu_tick:
    jsr __menu_command
    cmp #MENU_DIV_ITEM
    beq @return
+   cmp #HELP_CONTROLS
+   beq @auto_hide
+   cmp #HELP_ABOUT
+   beq @auto_hide
 @restore:
-   stz __menu_visible
    jsr tile_restore
+@auto_hide:
+   stz __menu_visible
    bra @return
 @check_bar:
    lda mouse_tile_y
@@ -600,7 +605,7 @@ __menu_toggle_music:
    lda (MENU_PTR),y
    ldy #1
    sta (ZP_PTR_1),y
-   jsr start_music
+   jsr enable_music
    bra @return
 @stop:
    stz __menu_music_check
@@ -611,7 +616,7 @@ __menu_toggle_music:
    lda (MENU_PTR),y
    ldy #1
    sta (ZP_PTR_1),y
-   jsr stop_music
+   jsr disable_music
 @return:
    rts
 

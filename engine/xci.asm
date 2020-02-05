@@ -126,24 +126,24 @@ start:
    lda cfg_inv+1
    adc #>RAM_CONFIG
    sta INV_PTR+1
-   ldy MENU_CONTROLS
+   ldy #MENU_CONTROLS
    lda (MENU_PTR),y
    clc
    adc #<RAM_CONFIG
-   sta HELP_CTRLS_PTR
+   sta help_controls_ptr
    iny
    lda (MENU_PTR),y
    adc #>RAM_CONFIG
-   sta HELP_CTRLS_PTR+1
-   ldy MENU_ABOUT
+   sta help_controls_ptr+1
+   ldy #MENU_ABOUT
    lda (MENU_PTR),y
    clc
    adc #<RAM_CONFIG
-   sta HELP_ABOUT_PTR
+   sta help_about_ptr
    iny
    lda (MENU_PTR),y
    adc #>RAM_CONFIG
-   sta HELP_ABOUT_PTR+1
+   sta help_about_ptr+1
    lda #<cfg_zone_levels
    sta ZL_COUNT_PTR
    lda #>cfg_zone_levels

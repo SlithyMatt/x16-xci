@@ -183,7 +183,7 @@ int parse_menu_config(const char *cfg_fn, menu_config_t *cfg_bin,
                printf("parse_menu_config: no value specified for menu_check\n");
                return -1;
             }
-            if (asc2tile(node->values->val, 0, cfg_bin->check) < 0) {
+            if (asc2tile(node->values->val, MENU_PO_IDX, cfg_bin->check) < 0) {
                printf("parse_menu_config: error parsing tile for menu_check\n");
                return -1;
             }
@@ -193,7 +193,7 @@ int parse_menu_config(const char *cfg_fn, menu_config_t *cfg_bin,
                printf("parse_menu_config: no value specified for menu_uncheck\n");
                return -1;
             }
-            if (asc2tile(node->values->val, 0, cfg_bin->uncheck) < 0) {
+            if (asc2tile(node->values->val, MENU_PO_IDX, cfg_bin->uncheck) < 0) {
                printf("parse_menu_config: error parsing tile for menu_uncheck\n");
                return -1;
             }

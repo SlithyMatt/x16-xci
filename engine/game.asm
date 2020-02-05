@@ -27,12 +27,12 @@ game_tick:        ; called after every VSYNC detected (60 Hz)
    jsr ts_tick
    jsr mouse_tick
    jsr music_tick
+   jsr help_tick
    jsr menu_tick
    jsr level_tick
    jsr anim_tick
    jsr inv_tick
    jsr toolbar_tick
-   jsr help_tick
 @return:
    rts
 

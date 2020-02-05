@@ -1,22 +1,26 @@
 .ifndef HELP_INC
 HELP_INC = 1
 
+.include "x16.inc"
+.include "globals.asm"
+.include "level.asm"
+
 __help_start_ptr: .word 0
 __help_row:       .byte 0
+__help_first:     .byte 0
 
-help_controls:
+__help_show:
    lda #1
    sta help_visible
-   jsr tile_backup
+   sta __help_first
    stz VERA_ctrl
    VERA_SET_ADDR VRAM_sprreg, 0  ; disable sprites
    stz VERA_data0
-   lda HELP_CTRLS_PTR
-   sta __help_start_ptr
+   lda __help_start_ptr
    tay
-   stz HELP_CTRLS_PTR
-   lda HELP_CTRLS_PTR+1
-   sta __help_start_ptr+1
+   stz HELP_PTR
+   lda __help_start_ptr+1
+   sta HELP_PTR+1
    lda #1
    sta __help_row
 @row_loop:
@@ -33,13 +37,14 @@ help_controls:
    ply
    ldx #0
 @tile_loop:
-   cpx #40
+   cpx #80
    beq @next_row
-   lda (HELP_CTRLS_PTR),y
+   inx
+   lda (HELP_PTR),y
    sta VERA_data0
    iny
    bne @tile_loop
-   inc HELP_CTRLS_PTR+1
+   inc HELP_PTR+1
    bra @tile_loop
 @next_row:
    inc __help_row
@@ -48,20 +53,29 @@ help_controls:
    beq @return
    bra @row_loop
 @return:
-   lda __help_start_ptr
-   sta HELP_CTRLS_PTR
-   lda __help_start_ptr+1
-   sta HELP_CTRLS_PTR+1
    rts
 
+help_controls:
+   lda help_controls_ptr
+   sta __help_start_ptr
+   lda help_controls_ptr+1
+   sta __help_start_ptr+1
+   jsr __help_show
+   rts
 
 help_about:
-
+   lda help_about_ptr
+   sta __help_start_ptr
+   lda help_about_ptr+1
+   sta __help_start_ptr+1
+   jsr __help_show
    rts
 
 help_tick:
    lda help_visible
    beq @return
+   ;lda __help_first
+   ;bne @return
    lda mouse_left_click
    beq @return
    stz help_visible
@@ -70,6 +84,7 @@ help_tick:
    lda #$01
    sta VERA_data0
 @return:
+   stz __help_first
    rts
 
 

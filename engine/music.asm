@@ -8,11 +8,9 @@ MUSIC_INC = 1
 OPM_DELAY_REG   = 2
 OPM_DONE_REG    = 4
 
-__music_delay: .byte 0
-
-__music_playing: .byte 1
-
-__music_looping: .byte 1
+__music_delay:    .byte 0
+__music_enabled:  .byte 1
+__music_playing:  .byte 1
 
 .macro INC_MUSIC_PTR
    clc
@@ -45,18 +43,23 @@ stop_music:
    jsr init_music
    rts
 
-stop_music_loop:
-   stz __music_looping
+enable_music:
+   lda #1
+   sta __music_enabled
+   jsr start_music
    rts
 
-enable_music_loop:
-   lda #1
-   sta __music_looping
+disable_music:
+   jsr stop_music
+   stz __music_enabled
    rts
 
 start_music:
+   lda __music_enabled
+   beq @return
    lda #1
    sta __music_playing
+@return:
    rts
 
 music_tick:
@@ -78,17 +81,12 @@ music_tick:
    cmp #OPM_DELAY_REG
    beq @delay
    cmp #OPM_DONE_REG
-   beq @done
+   beq @reinit
    bra @write
 @delay:
    lda (MUSIC_PTR),y
    sta __music_delay
    INC_MUSIC_PTR
-   bra @return
-@done:
-   lda __music_looping
-   bne @reinit
-   jsr stop_music
    bra @return
 @reinit:
    jsr init_music
