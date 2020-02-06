@@ -157,7 +157,8 @@ show_inv:
 @row: .byte 0
 @col: .byte 0
 @start:
-   stz @pos
+   lda __inv_page_start
+   sta @pos
    lda inv_start_y
    sta @y
    lda __inv_tilemap_addr
@@ -530,11 +531,30 @@ __inv_set_item_cursor:
    rts
 
 __inv_scroll_up:
-   ; TODO
+   lda __inv_page_start
+   beq @return
+   sec
+   sbc __inv_page_cols
+   sta __inv_page_start
+   jsr show_inv
+@return:
    rts
 
 __inv_scroll_down:
-   ; TODO
+   ldx __inv_page_cols
+   ldy __inv_page_rows
+   jsr byte_mult
+   clc
+   adc __inv_page_start
+   inc
+   cmp __inv_num_items
+   bpl @return
+   lda __inv_page_start
+   clc
+   adc __inv_page_cols
+   sta __inv_page_start
+   jsr show_inv
+@return:
    rts
 
 __inv_map_item_cfgs: ; Input: X/Y item config start address
