@@ -31,6 +31,20 @@ __xgf_saveas_dialog:
 .byte " [CLEAR] [SAVE] "
 .byte "                "
 
+__xgf_load_lengths:  .byte 0,0,0,0,0,0,0,0
+__xgf_load_num: .byte 0
+__xgf_load_dialog:
+.byte "                      "
+.byte " Select File to Load: "
+.byte " -------------------- "
+.byte "           |          "
+.byte "           |          "
+.byte "           |          "
+.byte "           |          "
+.byte " -------------------- "
+.byte "                      "
+
+
 XGF_SAVEAS_X      = 12
 XGF_SAVEAS_Y      = 6
 XGF_SAVEAS_WIDTH  = 16
@@ -43,6 +57,17 @@ XGF_CLEAR_X_MAX   = XGF_CLEAR_X_MIN + 7
 XGF_SAVE_X_MIN    = XGF_SAVEAS_X + 9
 XGF_SAVE_X_MAX    = XGF_SAVE_X_MIN + 6
 XGF_EXT_LENGTH    = 4
+XGF_LOAD_X        = 9
+XGF_LOAD_Y        = 9
+XGF_LOAD_WIDTH    = 22
+XGF_LOAD_HEIGHT   = 9
+XGF_LOAD_R_X_MIN  = XGF_LOAD_X + 2
+XGF_LOAD_R_X_MAX  = XGF_LOAD_R_X_MIN + XGF_PREFIX_MAX
+XGF_LOAD_L_X_MIN  = XGF_LOAD_X + 13
+XGF_LOAD_L_X_MAX  = XGF_LOAD_L_X_MIN + XGF_PREFIX_MAX
+XGF_LOAD_Y_MIN    = XGF_LOAD_Y + 3
+XGF_LOAD_Y_MAX    = XGF_LOAD_Y_MIN + 4
+
 
 ASCII_UNDERSCORE  = 95
 
@@ -50,7 +75,40 @@ __xgf_row:        .byte 0
 __xgf_cursor_x:   .byte 0
 
 load_game:
-
+   lda #XGF_LOAD_Y
+   sta __xgf_row
+@row_loop:
+   lda #1
+   ldx #XGF_LOAD_X
+   ldy __xgf_row
+   jsr xy2vaddr
+   stz VERA_ctrl
+   ora #$10
+   sta VERA_addr_bank
+   stx VERA_addr_low
+   sty VERA_addr_high
+   lda __xgf_row
+   sec
+   sbc #XGF_LOAD_Y
+   tax
+   ldy #XGF_LOAD_WIDTH
+   jsr byte_mult
+   tax
+   ldy #XGF_LOAD_WIDTH
+@tile_loop:
+   lda __xgf_load_dialog,x
+   sta VERA_data0
+   lda #(MENU_PO << 4)
+   sta VERA_data0
+   inx
+   dey
+   bne @tile_loop
+   inc __xgf_row
+   lda __xgf_row
+   cmp #(XGF_LOAD_Y+XGF_LOAD_HEIGHT)
+   bne @row_loop
+   lda #1
+   sta load_visible
    rts
 
 save_game:
@@ -117,10 +175,11 @@ save_game:
    cli
    lda #KERNAL_ROM_BANK
    sta ROM_BANK
+   jsr CLRCHN
    lda #3
    ldx #DISK_DEVICE
-   ldy #3
-   jsr SETLFS        ; SetFileParams(LogNum=3,DevNum=DISK_DEVICE,SA=3)
+   ldy #0
+   jsr SETLFS        ; SetFileParams(LogNum=3,DevNum=DISK_DEVICE,SA=0)
    lda __xgf_fn_length
    ldx #<__xgf_fn
    ldy #>__xgf_fn
@@ -158,7 +217,8 @@ save_game:
    bra @write_loop
 @close:
    lda #3
-   jsr CLOSE            ; CloseFile(LogNum=3)
+   jsr CLOSE            ; CloseFile(LogNum=3)   
+   jsr CLRCHN
    jsr tile_restore
 @return:
    rts
@@ -317,7 +377,11 @@ __xgf_clear_btn_click:
    rts
 
 __xgf_load_tick:
-
+   lda mouse_left_click
+   beq @return
+   jsr tile_restore
+   stz load_visible
+@return:
    rts
 
 .endif
