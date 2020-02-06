@@ -237,6 +237,9 @@ load_level:
    sta VERA_data0
 
    jsr level_continue
+   ldx level
+   ldy zone
+   jsr set_visited
    rts
 
 __level_next_seq: ; Input/Output: ZP_PTR_3 - address of start of sequence

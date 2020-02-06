@@ -152,21 +152,21 @@ anim_bank:  .byte 0
 help_controls_ptr:   .word 0
 help_about_ptr:      .word 0
 
-tb_visible:    .byte 0
-tb_start_y:    .byte 0
-current_tool:  .byte 0
-inv_visible:   .byte 0
-inv_start_y:   .byte 0
-current_item:  .byte NO_ITEM
-help_visible:  .byte 0
-music_enabled: .byte 1
-sfx_enabled:   .byte 1
-
+tb_visible:       .byte 0
+tb_start_y:       .byte 0
+current_tool:     .byte 0
+inv_visible:      .byte 0
+inv_start_y:      .byte 0
+current_item:     .byte NO_ITEM
+help_visible:     .byte 0
+music_enabled:    .byte 1
+sfx_enabled:      .byte 1
+saveas_visible:   .byte 0
+load_visible:     .byte 0
 req_load_level:   .byte 0
-
-mouse_tile_x:  .byte 0
-mouse_tile_y:  .byte 0
-mouse_buttons: .byte 0
+mouse_tile_x:     .byte 0
+mouse_tile_y:     .byte 0
+mouse_buttons:    .byte 0
 mouse_left_click: .byte 0
 
 

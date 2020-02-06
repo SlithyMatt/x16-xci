@@ -19,6 +19,7 @@ XFG_DATA_SIZE           = $2142
 XGF_PREFIX_MAX = 8
 
 __xgf_fn:         .byte "SAVEGAME.XGF"
+__xgf_ext:        .byte ".XGF"
 __xgf_fn_length:  .byte 0 ; filename not set if zero
 __xgf_quant:      .word 0
 __xgf_state_done: .byte 0
@@ -36,12 +37,17 @@ XGF_SAVEAS_WIDTH  = 16
 XGF_SAVEAS_HEIGHT = 5
 XGF_CURSOR_X_MIN  = XGF_SAVEAS_X + 7
 XGF_CURSOR_Y      = XGF_SAVEAS_Y + 1
+XGF_SAVEAS_BTN_Y  = XGF_SAVEAS_Y + 3
+XGF_CLEAR_X_MIN   = XGF_SAVEAS_X + 1
+XGF_CLEAR_X_MAX   = XGF_CLEAR_X_MIN + 7
+XGF_SAVE_X_MIN    = XGF_SAVEAS_X + 9
+XGF_SAVE_X_MAX    = XGF_SAVE_X_MIN + 6
+XGF_EXT_LENGTH    = 4
+
 ASCII_UNDERSCORE  = 95
 
-__xgf_saveas_visible:   .byte 0
-__xgf_load_visible:     .byte 0
-__xgf_row:              .byte 0
-__xgf_cursor_x:         .byte 0
+__xgf_row:        .byte 0
+__xgf_cursor_x:   .byte 0
 
 load_game:
 
@@ -111,17 +117,17 @@ save_game:
    cli
    lda #KERNAL_ROM_BANK
    sta ROM_BANK
-   lda #1
+   lda #3
    ldx #DISK_DEVICE
-   ldy #0
-   jsr SETLFS        ; SetFileParams(LogNum=1,DevNum=DISK_DEVICE,SA=0)
+   ldy #3
+   jsr SETLFS        ; SetFileParams(LogNum=3,DevNum=DISK_DEVICE,SA=3)
    lda __xgf_fn_length
    ldx #<__xgf_fn
    ldy #>__xgf_fn
    jsr SETNAM        ; SetFileName(__xgf_fn)
    jsr OPEN
-   ldx #1
-   jsr CHKOUT        ; SetDefaultOutput(LogNum=1)
+   ldx #3
+   jsr CHKOUT        ; SetDefaultOutput(LogNum=3)
    stz ZP_PTR_1
    lda #>XGF_STAGE_START
    sta ZP_PTR_1+1
@@ -151,13 +157,13 @@ save_game:
    sta __xgf_state_done
    bra @write_loop
 @close:
-   lda #1
-   jsr CLOSE
+   lda #3
+   jsr CLOSE            ; CloseFile(LogNum=3)
+   jsr tile_restore
 @return:
    rts
 
 save_game_as:
-   jsr tile_backup
    lda #XGF_SAVEAS_Y
    sta __xgf_row
 @row_loop:
@@ -171,8 +177,8 @@ save_game_as:
    stx VERA_addr_low
    sty VERA_addr_high
    lda __xgf_row
-   clc
-   sbc XGF_SAVEAS_Y
+   sec
+   sbc #XGF_SAVEAS_Y
    tax
    ldy #XGF_SAVEAS_WIDTH
    jsr byte_mult
@@ -190,15 +196,26 @@ save_game_as:
    lda __xgf_row
    cmp #(XGF_SAVEAS_Y+XGF_SAVEAS_HEIGHT)
    bne @row_loop
-   lda XGF_CURSOR_X_MIN
+   lda #XGF_CURSOR_X_MIN
    sta __xgf_cursor_x
    lda #1
-   sta __xgf_saveas_visible
+   sta saveas_visible
+   stz __xgf_fn_length
    rts
 
 xgf_tick:
-   lda __xgf_saveas_visible
+   lda saveas_visible
    beq @check_load
+   jsr __xgf_saveas_tick
+   bra @return
+@check_load:
+   lda load_visible
+   beq @return
+   jsr __xgf_load_tick
+@return:
+   rts
+
+__xgf_saveas_tick:
    ldx __xgf_cursor_x
    cpx #(XGF_CURSOR_X_MIN+XGF_PREFIX_MAX)
    bpl @return
@@ -214,8 +231,11 @@ xgf_tick:
    cmp #0
    beq @cursor
    sta VERA_data0
+   ldx __xgf_fn_length
+   sta __xgf_fn,x
    lda #(MENU_PO << 4)
    sta VERA_data0
+   inc __xgf_fn_length
    inc __xgf_cursor_x
    lda __xgf_cursor_x
    cmp #(XGF_CURSOR_X_MIN+XGF_PREFIX_MAX)
@@ -235,13 +255,69 @@ xgf_tick:
 @check_saveas_click:
    lda mouse_left_click
    beq @return
-   ; TODO:  check mouse position
-
-@check_load:
-   lda __xgf_load_visible
-   beq @return
-
+   lda mouse_tile_y
+   cmp #XGF_SAVEAS_BTN_Y
+   bne @return
+   lda mouse_tile_x
+   cmp #XGF_CLEAR_X_MIN
+   bmi @return
+   cmp #XGF_CLEAR_X_MAX
+   bmi @clear
+   cmp #XGF_SAVE_X_MIN
+   bmi @return
+   cmp #XGF_SAVE_X_MAX
+   bpl @return
+   jsr __xgf_save_btn_click
+   bra @return
+@clear:
+   jsr __xgf_clear_btn_click
+   bra @return
 @return:
+   rts
+
+__xgf_save_btn_click:
+   lda __xgf_fn_length
+   beq @return
+   tax
+   ldy #0
+@loop:
+   lda __xgf_ext,y
+   sta __xgf_fn,x
+   inc __xgf_fn_length
+   inx
+   iny
+   cpy #XGF_EXT_LENGTH
+   bmi @loop
+   jsr save_game
+   stz saveas_visible
+@return:
+   rts
+
+__xgf_clear_btn_click:
+   stz __xgf_fn_length
+   lda #1
+   ldx #XGF_CURSOR_X_MIN
+   ldy #XGF_CURSOR_Y
+   jsr xy2vaddr
+   stz VERA_ctrl
+   ora #$10
+   sta VERA_addr_bank
+   stx VERA_addr_low
+   sty VERA_addr_high
+   ldx #XGF_PREFIX_MAX
+@loop:
+   lda #ASCII_UNDERSCORE
+   sta VERA_data0
+   lda #(MENU_PO << 4)
+   sta VERA_data0
+   dex
+   bne @loop
+   lda #XGF_CURSOR_X_MIN
+   sta __xgf_cursor_x
+   rts
+
+__xgf_load_tick:
+
    rts
 
 .endif

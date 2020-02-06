@@ -28,6 +28,7 @@ game_tick:        ; called after every VSYNC detected (60 Hz)
    jsr mouse_tick
    jsr music_tick
    jsr help_tick
+   jsr xgf_tick
    jsr menu_tick
    jsr level_tick
    jsr anim_tick

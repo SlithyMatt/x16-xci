@@ -392,6 +392,12 @@ __menu_build_item_tiles:   ; A: item ID
 
 
 menu_tick:
+   lda help_visible
+   bne @return
+   lda saveas_visible
+   bne @return
+   lda load_visible
+   bne @return
    lda __menu_bar_visible
    beq @return
    lda mouse_left_click
@@ -413,6 +419,12 @@ menu_tick:
    cmp #HELP_CONTROLS
    beq @auto_hide
    cmp #HELP_ABOUT
+   beq @auto_hide
+   cmp #LOAD_GAME
+   beq @auto_hide
+   cmp #SAVE_GAME
+   beq @auto_hide
+   cmp #SAVE_GAME_AS
    beq @auto_hide
 @restore:
    jsr tile_restore

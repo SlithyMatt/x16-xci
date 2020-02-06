@@ -7,12 +7,10 @@ HELP_INC = 1
 
 __help_start_ptr: .word 0
 __help_row:       .byte 0
-__help_first:     .byte 0
 
 __help_show:
    lda #1
    sta help_visible
-   sta __help_first
    stz VERA_ctrl
    VERA_SET_ADDR VRAM_sprreg, 0  ; disable sprites
    stz VERA_data0
@@ -74,8 +72,6 @@ help_about:
 help_tick:
    lda help_visible
    beq @return
-   ;lda __help_first
-   ;bne @return
    lda mouse_left_click
    beq @return
    stz help_visible
@@ -84,7 +80,6 @@ help_tick:
    lda #$01
    sta VERA_data0
 @return:
-   stz __help_first
    rts
 
 
