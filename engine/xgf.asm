@@ -117,6 +117,9 @@ save_game:
    jsr save_game_as
    jmp @return
 @save:
+
+   jmp @restore   ; skip RAM staging
+
    lda #<XGF_STAGE_START
    sta ZP_PTR_1
    lda #>XGF_STAGE_START
@@ -173,6 +176,10 @@ save_game:
    cpx #XGF_NUM_INV_QUANTS
    bmi @inv_loop
    cli
+
+   jmp @restore ; just stage RAM, no XGF I/O until new kernal is ready
+
+   ; dead code until @restore:
    lda #KERNAL_ROM_BANK
    sta ROM_BANK
    jsr CLRCHN
@@ -217,8 +224,9 @@ save_game:
    bra @write_loop
 @close:
    lda #3
-   jsr CLOSE            ; CloseFile(LogNum=3)   
+   jsr CLOSE            ; CloseFile(LogNum=3)
    jsr CLRCHN
+@restore:
    jsr tile_restore
 @return:
    rts
