@@ -741,7 +741,7 @@ __anim_scroll_instruction:
    cli
    jsr __anim_scroll
 @skip:
-   INC_ANIM_PTR   
+   INC_ANIM_PTR
 @return:
    rts
 
@@ -795,15 +795,18 @@ __anim_go_level:
    sei
    sta RAM_BANK
    lda (ANIM_PTR)
+   pha
+   INC_ANIM_PTR
+   lda (ANIM_PTR)
+   cli
+   sta level
+   pla
    cmp zone
    beq @level
    sta zone
    jsr load_zone
 @level:
-   INC_ANIM_PTR
-   lda (ANIM_PTR)
-   cli
-   sta level
+
    lda #1
    sta req_load_level
    stz __anim_text_line

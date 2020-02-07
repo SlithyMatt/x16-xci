@@ -117,13 +117,10 @@ save_game:
    jsr save_game_as
    jmp @return
 @save:
-
-   jmp @restore   ; skip RAM staging
-
    lda #<XGF_STAGE_START
-   sta ZP_PTR_1
+   sta ZP_PTR_3
    lda #>XGF_STAGE_START
-   sta ZP_PTR_1+1
+   sta ZP_PTR_3+1
    lda #<RAM_CONFIG
    sta ZP_PTR_2
    lda #>RAM_CONFIG
@@ -134,28 +131,28 @@ save_game:
    ldy #0
 @title_author_loop:
    lda (ZP_PTR_2),y
-   sta (ZP_PTR_1),y
+   sta (ZP_PTR_3),y
    iny
    cpy #XGF_STAGE_ZONE_OFFSET
    bmi @title_author_loop
    lda zone
-   sta (ZP_PTR_1),y
+   sta (ZP_PTR_3),y
    iny
    lda level
-   sta (ZP_PTR_1),y
+   sta (ZP_PTR_3),y
    iny
    lda music_enabled
-   sta (ZP_PTR_1),y
+   sta (ZP_PTR_3),y
    iny
    lda sfx_enabled
-   sta (ZP_PTR_1),y
-   lda ZP_PTR_1
+   sta (ZP_PTR_3),y
+   lda ZP_PTR_3
    clc
    adc #XGF_STAGE_INV_OFFSET
-   sta ZP_PTR_1
-   lda ZP_PTR_1+1
+   sta ZP_PTR_3
+   lda ZP_PTR_3+1
    adc #0
-   sta ZP_PTR_1+1
+   sta ZP_PTR_3+1
    ldx #0
 @inv_loop:
    phx
@@ -168,10 +165,10 @@ save_game:
    asl
    tay
    lda __xgf_quant
-   sta (ZP_PTR_1),y
+   sta (ZP_PTR_3),y
    iny
    lda __xgf_quant+1
-   sta (ZP_PTR_1),y
+   sta (ZP_PTR_3),y
    inx
    cpx #XGF_NUM_INV_QUANTS
    bmi @inv_loop
