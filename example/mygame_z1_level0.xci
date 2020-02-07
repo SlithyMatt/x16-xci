@@ -1,1 +1,10 @@
 # Zone 1, level 0
+
+bitmap mygame_foyer.data
+music zone0.vgm
+
+init
+end_anim
+
+first
+end_anim

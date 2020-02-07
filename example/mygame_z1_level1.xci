@@ -1,1 +1,10 @@
 # Zone 1, level 1
+
+bitmap mygame_house.data
+music zone0.vgm
+
+init
+end_anim
+
+first
+end_anim
