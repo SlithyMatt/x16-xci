@@ -310,7 +310,10 @@ __anim_sprite_frames:
    asl
    rol
    rol
-   ora VERA_data0 ; add flipping to current Z-depth
+   sta __sprite_flip
+   lda VERA_data0 ; add flipping to current Z-depth
+   and #$FC
+   ora __sprite_flip
    sta __sprite_flip
    lda __sprite_idx
    jsr __sprattr  ; write flipping back

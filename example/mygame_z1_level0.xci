@@ -4,7 +4,133 @@ bitmap mygame_foyer.data
 music zone0.vgm
 
 init
+if kitchen_to_foyer
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite 1  288 128
+clear_state near_door
+clear_state kitchen_to_foyer
+end_if
+if lr_to_foyer
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite 1  18 128
+clear_state lr_to_foyer
+set_state near_door
+end_if
+if front_to_foyer
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite 1  18 128
+clear_state front_to_foyer
+set_state near_door
+end_if
 end_anim
 
 first
+text 1  There you are.
+wait 60
+text 1  You are me.
+wait 60
+text 1  We are we.
+wait 60
+text 1  Let's go do something.
+end_anim
+
+tool_trigger use  0 8  1 18
+if near_door
+sprite_frames 1  0  3H
+wait 30
+go_level  1 1
+end_if
+if_not near_door
+clear
+text 1  We can't reach the door from here.
+end_if
+end_anim
+
+tool_trigger look  0 8  1 18
+clear
+text 1 That's the front door to the house.
+end_anim
+
+tool_trigger use  3 13  5 16
+if near_door
+sprite_frames 1  0  11
+wait 30
+go_level  1 2
+end_if
+if_not near_door
+clear
+text 1  We can't reach the door from here.
+end_if
+end_anim
+
+tool_trigger look  3 13  5 16
+clear
+text 1 That's door to the living room.
+end_anim
+
+tool_trigger walk  0 8  5 18
+if_not near_door
+sprite_move  1  4  135  -2 0
+wait 255
+wait 255
+wait 30
+set_state near_door
+end_if
+end_anim
+
+tool_trigger run  0 8  5 18
+if_not near_door
+sprite_move  1  2  135  -2 0
+wait 255
+wait 15
+set_state near_door
+end_if
+end_anim
+
+tool_trigger walk  38 13  39 18
+if near_door
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite_move  1  4  135  2 0
+clear_state near_door
+wait 255
+wait 255
+wait 30
+go_level 0 1
+end_if
+if_not near_door
+sprite_frames 1  0  3
+wait 30
+go_level  0 1
+end_if
+end_anim
+
+tool_trigger run  38 13  39 18
+if near_door
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite_move  1  2  135  2 0
+clear_state near_door
+wait 255
+wait 15
+go_level 0 1
+end_if
+if_not near_door
+sprite_frames 1  0  3
+wait 30
+go_level  0 1
+end_if
+end_anim
+
+tool_trigger look  38 13  39 18
+clear
+text 1  That's the doorway to the kitchen.
+end_anim
+
+tool_trigger look  19 12  22 15
+clear
+text 1  We really love bananas.
+end_anim
+
+tool_trigger talk  19 12  22 15
+clear
+text 2  "I love you, bananas!"
 end_anim

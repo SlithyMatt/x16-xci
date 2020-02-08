@@ -144,6 +144,7 @@ __zone_load_file:
    jsr SETNAM                 ; SetFileName(__zone_filename)
    lda __zone_bank
    sta RAM_BANK
+   jsr reset_bank
    lda #0
    ldx #<RAM_WIN
    ldy #>RAM_WIN

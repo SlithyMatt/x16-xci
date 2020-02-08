@@ -20,6 +20,7 @@ typedef struct state_list_node {
 } state_list_node_t;
 
 state_list_node_t *state_list = NULL;
+state_list_node_t *last_state = NULL;
 
 int state_index(const char* label) {
    char label_lc[MAX_STATE_LABEL+1];
@@ -53,7 +54,6 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
    get_item_t *get_item_bin;
    int num;
    int num_triggers = 0;
-   state_list_node_t *last_state = NULL;
    state_list_node_t *new_state = NULL;
    int bank;
    char bin_fn[15];

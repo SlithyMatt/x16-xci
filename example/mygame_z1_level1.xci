@@ -4,6 +4,15 @@ bitmap mygame_house.data
 music zone0.vgm
 
 init
+sprite_frames 2  0  30 31 32 33 34 35 36 37 # Flag waving
+sprite 2  282 50                            # Top-right of pole
+sprite_move 2  6  120  0 0                  # Fixed position, 10 fps, 12 s
+sprite_frames 3  0  38  # Front of car
+sprite 3  86 170        # Parked, not moving
+sprite_frames 4  0  40  # Read of car
+sprite 4  102 170       # Parked, not moving
+sprite_frames 1  0  6
+sprite 1  148 170
 end_anim
 
 first

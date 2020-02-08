@@ -184,6 +184,7 @@ text 1  Take my bananas.
 end_if
 if cup_taken
 if bananas_taken
+set_state kitchen_to_foyer
 go_level 1 0 # go to zone 1, level 0
 end_if # bananas_taken
 end_if # cup_taken
@@ -198,5 +199,5 @@ end_anim # run to doorway
 # clicking on the doorway with look tool
 tool_trigger look  2 6  6 23
 clear
-text 1  That's the doorway to the living room.
+text 1  That's the doorway to the foyer.
 end_anim # run to doorway
