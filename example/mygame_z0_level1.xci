@@ -50,7 +50,6 @@ end_if # not holding_carafe
 end_if # coffee_made
 if_not coffee_made
 clear
-gif_start
 text 1  Ok, I'll make some coffee
 wait 60
 # show steam
@@ -110,6 +109,7 @@ tiles 0  21 13  0
 get_item coffee 1 # add 1 coffee to inventory
 clear_state coffee_poured
 set_state cup_taken
+gif_start
 end_if # coffee_poured
 end_if # not holding_carafe
 if holding_carafe
@@ -172,7 +172,6 @@ end_anim # look at bananas
 
 # clicking on the doorway with walk tool (default)
 tool_trigger walk  2 6  6 23
-gif_pause
 clear
 if_not cup_taken
 text 1  You look tired. Have some coffee.

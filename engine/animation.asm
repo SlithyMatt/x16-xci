@@ -1165,6 +1165,7 @@ __anim_move_sprites:
    stz VERA_data0
    lda __sprite_flip
    sta VERA_data0
+   jmp @loop
 @return:
    cli
    rts

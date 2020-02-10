@@ -28,7 +28,7 @@ end_anim
 tool_trigger look  10 21  15 24
 clear
 text 1 That's our car.
-wait 1
+wait 60
 text 1 We should have our keys.
 end_anim
 
@@ -45,12 +45,13 @@ end_anim
 
 item_trigger keys 1 0  10 21  15 24
 sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
-sprite_move 1  4  32  -2 0
+sprite_move 1  4  27  -2 0
 wait 128
 sprite_hide 1
 sprite_frames 4  0  41 42
 sprite_move 3  2  42  -2 0
 sprite_move 4  2  42  -2 0
 wait 84
+gif_pause
 go_level 2 0
 end_anim
