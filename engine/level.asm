@@ -118,10 +118,10 @@ load_level:
    sta __level_first+1
    lda #1
    sta __level_has_first
+   jsr __level_next_seq
 @find_triggers:
    stz __level_num_triggers
 @trigger_loop:
-   jsr __level_next_seq
    lda anim_bank
    sta RAM_BANK
    lda (ZP_PTR_3)
@@ -188,6 +188,7 @@ load_level:
    sta (ZP_PTR_2),y  ; set y_max
 @next_trigger:
    inc __level_num_triggers
+   jsr __level_next_seq
    jmp @trigger_loop
 
    ; intialize music
