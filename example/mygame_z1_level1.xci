@@ -62,6 +62,12 @@ wait 60
 text 1 We should have our keys.
 end_anim
 
+tool_trigger use  10 21  15 24
+clear
+text 1 Not much you can do with a car
+text 1 without keys.
+end_anim
+
 tool_trigger talk  10 21  15 24
 clear
 text 2 "Hello, car."
@@ -84,4 +90,9 @@ sprite_move 4  2  42  -2 0
 wait 84
 gif_pause
 go_level 2 0
+end_anim
+
+tool_trigger use  19 16  22 21
+set_state front_to_foyer
+go_level 1 0
 end_anim

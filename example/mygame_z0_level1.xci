@@ -149,7 +149,7 @@ tool_trigger use  35 12  36 13
 if_not bananas_taken
 clear
 text 2  Go ahead and take the bananas. # make it yellow, because bananas
-wait 60
+wait 30
 # remove bananas
 tiles 0  35 12  0 0
 tiles 0  35 13  0 0

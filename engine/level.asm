@@ -108,7 +108,7 @@ load_level:
    ldy zone
    jsr check_visited
    cmp #0
-   bne @find_triggers
+   bne @not_first
    lda ZP_PTR_3
    clc
    adc #1
@@ -118,6 +118,7 @@ load_level:
    sta __level_first+1
    lda #1
    sta __level_has_first
+@not_first:
    jsr __level_next_seq
 @find_triggers:
    stz __level_num_triggers
