@@ -1,1 +1,10 @@
 # Zone 1, level 2
+
+bitmap mygame_livingroom.data
+music zone0.vgm
+
+first
+tiles  0  22 17  176 177 176H
+tiles  0  22 18  178 179 178H
+tiles  0  22 19  180 181 180H 0 183
+end_anim

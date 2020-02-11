@@ -1686,3 +1686,83 @@ bbbbbb00
 00000000
 00000000
 00000000
+
+# Tile 176: Laptop upper corner
+00000000
+00000000
+000ccccc
+000cbbbb
+000cbbbb
+000cbbbb
+000cbbbb
+000cbbbb
+
+# Tile 177: Laptop top screen
+00000000
+00000000
+cccccccc
+bbbbbbbb
+bbbbbbbb
+bbbbbbbb
+bbbbbbbb
+bbbbbbbb
+
+# Tile 178: Laptop side screen
+000cbbbb
+000cbbbb
+000cbbbb
+000cbbbb
+000cbbbb
+000cbbbb
+000cbbbb
+000cbbbb
+
+# Tile 179: Dark gray (index 11) square
+bbbbbbbb
+bbbbbbbb
+bbbbbbbb
+bbbbbbbb
+bbbbbbbb
+bbbbbbbb
+bbbbbbbb
+bbbbbbbb
+
+# Tile 180: Laptop keyboard side
+000ccccc
+000cfcfc
+00cfcfcf
+00ccfcfc
+0ccccccc
+0ccccccc
+cccccccc
+cccccccc
+
+# Tile 181: Laptop keyboard middle
+cccccccc
+fcfccfcf
+cfcffcfc
+fcfccfcf
+cccccccc
+cffffffc
+cffffffc
+cccccccc
+
+# Tile 182: Laptop keyboard w/ thumbdrive
+ccccc000
+cfcfc000
+fcfcfc22
+cfcfcc00
+ccccccc0
+ccccccc0
+cccccccc
+cccccccc
+
+# Tile 183: Thumbdrive
+00000000
+00000000
+000c0000
+00020000
+00020000
+00000000
+00000000
+00000000
