@@ -471,6 +471,7 @@ __inv_click:
    lda @end_y
    clc
    adc __inv_item_height
+   sta @end_y
    iny
    bra @y_loop
 @next_col:

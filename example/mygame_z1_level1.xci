@@ -25,6 +25,36 @@ clear
 text 2 "Lookin' good!"
 end_anim
 
+item_trigger banana 1 1  18 21  19 22
+clear
+if first_banana
+text 1 We're not hungry anymore.
+wait 60
+text 2 Not even for bananas.
+get_item banana 1 # replenish lost banana
+end_if
+if_not first_banana
+text 1 We could use a snack for the road.
+wait 60
+text 2 Mmm... banana!
+set_state first_banana
+end_if
+end_anim
+
+item_trigger coffee 1 0  18 21  19 22
+clear
+text 1 We're still pretty awake.
+wait 60
+text 1 Let's save the coffee for later.
+end_anim
+
+item_trigger phone 1 0  18 21  19 22
+clear
+text 1 Don't need to call for a ride.
+wait 60
+text 1 Our car is right here.
+end_anim
+
 tool_trigger look  10 21  15 24
 clear
 text 1 That's our car.
@@ -45,8 +75,8 @@ end_anim
 
 item_trigger keys 1 0  10 21  15 24
 sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
-sprite_move 1  4  27  -2 0
-wait 128
+sprite_move 1  4  26  -2 0
+wait 104
 sprite_hide 1
 sprite_frames 4  0  41 42
 sprite_move 3  2  42  -2 0
