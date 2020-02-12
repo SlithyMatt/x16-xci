@@ -1,1 +1,19 @@
 # Zone 2, level 0
+
+bitmap mygame_bar_ext.data
+music zone0.vgm
+
+init
+sprite_frames 2  0  49 50  # beacon
+sprite 2  182 8
+sprite_move 2  60  255  0 0
+sprite_frames 3  0  51 52  # beer sign
+sprite 3  191 134
+sprite_move 3  45  255  0 0
+end_anim
+
+first
+text 1 This is Izquierdito's.
+wait 60
+text 1 Or Izzy's, for short.
+end_anim
