@@ -62,6 +62,17 @@ load_zone:
    sta VERA_addr_bank
    lda #BLACK_PO
    sta VERA_data0
+   ; clear level tiles
+   jsr tile_clear
+   ; clear sprites
+   VERA_SET_ADDR $F500E, 4 ; sprite 1 byte 6, stride of 8
+   ldx #1
+@clear_sprite_loop:
+   stz VERA_data0
+   inx
+   cpx #128
+   bne @clear_sprite_loop
+   ; load zone files
    lda #KERNAL_ROM_BANK
    sta ROM_BANK
    lda #1

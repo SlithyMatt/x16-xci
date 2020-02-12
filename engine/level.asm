@@ -244,6 +244,16 @@ load_level:
    jsr set_visited
    rts
 
+.macro INC_ZP_PTR_3
+   lda ZP_PTR_3
+   clc
+   adc #1
+   sta ZP_PTR_3
+   lda ZP_PTR_3+1
+   adc #0
+   sta ZP_PTR_3+1
+.endmacro
+
 __level_next_seq: ; Input/Output: ZP_PTR_3 - address of start of sequence
 @loop:
    lda anim_bank
@@ -253,22 +263,108 @@ __level_next_seq: ; Input/Output: ZP_PTR_3 - address of start of sequence
    cli
    cmp #END_ANIM_KEY
    beq @next
-   lda ZP_PTR_3
-   clc
-   adc #1
-   sta ZP_PTR_3
-   lda ZP_PTR_3+1
-   adc #0
-   sta ZP_PTR_3+1
+   jsr __level_next_instruction
    bra @loop
 @next:
+   INC_ZP_PTR_3
+   rts
+
+__level_next_instruction: ; Input/Output: ZP_PTR_3 - address of start of instruction
+   lda (ZP_PTR_3)
+   cmp #TOOL_TRIGGER
+   bne @check_item_trigger
+   jmp @seek6
+@check_item_trigger:
+   cmp #ITEM_TRIGGER
+   bne @check_sprite_frames
+   jmp @seek10
+@check_sprite_frames:
+   cmp #SPRITE_FRAMES_KEY
+   beq @sprite_frames
+   cmp #SPRITE_KEY
+   bne @check_tiles
+   jmp @seek5
+@check_tiles:
+   cmp #TILES_KEY
+   beq @tiles
+   cmp #WAIT_KEY
+   bne @check_sprite_move
+   jmp @seek2
+@check_sprite_move:
+   cmp #SPRITE_MOVE_KEY
+   beq @seek6
+   cmp #SPRITE_HIDE_KEY
+   bne @check_text_line
+   jmp @seek2
+@check_text_line:
+   cmp #TEXT_LINE
+   beq @seek40
+   cmp #SCROLL_KEY
+   bne @check_go_level
+   jmp @seek2
+@check_go_level:
+   cmp #GO_LEVEL
+   beq @seek3
+   cmp #IF_STATE
+   beq @seek3
+   cmp #IF_NOT_STATE
+   beq @seek3
+   cmp #SET_STATE
+   beq @seek3
+   cmp #CLEAR_STATE
+   beq @seek3
+   cmp #GET_ITEM
+   beq @seek4
+   jmp @seek1     ; all other keys are single-byte instructions
+@sprite_frames:   ; SPRITE_FRAMES same binary format as TILES
+@tiles:
    lda ZP_PTR_3
    clc
-   adc #1
+   adc #3
    sta ZP_PTR_3
    lda ZP_PTR_3+1
    adc #0
    sta ZP_PTR_3+1
+   lda (ZP_PTR_3)
+   asl
+   clc
+   adc ZP_PTR_3
+   sta ZP_PTR_3
+   lda ZP_PTR_3+1
+   adc #0
+   sta ZP_PTR_3+1
+   bra @return
+@seek40:
+   lda ZP_PTR_3
+   clc
+   adc #40
+   sta ZP_PTR_3
+   lda ZP_PTR_3+1
+   adc #0
+   sta ZP_PTR_3+1
+   bra @return
+@seek10:
+   lda ZP_PTR_3
+   clc
+   adc #10
+   sta ZP_PTR_3
+   lda ZP_PTR_3+1
+   adc #0
+   sta ZP_PTR_3+1
+   bra @return
+@seek6:
+   INC_ZP_PTR_3
+@seek5:
+   INC_ZP_PTR_3
+@seek4:
+   INC_ZP_PTR_3
+@seek3:
+   INC_ZP_PTR_3
+@seek2:
+   INC_ZP_PTR_3
+@seek1:
+   INC_ZP_PTR_3
+@return:
    rts
 
 level_pause:

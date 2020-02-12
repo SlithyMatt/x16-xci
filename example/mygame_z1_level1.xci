@@ -92,6 +92,8 @@ go_level 2 0
 end_anim
 
 tool_trigger use  19 16  22 21
+sprite_frames 1  0  11
+wait 30
 set_state front_to_foyer
 go_level 1 0
 end_anim
