@@ -28,6 +28,7 @@ end_anim
 
 tool_trigger use  38 3  39 25
 set_state lr_to_foyer
+gif_pause
 go_level 1 0
 end_anim
 

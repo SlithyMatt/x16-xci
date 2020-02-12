@@ -88,7 +88,6 @@ sprite_frames 4  0  41 42
 sprite_move 3  2  42  -2 0
 sprite_move 4  2  42  -2 0
 wait 84
-gif_pause
 go_level 2 0
 end_anim
 

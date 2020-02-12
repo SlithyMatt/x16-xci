@@ -17,6 +17,7 @@ clear_state lr_to_foyer
 set_state near_door
 end_if
 if front_to_foyer
+gif_start
 sprite_frames 1  0  1 2 3 2 1 4 5 4
 sprite 1  18 128
 clear_state front_to_foyer

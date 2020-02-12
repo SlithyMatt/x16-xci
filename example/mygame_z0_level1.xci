@@ -109,7 +109,6 @@ tiles 0  21 13  0
 get_item coffee 1 # add 1 coffee to inventory
 clear_state coffee_poured
 set_state cup_taken
-gif_start
 end_if # coffee_poured
 end_if # not holding_carafe
 if holding_carafe
