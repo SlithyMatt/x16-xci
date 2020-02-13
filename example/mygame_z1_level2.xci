@@ -47,7 +47,8 @@ tool_trigger use  7 4  11 17
 clear
 text 1 We can't go in the bedroom now.
 wait 60
-text 1 Really, it's for the best.
+text 1 Any kind of business in there
+text 1 would be a holy grail moment.
 end_anim
 
 tool_trigger look  20 4  29 10

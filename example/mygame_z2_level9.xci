@@ -1,1 +1,11 @@
 # Zone 2, level 9
+
+# bitmap mygame_bedroom.data
+music jingle.vgm
+
+init
+wait 30
+text 1 Oh dear. It has been a while.
+wait 60
+text 1 How many Christmases ago was it?
+end_anim

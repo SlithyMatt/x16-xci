@@ -13,6 +13,6 @@ wait 30
 text 1 Hmm... it might come in handy.
 wait 90
 get_item screwdriver 1
-set_state from_screwdriver
+set_state got_screwdriver
 go_level 2 1
 end_anim

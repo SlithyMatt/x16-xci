@@ -937,7 +937,7 @@ __anim_seek_next_instruction:
    lda ANIM_PTR+1
    adc #0
    sta ANIM_PTR+1
-   bra @return
+   bra @seek1
 @seek40:
    lda ANIM_PTR
    clc

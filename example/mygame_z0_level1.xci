@@ -11,15 +11,22 @@ tiles 0  19 12  164 165
 tiles 0  19 13  166 167
 # steam loop
 sprite_frames 2  0  43 44 45 46
-end_anim
-
-first
-# coffee cup
-tiles 0  21 12  170
-tiles 0  21 13  171
+if_not bananas_taken
 # bananas
 tiles 0  35 12  172 173
 tiles 0  35 13  174 175
+end_if
+if_not cup_taken
+# coffee cup
+tiles 0  21 12  170
+tiles 0  21 13  171
+clear_state coffee_made
+clear_state holding_carafe
+clear_state coffee_poured
+end_if
+end_anim
+
+first
 wait 30
 text 1  This is my kitchen. So modern!
 wait 60
@@ -172,20 +179,8 @@ end_anim # look at bananas
 # clicking on the doorway with walk tool (default)
 tool_trigger walk  2 6  6 23
 clear
-if_not cup_taken
-text 1  You look tired. Have some coffee.
-end_if
-if_not bananas_taken
-text 1  You'll get hungry later.
-wait 60
-text 1  Take my bananas.
-end_if
-if cup_taken
-if bananas_taken
 set_state kitchen_to_foyer
 go_level 1 0 # go to zone 1, level 0
-end_if # bananas_taken
-end_if # cup_taken
 end_anim # walk to doorway
 
 # clicking on the doorway with run tool

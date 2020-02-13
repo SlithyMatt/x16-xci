@@ -9,7 +9,7 @@ wait 30
 text 3 "That'll be five bucks."
 clear_state from_menu
 end_if
-if from_screwdriver
+if got_screwdriver
 wait 30
 text 3 "Enjoy your screwdriver."
 wait 60
@@ -36,6 +36,7 @@ go_level 2 2
 end_anim
 
 item_trigger money 5 5  0 1  39 25
+clear
 wait 30
 text 3 "Thanks! Just a sec..."
 wait 60
@@ -45,6 +46,7 @@ go_level 2 3
 end_anim
 
 tool_trigger talk  13 2  33 25
+clear
 text 2 "How much again?"
 wait 60
 text 3 "Five bucks. Got it?"

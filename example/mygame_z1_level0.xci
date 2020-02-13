@@ -38,7 +38,12 @@ tool_trigger use  0 8  1 18
 if near_door
 sprite_frames 1  0  3H
 wait 30
-go_level  1 1
+if_not got_screwdriver
+go_level 1 1
+end_if
+if got_screwdriver
+set_state from_house
+go_level 2 6
 end_if
 if_not near_door
 clear
@@ -65,7 +70,7 @@ end_anim
 
 tool_trigger look  3 13  5 16
 clear
-text 1 That's door to the living room.
+text 1 That's the door to the living room.
 end_anim
 
 tool_trigger walk  0 8  5 18

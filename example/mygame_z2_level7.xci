@@ -1,1 +1,53 @@
 # Zone 2, level 7
+
+bitmap mygame_foyer.data
+music zone0.vgm
+
+init
+if lr_to_foyer
+sprite_frames 1  0  6
+clear_state lr_to_foyer
+end_if
+if front_to_foyer
+sprite_frames 1  0  1
+clear_state front_to_foyer
+end_if
+sprite 1  18 128
+end_anim
+
+tool_trigger look  38 13  39 18
+clear
+text 1  We have the grail.
+wait 30
+text 1  The kitchen isn't where we need to go.
+end_anim
+
+tool_trigger look  19 12  22 15
+clear
+text 1  We really love bananas.
+end_anim
+
+tool_trigger talk  19 12  22 15
+clear
+text 2  "I love you, bananas!"
+end_anim
+
+tool_trigger use  3 13  5 16
+sprite_frames 1  0  11
+wait 30
+go_level  2 8
+end_anim
+
+tool_trigger look  3 13  5 16
+clear
+text 1 That's the door to the living room.
+wait 60
+text 1 The bedroom door is in there.
+end_anim
+
+tool_trigger look  0 8  1 18
+clear
+text 1 We have the grail.
+wait 30
+text 1 We can't leave now!
+end_anim

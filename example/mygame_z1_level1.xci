@@ -6,7 +6,7 @@ music zone0.vgm
 init
 sprite_frames 2  0  30 31 32 33 34 35 36 37 # Flag waving
 sprite 2  282 50                            # Top-right of pole
-sprite_move 2  6  240  0 0                  # Fixed position, 10 fps, 24 s
+sprite_move 2  6  255  0 0                  # Fixed position, 10 fps, 25.5 s
 sprite_frames 3  0  38 39  # Front of car
 sprite 3  86 170           # Parked, not moving
 sprite_frames 4  0  40     # Rear of car

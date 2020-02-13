@@ -1,1 +1,57 @@
 # Zone 2, level 6
+
+bitmap mygame_house.data
+music zone0.vgm
+
+init
+sprite_frames 2  0  30 31 32 33 34 35 36 37 # Flag waving
+sprite 2  282 50                            # Top-right of pole
+sprite_move 2  6  255  0 0                  # Fixed position, 10 fps, 25.5 s
+sprite_frames 3  0  38H 39H   # Front of car
+if_not from_house
+sprite_frames 4  0  41H 42H
+sprite 3  16 170
+sprite 4  0 170
+sprite_move 3  2  42  2 0
+sprite_move 4  2  42  2 0
+wait 84
+sprite_frames 4  0  40H
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite 1  96 170
+sprite_move 1  4  26  2 0
+wait 104
+sprite_frames 1  0  11
+end_if
+if from_house
+sprite 3  102 170
+sprite_frames 4  0  40H
+sprite 4  86 170
+sprite_frames 1  0  6
+sprite 1  148 170
+clear_state from_house
+end_if
+end_anim
+
+tool_trigger use  19 16  22 21
+sprite_frames 1  0  11
+wait 30
+set_state front_to_foyer
+if got_grail
+go_level 2 7
+end_if
+if_not got_grail
+go_level 1 0
+end_if
+end_anim
+
+item_trigger keys 1 0  10 21  15 24
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_move 1  4  26  -2 0
+wait 104
+sprite_hide 1
+sprite_frames 4  0  41H 42H
+sprite_move 3  2  118  2 0
+sprite_move 4  2  118  2 0
+wait 84
+go_level 2 4
+end_anim

@@ -1,1 +1,33 @@
 # Zone 2, level 5
+
+# bitmap garage.data
+music zone0.vgm
+
+init
+if got_grail
+wait 30
+text 1 We already have the grail.
+wait 60
+text 1 Let's go home.
+wait 60
+go_level 2 4
+end_if
+end_anim
+
+first
+sprite_frames 2  0  53
+sprite  2 152 88
+wait 30
+text 1 Behold, the grail!
+end_anim
+
+tool_trigger use  19 11  20 12
+sprite_hide 2
+get_item grail 1
+set_state got_grail
+text 1 At last, we have the grail!
+wait 60
+text 1 It's just what we need at home!
+wait 90
+go_level 2 4
+end_anim

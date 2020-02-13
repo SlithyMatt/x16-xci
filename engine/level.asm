@@ -333,7 +333,7 @@ __level_next_instruction: ; Input/Output: ZP_PTR_3 - address of start of instruc
    lda ZP_PTR_3+1
    adc #0
    sta ZP_PTR_3+1
-   bra @return
+   bra @seek1
 @seek40:
    lda ZP_PTR_3
    clc
