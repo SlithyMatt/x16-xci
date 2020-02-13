@@ -1,1 +1,51 @@
 # Zone 2, level 1
+
+bitmap izzy.data
+music zone0.vgm
+
+init
+if from_menu
+wait 30
+text 3 "That'll be five bucks."
+clear_state from_menu
+end_if
+if from_screwdriver
+wait 30
+text 3 "Enjoy your screwdriver."
+wait 60
+text 2 "Thanks. I'll take it to go."
+wait 60
+text 3 "OK. Adios, amigo!"
+wait 90
+go_level 2 4
+end_if
+end_anim
+
+first
+text 3 "Hey, welcome back, John!"
+wait 60
+text 2 "Hi, Izzy."
+wait 90
+text 3 "Whatcha having?"
+wait 60
+text 2 "I don't know. It's kinda early."
+wait 90
+text 3 "No problem! We got a breakfast menu."
+wait 120
+go_level 2 2
+end_anim
+
+item_trigger money 5 5  0 1  39 25
+wait 30
+text 3 "Thanks! Just a sec..."
+wait 60
+text 3 "OK, here you go!"
+wait 90
+go_level 2 3
+end_anim
+
+tool_trigger talk  13 2  33 25
+text 2 "How much again?"
+wait 60
+text 3 "Five bucks. Got it?"
+end_anim

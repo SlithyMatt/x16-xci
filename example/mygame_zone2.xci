@@ -1,11 +1,11 @@
 # Zone 2 levels
-level mygame_z2_level0.xci
-level mygame_z2_level1.xci
-level mygame_z2_level2.xci
-level mygame_z2_level3.xci
-level mygame_z2_level4.xci
-level mygame_z2_level5.xci
-level mygame_z2_level6.xci
-level mygame_z2_level7.xci
-level mygame_z2_level8.xci
-level mygame_z2_level9.xci
+level mygame_z2_level0.xci # outside Izzy's 1
+level mygame_z2_level1.xci # inside Izzy's
+level mygame_z2_level2.xci # menu
+level mygame_z2_level3.xci # screwdriver
+level mygame_z2_level4.xci # outside Izzy's 2
+level mygame_z2_level5.xci # garage
+level mygame_z2_level6.xci # house
+level mygame_z2_level7.xci # foyer
+level mygame_z2_level8.xci # living room
+level mygame_z2_level9.xci # bedroom

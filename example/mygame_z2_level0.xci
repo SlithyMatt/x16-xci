@@ -99,6 +99,13 @@ text 1 We're not close enough to the door.
 end_if
 end_anim
 
+tool_trigger look 4 15  10 18
+clear
+text 1 That old garage looks abandoned.
+wait 60
+text 1 The door doesn't even have a lock.
+end_anim
+
 tool_trigger walk  4 19  10 21
 if_not near_garage
 if_not near_izzys

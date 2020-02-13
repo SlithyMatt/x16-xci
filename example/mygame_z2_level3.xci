@@ -1,1 +1,18 @@
 # Zone 2, level 3
+
+bitmap screwdriver.data
+music zone0.vgm
+
+init
+wait 30
+text 3 "My last one. You were lucky!"
+end_anim
+
+tool_trigger use  10 11  30 16
+wait 30
+text 1 Hmm... it might come in handy.
+wait 90
+get_item screwdriver 1
+set_state from_screwdriver
+go_level 2 1
+end_anim

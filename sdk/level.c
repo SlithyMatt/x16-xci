@@ -178,7 +178,7 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
                return -1;
             }
             if (node->num_values < 7) {
-               printf("parse_level_config: tool_trigger requires 7 values\n");
+               printf("parse_level_config: item_trigger requires 7 values\n");
                return -1;
             }
             item_trigger_bin = (item_trigger_t *)&bin[size];

@@ -1,1 +1,78 @@
 # Zone 2, level 4
+
+bitmap mygame_bar_ext.data
+music zone0.vgm
+
+init
+sprite_frames 2  0  49 50  # beacon
+sprite 2  182 8
+sprite_move 2  60  255  0 0
+sprite_frames 5  0  51 52  # beer sign
+sprite 5  191 134
+sprite_move 5  45  255  0 0
+sprite_frames 3  0  38 39  # Front of car
+sprite_frames 4  0  40     # Rear of car, parked
+sprite 3  236 170
+sprite 4  252 170
+if near_garage
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite 1  56 146
+end_if
+end_anim
+
+first
+sprite_frames 1  0  6
+sprite 1  164 146
+end_anim
+
+tool_trigger use 4 15  10 18
+if near_garage
+clear
+text 1 The door appears to be jammed.
+wait 60
+text 1 It only opens a tiny bit.
+wait 30
+text 1 If only we had something
+text 1 to pry it open...
+end_if
+if_not near_garage
+clear
+text 1 We're not close enough to the door.
+end_if
+end_anim
+
+tool_trigger look 4 15  10 18
+clear
+text 1 That old garage looks abandoned.
+wait 60
+text 1 The door doesn't even have a lock.
+end_anim
+
+item_trigger screwdriver 1 0  4 15  10 18
+clear
+text 1 That should do the trick...
+wait 60
+text 1 It's opening!
+wait 90
+go_level 2 5
+end_anim
+
+tool_trigger walk  4 19  10 21
+if_not near_garage
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_move 1  4  54  -2 0
+clear_state near_izzys
+wait 216
+set_state near_garage
+end_if
+end_anim
+
+tool_trigger run  4 19  10 21
+if_not near_garage
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_move 1  2  54  -2 0
+clear_state near_izzys
+wait 108
+set_state near_garage
+end_if
+end_anim

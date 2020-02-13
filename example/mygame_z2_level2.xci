@@ -1,1 +1,32 @@
 # Zone 2, level 2
+
+bitmap breakfast.data
+music zone0.vgm
+
+init
+wait 30
+text 3 "So, whatcha thinking?"
+end_anim
+
+tool_trigger use  12 10  27 11
+clear
+text 3 "Sorry, out of whiskey."
+end_anim
+
+tool_trigger use  12 12  27 13
+clear
+text 3 "Sorry, out of champagne."
+end_anim
+
+tool_trigger use  12 14  27 15
+clear
+text 3 "Sorry, out of tomato juice."
+end_anim
+
+tool_trigger use  12 16  27 17
+clear
+text 3 "One screwdriver, coming up!"
+wait 90
+set_state from_menu
+go_level 2 1
+end_anim
