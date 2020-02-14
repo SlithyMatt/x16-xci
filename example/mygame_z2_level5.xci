@@ -1,6 +1,6 @@
 # Zone 2, level 5
 
-# bitmap garage.data
+bitmap garage.data
 music zone0.vgm
 
 init
@@ -30,4 +30,25 @@ wait 60
 text 1 It's just what we need at home!
 wait 90
 go_level 2 4
+end_anim
+
+tool_trigger look  19 11  20 12
+clear
+text 1 It's the holy grail!
+wait 60
+text 1 We need one of those.
+end_anim
+
+tool_trigger look  5 18  16 25
+clear
+text 1 It's an old, stuffed owl.
+wait 60
+text 1 Nobody wants that dusty old thing.
+end_anim
+
+tool_trigger look  32 12  36 20
+clear
+text 1 Whoever owned this mop
+wait 30
+text 1 never did much cleaning.
 end_anim

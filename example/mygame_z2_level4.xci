@@ -57,7 +57,7 @@ clear
 text 1 The door appears to be jammed.
 wait 60
 text 1 It only opens a tiny bit.
-wait 30
+wait 60
 text 1 If only we had something
 text 1 to pry it open...
 end_if
