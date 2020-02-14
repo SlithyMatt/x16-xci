@@ -199,8 +199,12 @@ show_inv:
    stz @col
 @fill_loop:
    lda @pos
+   sec
+   sbc __inv_page_start
    cmp __inv_page_size
    beq @return
+   clc
+   adc __inv_page_start
    cmp __inv_num_items
    beq @return
    ldx @col
@@ -413,7 +417,7 @@ inv_tick:
    lda mouse_tile_y
    cmp inv_start_y
    beq @scroll_up
-   cmp #30
+   cmp #29
    beq @scroll_down
    bra @return
 @scroll_up:
@@ -542,12 +546,9 @@ __inv_scroll_up:
    rts
 
 __inv_scroll_down:
-   ldx __inv_page_cols
-   ldy __inv_page_rows
-   jsr byte_mult
+   lda __inv_page_size
    clc
    adc __inv_page_start
-   inc
    cmp __inv_num_items
    bpl @return
    lda __inv_page_start
