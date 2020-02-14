@@ -1,6 +1,6 @@
 # Zone 2, level 9
 
-# bitmap mygame_bedroom.data
+bitmap mygame_bedroom.data
 music jingle.vgm
 
 init
@@ -8,4 +8,51 @@ wait 30
 text 1 Oh dear. It has been a while.
 wait 60
 text 1 How many Christmases ago was it?
+end_anim
+
+tool_trigger look  27 5  34 6
+clear
+text 1 That's our grail shelf.
+wait 60
+text 1 Looks a little empty...
+end_anim
+
+item_trigger grail 1 1  27 3  34 6
+sprite_frames 6  0  53
+sprite 6  235 26
+sprite_move 6 1 1 0 0
+clear
+wait 30
+text 1 At last!
+wait 30
+text 1 The grail is in its rightful place!
+wait 60
+line
+text 1 We win!
+wait 120
+clear
+text 1 Make your own game for the XCI Engine
+wait 60
+text 1 Visit the official GitHub page at:
+wait 60
+text 1 https://github.com/SlithyMatt/x16-xci
+wait 60
+text 1 Thanks, and have fun!
+end_anim
+
+tool_trigger look  18 13  38 21
+clear
+text 1 Chicks dig Santa blankets.
+wait 60
+text 1 Well, in theory, at least.
+end_anim
+
+tool_trigger look  2 3  11 20
+clear
+text 1 Luckily, it's a fake tree.
+end_anim
+
+tool_trigger look  18 4  26 12
+clear
+text 1 You stare longingly out the window.
 end_anim
