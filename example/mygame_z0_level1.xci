@@ -178,7 +178,6 @@ end_anim # look at bananas
 
 # clicking on the doorway with walk tool (default)
 tool_trigger walk  2 6  6 23
-clear
 set_state kitchen_to_foyer
 go_level 1 0 # go to zone 1, level 0
 end_anim # walk to doorway

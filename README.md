@@ -55,7 +55,7 @@ VRAM:
 * Bank 1: Sprites ($0000-$FFFF)
 
 ## Data Format
-All game data is described in text files, starting with a main file. This file defines the top-level game data, providing references to all other source files. Its filename is the only input to the build utility (**xci.exe**). It is simply a set of key-value pairs. There are certain mandatory keys that are required for the game to be successfully built. Unrecognized keys are ignored by the build utility, as are comments, which begin with a hash (```#```) symbol. Keys have no spaces and are not case-sensitive, but values may be case-sensitive and consist of all text after the first whitespace after the key up to the end of the line or the start of a comment. New lines can be part of a value by using the escape code ```\n```. A value can contain a hash character by escaping it with a backslash (i.e. ```\#```). And if a value contains a backslash character, that can be escaped with a double backslash (```\\```).
+All game data is described in text files, starting with a main file. This file defines the top-level game data, providing references to all other source files. Its filename is the only command-line input to the software development kit (SDK) executable (**xci.exe**). It is simply a set of key-value pairs. There are certain mandatory keys that are required for the game to be successfully built. Unrecognized keys are ignored by the build utility, as are comments, which begin with a hash (```#```) symbol. Keys have no spaces and are not case-sensitive, but values may be case-sensitive and consist of all text after the first whitespace after the key up to the end of the line or the start of a comment. New lines can be part of a value by using the escape code ```\n```. A value can contain a hash character by escaping it with a backslash (i.e. ```\#```). And if a value contains a backslash character, that can be escaped with a double backslash (```\\```).
 
 ### Main File
 The following is an example of a main file, showing all required keys.
@@ -660,7 +660,7 @@ sprite 2  282 50                            # Top-right of pole
 sprite_move 2  6  120  0 0                  # Fixed position, 10 fps, 12 s
 sprite_frames 3  0  38  # Front of car
 sprite 3  86 170        # Parked, not moving
-sprite_frames 4  0  40  # Read of car
+sprite_frames 4  0  40  # Rear of car
 sprite 4  102 170       # Parked, not moving
 end_anim
 
@@ -753,15 +753,22 @@ tiles 0  19 12  164 165
 tiles 0  19 13  166 167
 # steam loop
 sprite_frames 2  0  43 44 45 46
-end_anim
-
-first
-# coffee cup
-tiles 0  21 12  170
-tiles 0  21 13  171
+if_not bananas_taken
 # bananas
 tiles 0  35 12  172 173
 tiles 0  35 13  174 175
+end_if
+if_not cup_taken
+# coffee cup
+tiles 0  21 12  170
+tiles 0  21 13  171
+clear_state coffee_made
+clear_state holding_carafe
+clear_state coffee_poured
+end_if
+end_anim
+
+first
 wait 30
 text 1  This is my kitchen. So modern!
 wait 60
@@ -792,7 +799,6 @@ end_if # not holding_carafe
 end_if # coffee_made
 if_not coffee_made
 clear
-gif_start
 text 1  Ok, I'll make some coffee
 wait 60
 # show steam
@@ -891,7 +897,7 @@ tool_trigger use  35 12  36 13
 if_not bananas_taken
 clear
 text 2  Go ahead and take the bananas. # make it yellow, because bananas
-wait 60
+wait 30
 # remove bananas
 tiles 0  35 12  0 0
 tiles 0  35 13  0 0
@@ -914,21 +920,8 @@ end_anim # look at bananas
 
 # clicking on the doorway with walk tool (default)
 tool_trigger walk  2 6  6 23
-gif_pause
-clear
-if_not cup_taken
-text 1  You look tired. Have some coffee.
-end_if
-if_not bananas_taken
-text 1  You'll get hungry later.
-wait 60
-text 1  Take my bananas.
-end_if
-if cup_taken
-if bananas_taken
+set_state kitchen_to_foyer
 go_level 1 0 # go to zone 1, level 0
-end_if # bananas_taken
-end_if # cup_taken
 end_anim # walk to doorway
 
 # clicking on the doorway with run tool
@@ -940,7 +933,7 @@ end_anim # run to doorway
 # clicking on the doorway with look tool
 tool_trigger look  2 6  6 23
 clear
-text 1  That's the doorway to the living room.
+text 1  That's the doorway to the foyer.
 end_anim # run to doorway
 ```
 
@@ -982,9 +975,9 @@ The next triggers are for the bananas on the counter, and like the coffee cup th
 
 The other banana trigger is for the ```look``` tool, which again throws up some yellow text, but doesn't modify any state or inventory quantities, just again gently guides the player into taking the bananas so that the game can continue.
 
-The last triggers are for the doorway, starting with the default tool: ```walk```.  Here, we can enforce state requirements for leaving a level. In this case, we can prevent the player from continuing until they add both coffee and bananas to their inventory. The sequence starts with an unconditional **clear** key so that it doesn't have to be in any of the sub-sequences. Then there are **if_not** sequences for each required state, gently hinting that the player should acuire the items before they leave the kitchen. Then the last sub-sequence is led by **if** keys for each required state and simply goes to level 0 of zone 1 (a.k.a. the living room) immediately with no further animation or text.
+The last triggers are for the doorway, starting with the default tool: ```walk```.  Here, we set the ```kitchen_to_foyer``` state before proceeding to level 0 of zone 1 without any further animation. This state will inform the next level where to place the avatar, as it could be entering the foyer from different locations.  The [appendix](examples/APPENDIX.md) shows how this is handled in zone 1.
 
-The other doorway triggers are for the ```run``` and ```look``` tools. In levels where there is an animated player avatar, it might mike sense to run to a location to shorten the animation time, but since the level transition is both instantaneous and has no avatar to move, we can have a little joke. And finally, as before, looking at something can give a helpful hint or just a little exposition.
+The other doorway triggers are for the ```run``` and ```look``` tools. In levels where there is an animated player avatar, it might mike sense to run to a location to shorten the animation time, but since the level transition is both instantaneous and has no avatar to move, we can have a little joke. And finally, as before, looking at something can give a helpful hint or just a little exposition before taking the default action.
 
 #### VGM Files
 VGM (Video Game Music) files are based on an open standard for "chiptune" authoring and playback. It supports most sound chips from the 8-bit and 16-bit eras of gaming, so you can exactly replicate the sound tracks from arcade, console and home computer games. It is well suited to work with both emulation and real hardware, and can be used to define hwat will be played on the target machine. For example, a VGM file can be created with just YM2151 voices, using all 8 voices available on a single chip.  Within the VGM file format are the actual chip register writes that are required to play the music on the hardware, which makes transformation into a format that the X16 can use trivial.
@@ -995,15 +988,73 @@ For more information on the definition of the VGM format, see the [official stan
 (TODO)
 
 ## Building XCI Toolchain from Source
-(TODO)
+The toolchain for building and running XCI games consists of two executable binaries: **xci.exe** to assemble the game configuration on the development platform, and **XCI.PRG** to run the game on the Commander X16. These tools are called the SDK (software development kit) and the engine, respectively.
+The code for both of them are available from this repository.  For the sake of simplicity, I am using Unix-like commands for the examples. This is the default for Linux and Mac.  For Windows, using Git Bash is recommended over using the standard DOS-like command line.
+
+### Cloning Code Repository
+You will need to have [git](https://git-scm.com/) installed.
+
+```
+host:~$ git clone https://github.com/SlithyMatt/x16-xci.git
+host:~$ cd x16-xci
+host:~/x16-xci$
+```
+
+### Building SDK
+You will need to have [gcc](https://gcc.gnu.org/) installed.
+
+On the development platform, use the command line to change to the **sdk** directory, then build the default make target.
+
+```
+host:~/x16-xci$ cd sdk
+host:~/x16-xci/sdk$ make
+```
+
+After this you will see multiple calls to gcc. If no errors are reported, **xci.exe** should be in the current directory.
+
+### Building Engine
+You will need to have GNU make (available as part of [gcc](https://gcc.gnu.org/)) and [cc65](https://cc65.github.io/) installed.
+
+On the development platform, use the command line to change to the **engine** directory, then build the default make target.
+
+```
+host:~/x16-xci$ cd engine
+host:~/x16-xci/engine$ make
+```
+
+After this you will see a single call to cl65. If no errors are reported, **XCI.PRG** should be in the current directory.
 
 ## Building XCI Game Binaries
-(TODO)
+Copy or link **xci.exe** into the directory containing your game configuration files. Then, just call **xci.exe** with your main configuration file as its only argument. This will populate the current directory with all the **.BIN** files that the engine will load at run time.
+
+To build the example game, use the following commands.
+
+```
+host:~/x16-xci$ cd example
+host:~/x16-xci/example$ cp ../sdk/xci.exe .
+host:~/x16-xci/example$ ./xci.exe mygame.xci
+```
+
+If there are no errors in the configuration files, this will execute quietly and leave behind all expected **.BIN** files.
 
 ## Deploying XCI Game
-(TODO)
+Copy **XCI.PRG** and all of your game's **.BIN** files into the same directory. Then, you can run the game with the X16 emulator from the host command line or from the BASIC prompt within the emulator.
+
+Run from the host command line:
+
+```
+$ x16emu -prg XCI.PRG -run
+```
+
+Or from the BASIC prompt, first just run the emulator from the directory containing all of the game files. Then call ```LOAD "XCI.PRG"``` followed by ```RUN```.
+
+```
+$ x16emu
+```
+
+![run](example/run.gif)
 
 ## Licensing
-(TODO)
+The XCI [license](LICENSE) is free and open source, and you can use and/or modify the SDK and engine any way you want. You may re-distribute the compatible version of the engine with your game. While your game may be copyrighted and require a paid license, the engine itself must remain free.
 
 ## Notes
