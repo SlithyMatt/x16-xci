@@ -165,7 +165,6 @@ load_level:
    ldy #1
    sta (ZP_PTR_2),y
    lda anim_bank
-   sei
    sta RAM_BANK
    lda (ZP_PTR_3)
    ldy #6
@@ -185,7 +184,6 @@ load_level:
    sta (ZP_PTR_2),y  ; set x_max
    iny
    lda (ZP_PTR_3),y
-   cli
    sta (ZP_PTR_2),y  ; set y_max
 @next_trigger:
    inc __level_num_triggers
@@ -257,10 +255,8 @@ load_level:
 __level_next_seq: ; Input/Output: ZP_PTR_3 - address of start of sequence
 @loop:
    lda anim_bank
-   sei
    sta RAM_BANK
    lda (ZP_PTR_3)
-   cli
    cmp #END_ANIM_KEY
    beq @next
    jsr __level_next_instruction
@@ -426,7 +422,6 @@ level_tick:
    adc __level_trigger_offset+1
    sta ZP_PTR_3+1
    lda anim_bank
-   sei
    sta RAM_BANK
    lda mouse_tile_x
    ldy #2
@@ -454,7 +449,6 @@ level_tick:
 @check_key:
    ldy #6
    lda (ZP_PTR_3),y
-   cli
    cmp #ITEM_TRIGGER
    beq @check_item_click
    jmp @check_tool
@@ -464,12 +458,10 @@ level_tick:
    jmp @next
 @check_item_index:
    lda anim_bank
-   sei
    sta RAM_BANK
    lda current_item
    ldy #7
    cmp (ZP_PTR_3),y
-   cli
    beq @check_item_quant
    jmp @next
 @check_item_quant:
@@ -477,7 +469,6 @@ level_tick:
    stx __level_quant
    sty __level_quant+1
    lda anim_bank
-   sei
    sta RAM_BANK
    lda (ZP_PTR_3)
    sec
@@ -485,7 +476,6 @@ level_tick:
    sta ZP_PTR_2
    ldy #1
    lda (ZP_PTR_3),y
-   cli
    sbc #0
    sta ZP_PTR_2+1
    ldy #1
@@ -522,19 +512,15 @@ level_tick:
    bne @check_match
    ldy #7
    lda anim_bank
-   sei
    sta RAM_BANK
    lda (ZP_PTR_3),y
-   cli
    jsr tool_set_cursor
    bra @check_click
 @check_match:
    ldy #7
    lda anim_bank
-   sei
    sta RAM_BANK
    lda (ZP_PTR_3),y
-   cli
    cmp current_tool
    bne @next
 @check_click:
@@ -544,18 +530,15 @@ level_tick:
    SET_MOUSE_CURSOR def_cursor
 @exec_trigger:
    lda anim_bank
-   sei
    sta RAM_BANK
    lda (ZP_PTR_3)
    sta ANIM_PTR
    ldy #1
    lda (ZP_PTR_3),y
-   cli
    sta ANIM_PTR+1
    stz anim_seq_done
    bra @clear_stack
 @next:
-   cli
    plx
    inx
    lda __level_trigger_offset

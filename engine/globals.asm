@@ -52,11 +52,9 @@ reset_bank: ; A: bank to set to all zeros
    ldy #0
 @loop:
    lda @bank
-   sei
    sta RAM_BANK
    lda #0
    sta (ZP_PTR_1),y
-   cli
    iny
    bne @loop
    inc ZP_PTR_1+1

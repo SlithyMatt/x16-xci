@@ -126,7 +126,6 @@ save_game:
    lda #>RAM_CONFIG
    sta ZP_PTR_2+1
    lda #(STATE_BANK-1)
-   sei
    sta RAM_BANK
    ldy #0
 @title_author_loop:
@@ -172,7 +171,6 @@ save_game:
    inx
    cpx #XGF_NUM_INV_QUANTS
    bmi @inv_loop
-   cli
 
    jmp @restore ; just stage RAM, no XGF I/O until new kernal is ready
 
