@@ -12,6 +12,7 @@ int parse_animation_node(const xci_config_node_t *node, uint8_t *bin) {
    sprite_frames_t *sprite_frames_bin = (sprite_frames_t *)bin;
    sprite_pos_t *sprite_bin = (sprite_pos_t *)bin;
    sprite_hide_t *sprite_hide_bin = (sprite_hide_t *)bin;
+   sprite_debug_t *sprite_debug_bin = (sprite_debug_t *)bin;
    sprite_move_t *sprite_move_bin = (sprite_move_t *)bin;
    wait_t *wait_bin = (wait_t *)bin;
    tile_row_t *tile_row_bin = (tile_row_t *)bin;
@@ -89,6 +90,15 @@ int parse_animation_node(const xci_config_node_t *node, uint8_t *bin) {
          sprite_hide_bin->key = SPRITE_HIDE;
          sprite_hide_bin->index = atoi(val->val);
          size = sizeof(sprite_hide_t);
+         break;
+      case SPRITE_DEBUG:
+         if (node->num_values < 1) {
+            printf("parse_animation_node: no value specified for sprite_debug");
+            return -1;
+         }
+         sprite_debug_bin->key = SPRITE_DEBUG;
+         sprite_debug_bin->index = atoi(val->val);
+         size = sizeof(sprite_debug_t);
          break;
       case TILES:
          if (node->num_values < 4) {

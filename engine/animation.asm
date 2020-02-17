@@ -26,6 +26,7 @@ GET_ITEM             = 72
 GIF_START            = 73
 GIF_PAUSE            = 74
 GIF_FRAME            = 75
+SPRITE_DEBUG         = 76
 
 NUM_SPRITES          = 128
 
@@ -120,6 +121,8 @@ anim_tick:
    beq @sprite
    cmp #SPRITE_HIDE_KEY
    beq @sprite_hide
+   cmp #SPRITE_DEBUG
+   beq @sprite_debug
    cmp #TILES_KEY
    beq @tiles
    cmp #WAIT_KEY
@@ -153,9 +156,13 @@ anim_tick:
    cmp #GIF_PAUSE
    beq @gif_pause
    cmp #GIF_FRAME
-   beq @gif_frame
+   bne @check_end_anim
+   jmp @gif_frame
+@check_end_anim:
    cmp #END_ANIM_KEY
-   beq @end_anim
+   bne @unknown
+   jmp @end_anim
+@unknown:
    jmp @stop ; unrecognized key, just stop
 @sprite_frames:
    jsr __anim_sprite_frames
@@ -165,6 +172,9 @@ anim_tick:
    jmp @play
 @sprite_hide:
    jsr __anim_sprite_hide
+   jmp @play
+@sprite_debug:
+   jsr __anim_sprite_debug
    jmp @play
 @tiles:
    jsr __anim_tiles
@@ -445,6 +455,79 @@ __anim_sprite_hide:
    sta RAM_BANK
    lda #0
    sta (ZP_PTR_1)
+   rts
+
+.macro PRINT_BYTE byte_in, char_out
+   lda byte_in
+   and #$F0
+   lsr
+   lsr
+   lsr
+   lsr
+   cmp #$0A
+   bmi :+
+   clc
+   adc #$37
+   bra :++
+:  ora #$30
+:  sta char_out
+   lda #(MENU_PO << 4)
+   sta char_out
+   lda byte_in
+   and #$0F
+   cmp #$0A
+   bmi :+
+   clc
+   adc #$37
+   bra :++
+:  ora #$30
+:  sta char_out
+   lda #(MENU_PO << 4)
+   sta char_out
+.endmacro
+
+__anim_sprite_debug:
+   bra @start
+@byte: .byte 0
+@start:
+   lda anim_bank
+   sta RAM_BANK
+   lda (ANIM_PTR) ; sprite index
+   sta __sprite_idx
+   jsr __sprattr  ; load sprite attributes
+   lda #1
+   sta VERA_ctrl
+   lda #VRAM_TILEMAP_BANK
+   sta VERA_addr_bank
+   lda __anim_text_line
+   asl
+   tax
+   lda __anim_text_addr,x
+   sta VERA_addr_low
+   inx
+   lda __anim_text_addr,x
+   inx
+   sta VERA_addr_high
+   PRINT_BYTE __sprite_idx, VERA_data1
+   lda #$3A ; colon
+   sta VERA_data1
+   ldy #(MENU_PO << 4)
+   sty VERA_data1
+   lda #$20 ; space
+   sta VERA_data1
+   sty VERA_data1
+   ldx #7
+@loop:
+   lda VERA_data0
+   sta @byte
+   PRINT_BYTE @byte, VERA_data1
+   lda #$20 ; space
+   sta VERA_data1
+   sty VERA_data1
+   dex
+   bne @loop
+   inc __anim_text_line
+   INC_ANIM_PTR
    rts
 
 __anim_tiles:

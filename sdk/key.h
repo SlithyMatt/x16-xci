@@ -75,9 +75,15 @@ typedef enum xci_key {
    SET_STATE,
    CLEAR_STATE,
    GET_ITEM,
+
+   // Emulation Only
    GIF_START,
    GIF_PAUSE,
    GIF_FRAME,
+
+   // Debug for Engine Development
+   SPRITE_DEBUG,
+
 
    NUM_XCI_KEYS
 } xci_key_t;

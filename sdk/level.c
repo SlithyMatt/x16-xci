@@ -252,6 +252,7 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
          case TILES:
          case WAIT:
          case SPRITE_MOVE:
+         case SPRITE_DEBUG:
             num = parse_animation_node(node, &bin[size]);
             if (num < 0) {
                printf("parse_level_config: error parsing %s\n",

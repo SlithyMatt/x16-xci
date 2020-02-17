@@ -76,9 +76,14 @@ const char xci_key_strings[NUM_XCI_KEYS][MAX_KEY_LENGTH] = {
    "set_state",
    "clear_state",
    "get_item",
+
+   // Emulation only
    "gif_start",
    "gif_pause",
-   "gif_frame"
+   "gif_frame",
+
+   // Debug for engine development
+   "sprite_debug"
 };
 
 void strn_tolower(char *dest, int max, const char *source) {
