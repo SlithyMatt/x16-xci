@@ -7,7 +7,7 @@ An adventure game engine for the Commander X16
 * [Memory Map](#memory-map)
 * [Data Format](#data-format)
    * [Main File](#main-file)
-      * [Required Keys](#main-file:-required_keys)
+      * [Required Keys](#main-file-required-keys)
 
 ## Overview
 XCI is an adventure game engine designed to be as compact as
