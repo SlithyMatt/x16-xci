@@ -97,6 +97,7 @@ void delete_config(xci_config_t *cfg) {
 int concat_string_val(const xci_val_list_t *vals, uint8_t *str, int max) {
    const xci_val_list_t *val = vals;
    int i = 0;
+   int j = 0;
    char temp_str[MAX_LINE] = ""; // contain possible overflow
 
    while (val != NULL) {
@@ -113,8 +114,16 @@ int concat_string_val(const xci_val_list_t *vals, uint8_t *str, int max) {
       val = val->next;
    }
 
+   j = 0;
    for (i = 0; i < max; i++) {
-      str[i] = (uint8_t)temp_str[i];
+      if (temp_str[j] == '#') {
+         i = max;
+      } else {
+         if (temp_str[j] == '\\') {
+            j++;
+         }
+         str[i] = (uint8_t)temp_str[j++];
+      }
    }
 
    return 0;
