@@ -8,6 +8,36 @@ An adventure game engine for the Commander X16
 * [Data Format](#data-format)
    * [Main File](#main-file)
       * [Required Keys](#main-file-required-keys)
+   * [Hex Files](#hex-files)
+      * [Palette Hex File](#palette-hex-file)
+      * [Tiles Kex File](#tiles-hex-file)
+      * [Sprites Hex File](#sprites-hex-file)
+   * [Menu File](#menu-file)
+      * [Required Keys](#menu-file-required-keys)
+      * [Optional Keys](#menu-file-optional-keys)
+   * [Help Files](#help-files)
+      * [Controls File](#controls-file)
+      * [About File](#about-file)
+   * [Title Screen File](#title-screen-file)
+      * [Required Keys](#title-screen-file-required-keys)
+      * [Optional Keys](#title-screen-optional-keys)
+   * [Inventory File](#inventory-file)
+      * [Required Keys](#inventory-file-required-keys)
+      * [Optional Keys](#inventory-file-optional-keys)
+   * [Raw Image Files](#raw-image-files)
+   * [Zone Files](#zone-files)
+   * [Level Files](#level-files)
+      * [Keys](#level-file-keys)
+      * [More Level Examples](#more-level-examples)
+   * [VGM Files](#vgm-files)
+   * [Sound Effects Files](#sound-effects-files)
+* [Building XCI Toolchain from Source](#building-xci-toolchain-from-source)
+   * [Cloning Code Repository](#cloning-code-repository)
+   * [Building SDK](#building-sdk)
+   * [Building Engine](#building-engine)
+* [Building XCI Game Binaries](#building-xci-game-binaries)
+* [Deploying XCI Game](#deploying-xci-game)
+* [Licensing](#licensing)
 
 ## Overview
 XCI is an adventure game engine designed to be as compact as
@@ -1064,5 +1094,3 @@ $ x16emu
 
 ## Licensing
 The XCI [license](LICENSE) is free and open source, and you can use and/or modify the SDK and engine any way you want. You may re-distribute the compatible version of the engine with your game. While your game may be copyrighted and require a paid license, the engine itself must remain free.
-
-## Notes
