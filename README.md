@@ -1,6 +1,14 @@
 # XCI: eXtremely Compact Interpreter
 An adventure game engine for the Commander X16
 
+## Contents
+
+* [Overview](#overview)
+* [Memory Map](#memory-map)
+* [Data Format](#data-format)
+   * [Main File](#main-file)
+      * [Required Keys](#main-file-required_keys)
+
 ## Overview
 XCI is an adventure game engine designed to be as compact as
 possible while still creating a rich experience, featuring a
@@ -110,7 +118,7 @@ If it finishes without errors, the game is built! Let's assume that zone 0 has 2
 * **Z002L8.49.BIN, Z002L8.50.BIN, Z002L8.54.BIN** - Zone 2, level 8
 * **Z002L9.55.BIN, Z002L9.56.BIN, Z002L9.60.BIN** - Zone 2, level 9. These are loaded into banks 55-60, the highest RAM banks that can be populated by an XCI game, when the game enters zone 2.
 
-Wow, that's a lot of files! But most of them are 32kB or smaller. Each zone would easily fit on a single double-density 3.5" floppy, to put it in perspective. In this case, the whole game maxes out at 870kB (and that's assuming very complicated title screen and levels, and all available sprite frames and tiles defined), which would fit on a single high-density floppy, 2 double-density 3.5" floppies, or 3 double-density 5.25" floppies. The biggest XCI game possible would be 125MB, or 87 high-density 3.5" floppies. A CD-ROM could hold at least 5 XCI games. A 2GB SD Card could hold at least 16. Of course, it is highly unlikely that even the most prolific storyteller could come up with 2550 levels for a single game, so most games should clock in at around 5MB, which means that an X16 user could play hundreds of XCI games without changing their SD card. Because of filename conflicts, each game would need to be in a separate directory.
+Wow, that's a lot of files! But most of them are 32kB or smaller. Each zone would easily fit on a single double-density 3.5" floppy, to put it in perspective. In this case, the whole game maxes out at 870kB (and that's assuming very complicated title screen and levels, and all available sprite frames and tiles defined), which would fit on a single high-density floppy, 2 double-density 3.5" floppies, or 3 double-density 5.25" floppies. The biggest XCI game possible would be 125MB, or 87 high-density 3.5" floppies. A CD-ROM could hold at least 5 XCI games. A 2GB SD Card could hold at least 16. Of course, it is highly unlikely that even the most prolific storyteller could come up with 2560 levels for a single game, so most games should clock in at around 5MB, which means that an X16 user could play hundreds of XCI games without changing their SD card. Because of filename conflicts, each game would need to be in a separate directory.
 
 #### Main File: Required Keys
 
