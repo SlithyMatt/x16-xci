@@ -10,7 +10,7 @@ An adventure game engine for the Commander X16
       * [Required Keys](#main-file-required-keys)
    * [Hex Files](#hex-files)
       * [Palette Hex File](#palette-hex-file)
-      * [Tiles Kex File](#tiles-hex-file)
+      * [Tiles Hex File](#tiles-hex-file)
       * [Sprites Hex File](#sprites-hex-file)
    * [Menu File](#menu-file)
       * [Required Keys](#menu-file-required-keys)
@@ -20,7 +20,7 @@ An adventure game engine for the Commander X16
       * [About File](#about-file)
    * [Title Screen File](#title-screen-file)
       * [Required Keys](#title-screen-file-required-keys)
-      * [Optional Keys](#title-screen-optional-keys)
+      * [Optional Keys](#title-screen-file-optional-keys)
    * [Inventory File](#inventory-file)
       * [Required Keys](#inventory-file-required-keys)
       * [Optional Keys](#inventory-file-optional-keys)
@@ -1093,4 +1093,4 @@ $ x16emu
 ![run](example/run.gif)
 
 ## Licensing
-The XCI [license](LICENSE) is free and open source, and you can use and/or modify the SDK and engine any way you want. You may re-distribute the compatible version of the engine with your game. While your game may be copyrighted and require a paid license, the engine itself must remain free.
+The XCI [license](LICENSE) is free and open source, and you can use and/or modify the SDK and engine any way you want. You may re-distribute the compatible version of the engine with your game. While your game may be copyrighted and require a paid license, the engine itself must remain free, i.e. you may not charge a license fee for just the engine in its original form.
