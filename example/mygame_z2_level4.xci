@@ -16,7 +16,6 @@ sprite_frames 1  0  1 2 3 2 1 4 5 4
 sprite 1  56 146
 sprite_frames 4  0  40     # Rear of car, parked
 sprite 3  236 170
-#sprite_move 3 1 1 0 0
 sprite 4  252 170
 end_if
 if_not near_garage
@@ -46,7 +45,7 @@ first
 sprite_frames 1  0  6
 sprite 1  164 146
 sprite_frames 4  0  40     # Rear of car, parked
-sprite 3  236 170sprite_move 3 1 1 0 0
+sprite 3  236 170
 sprite 4  252 170
 end_anim
 
@@ -157,8 +156,6 @@ end_anim
 tool_trigger look 29 21  34 24
 clear
 text 1 Hey, our car didn't get stolen!
-# sprite_debug 3
-# sprite_debug 4
 end_anim
 
 item_trigger keys 1 0  29 21  34 24

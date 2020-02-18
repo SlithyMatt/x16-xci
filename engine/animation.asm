@@ -380,6 +380,7 @@ __anim_sprite:
    lda anim_bank
    sta RAM_BANK
    lda (ANIM_PTR) ; sprite index
+   sta __sprite_idx
    jsr __sprattr
    lda VERA_data0 ; use current frame for now
    lda VERA_data0
@@ -516,7 +517,7 @@ __anim_sprite_debug:
    lda #$20 ; space
    sta VERA_data1
    sty VERA_data1
-   ldx #7
+   ldx #8
 @loop:
    lda VERA_data0
    sta @byte

@@ -20,7 +20,6 @@ end_anim
 item_trigger grail 1 1  27 3  34 6
 sprite_frames 6  0  53
 sprite 6  235 26
-sprite_move 6 1 1 0 0
 clear
 wait 30
 text 1 At last!
