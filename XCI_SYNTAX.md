@@ -66,7 +66,7 @@ Skip to [Inventory File](README.md#inventory-file) keys:
 |--|--|--|
 | [**inv_empty**](#inv_empty) | [**inv_left_margin**](#inv_left_margin) | [**inv_right_margin**](#inv_right_margin) |
 | [**inv_quant**](#inv_quant) | [**inv_quant_margin**](#inv_quant_margin) | [**inv_scroll**](#inv_scroll) |
-| [**inv_scroll_margin**](#inv_scroll_margin) [**inv_item**](#inv_item) |
+| [**inv_scroll_margin**](#inv_scroll_margin) |  [**inv_item**](#inv_item) |
 
 Skip to [Zone File](README.md#zone-files) key:
 
@@ -74,7 +74,7 @@ Skip to [Zone File](README.md#zone-files) key:
 
 Skip to [Level File](README.md#level-files) keys:
 
-| [**bitmap**](#bitmap) | [**music**](#music) | [**sprite_frames**](#sprite_frames)
+|[**bitmap**](#bitmap) | [**music**](#music) | [**sprite_frames**](#sprite_frames)
 |--|--|--|
 | [**sprite**](#sprite) | [**tiles**](#tiles) | [**wait**](#wait) |
 | [**sprite_move**](#sprite_move) | [**end_anim**](#end_anim) | [**sprite_hide**](#sprite_hide) |
