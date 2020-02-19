@@ -596,7 +596,7 @@ In this configuration, we are specifying a total duration of 600 "jiffys". A jif
 Here is a preview of what that title sequence looks like: ![title screen](example/title.gif)
 
 #### Title Screen File: Required Keys
-The only required key for the title screen file is **duration**. The simplest possible title sequence would do nothing for zero jiffys, which would mean a file that only says ```duration 0```. This would just make the menu bar appear as soon as possible once the game program was run.  **duration** can only have a single number of jiffys for its value, with a maximum value of 65536 (1092.267 seconds, or 18 minutes and 12.267 seconds -- that would be a very long title screen, so try to keep it under a minute or 3600 jiffys). The player can stop the title screen at any time by clicking the mouse.
+The only required key for the title screen file is **duration**. The simplest possible title sequence would do nothing for zero jiffys, which would mean a file that only says ```duration 0```. This would just make the menu bar appear as soon as possible once the game program was run.  **duration** can only have a single number of jiffys for its value, with a maximum value of 65535 (1092.267 seconds, or 18 minutes and 12.267 seconds -- that would be a very long title screen, so try to keep it under a minute or 3600 jiffys). The player can stop the title screen at any time by clicking the mouse.
 
 #### Title Screen File: Optional Keys
 All of these keys are used identically for game levels, so see the [Level Files](#level-files) section. However, there is some special handling for two of them:

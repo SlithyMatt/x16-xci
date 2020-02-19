@@ -390,6 +390,134 @@ menu_item name
 Found in:
 * [Menu File](README.md#menu-file)
 
+### controls
+
+Defines the filename for the [Controls File](#controls-file).
+
+Usage:
+```
+controls filename
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| filename | String | 1-987 characters | Filename for controls file |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### about
+
+Defines the filename for the [About File](#about-file).
+
+Usage:
+```
+about filename
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| filename | String | 1-987 characters | Filename for about file |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### text1_bg
+
+Defines the background color of text style 1, based on the default palette.
+
+Usage:
+```
+text1_bg index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-15 | Palette index |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### text1_fg
+
+Defines the foreground color of text style 1, based on the default palette.
+
+Usage:
+```
+text1_bg index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-15 | Palette index |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### text2_bg
+
+Defines the background color of text style 2, based on the default palette.
+
+Usage:
+```
+text2_bg index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-15 | Palette index |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### text2_fg
+
+Defines the foreground color of text style 2, based on the default palette.
+
+Usage:
+```
+text2_bg index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-15 | Palette index |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### text3_bg
+
+Defines the background color of text style 3, based on the default palette.
+
+Usage:
+```
+text3_bg index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-15 | Palette index |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### text3_fg
+
+Defines the foreground color of text style 3, based on the default palette.
+
+Usage:
+```
+text3_bg index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-15 | Palette index |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
 ### tb_dim
 
 Defines the dimensions of the toolbar, measured in tiles.
@@ -401,8 +529,8 @@ tb_dim width height
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| width | Integer | 1-40 | Width of toolbar |
-| height | Integer | 1-4 | Height of toolbar |
+| width | Integer | 1-40 | Width of toolbar, in tiles |
+| height | Integer | 1-4 | Height of toolbar, in tiles |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -435,3 +563,435 @@ tool_tiles [tiles]
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
 | tiles | Tile | 1-160 tiles | Tile map for toolbar button |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### inventory
+
+Defines the filename for the [Inventory File](README.md#inventory-file).
+
+Usage:
+```
+inventory filename
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| filename | String | 1-987 characters | Filename for inventory file |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### walk
+
+Defines the sprite frame index for the "walk" mouse cursor. Note: mouse cursor sprites cannot be flipped.
+
+Usage:
+```
+walk index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### run
+
+Defines the sprite frame index for the "run" mouse cursor. Note: mouse cursor sprites cannot be flipped.
+
+Usage:
+```
+run index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### look
+
+Defines the sprite frame index for the "look" mouse cursor. Note: mouse cursor sprites cannot be flipped.
+
+Usage:
+```
+look index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### use
+
+Defines the sprite frame index for the "use" mouse cursor. Note: mouse cursor sprites cannot be flipped.
+
+Usage:
+```
+use index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### talk
+
+Defines the sprite frame index for the "talk" mouse cursor. Note: mouse cursor sprites cannot be flipped.
+
+Usage:
+```
+talk index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### strike
+
+Defines the sprite frame index for the "strike" mouse cursor. Note: mouse cursor sprites cannot be flipped.
+
+Usage:
+```
+strike index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+
+Found in:
+* [Menu File](README.md#menu-file)
+
+### duration
+
+Defines the duration of the title screen animation.
+
+Usage:
+```
+duration time
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| time | Integer | 0-65535 | Duration of title screen, in jiffys (60 jiffys = 1 second) |
+
+Found in:
+* [Title Screen File](README.md#title-screen-file)
+
+### bitmap
+
+Defines the filename of the [raw data bitmap file](README.md#raw-image-files) to convert for loading into the background layer.
+
+Usage:
+```
+bitmap filename
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| filename | String | 1-993 characters | Filename for bitmap file |
+
+Found in:
+* [Title Screen File](README.md#title-screen-file)
+* [Level Files](README.md#level-files)
+
+### music
+
+Defines the filename of the [VGM file](README.md#vgm-files) to convert for playing background music.
+
+Usage:
+```
+bitmap filename
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| filename | String | 1-993 characters | Filename for bitmap file |
+
+Found in:
+* [Title Screen File](README.md#title-screen-file)
+* [Level Files](README.md#level-files)
+
+### sprite_frames
+
+Defines the sequence of frames that a sprite lopos through while moving.
+
+Usage:
+```
+sprite_frames index offset [frames]
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 1-127 | Sprite index |
+| offset | Integer | 0-15 | Color palette offset |
+| frames | Sprite | 1-31 sprite frames | Sprite frame sequence |
+
+Found in:
+* [Title Screen File](README.md#title-screen-file)
+* [Level Files](README.md#level-files)
+
+### sprite
+
+Displays a sprite at a specified position.
+
+Usage:
+```
+sprite index x y
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 1-127 | Sprite index |
+| x | Integer | 0-319 | Screen position x-coordinate, in pixels |
+| y | Integer | 8-207 | Screen position y-coordinate, in pixels |
+
+Found in:
+* [Title Screen File](README.md#title-screen-file)
+* [Level Files](README.md#level-files)
+
+### tiles
+
+Displays a row of tiles at a specified position.
+
+Usage:
+```
+tiles offset x y [tiles]
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| offset | Integer | 0-15 | Color palette offset |
+| x | Integer | 0-39 | Screen position x-coordinate, in tiles |
+| y | Integer | 1-25 | Screen position y-coordinate, in tiles |
+| tiles | Tile | 1-40 tiles | Tiles to display, from left to right |
+
+Found in:
+* [Title Screen File](README.md#title-screen-file)
+* [Level Files](README.md#level-files)
+
+### wait
+
+Delays execution of the next animation instruction until the specified time has elapsed.
+
+Usage:
+```
+wait time
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| time | Integer | 0-255 | Duration of delay, in jiffys (60 jiffys = 1 second) |
+
+
+Found in:
+* [Title Screen File](README.md#title-screen-file)
+* [Level Files](README.md#level-files)
+
+### sprite_move
+
+Moves sprite from current position.
+
+Usage:
+```
+sprite_move index delay steps x y
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 1-127 | Sprite index |
+| delay | Integer | 1-255 | Delay between steps, in jiffys (60 jiffys = 1 second) |
+| steps | Integer | 1-255 | Number of steps to move |
+| x | Integer | -128-127 | Number of pixels to move to the right (or left, if negative) for each step |
+| y | Integer | -128-127 | Number of pixels to move down (or up, if negative) for each step |
+
+Found in:
+* [Title Screen File](README.md#title-screen-file)
+* [Level Files](README.md#level-files)
+
+### inv_dim
+
+Defines the dimensions of the inventory control, measured in tiles.
+
+Usage:
+```
+inv_dim width height
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| width | Integer | 1-40 | Width of inventory control, in tiles |
+| height | Integer | 1-4 | Height of inventory control, in tiles |
+
+Found in:
+* [Inventory File](README.md#inventory-file)
+
+### inv_item_dim
+
+Defines the dimensions of an inventory item button, measured in tiles.
+
+Usage:
+```
+inv_item_dim width height
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| width | Integer | 1-39 | Width of inventory item button, in tiles |
+| height | Integer | 1-4 | Height of inventory item button, in tiles |
+
+Found in:
+* [Inventory File](README.md#inventory-file)
+
+### inv_empty
+
+Defines the tilemap for an empty inventory item button.
+
+Usage:
+```
+inv_empty [tiles]
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| tiles | Tile | Number of tiles specified by [**inv_item_dim**](#inv_item_dim) | Tilemap for empty item button, rows going down |
+
+Found in:
+* [Inventory File](README.md#inventory-file)
+
+### inv_left_margin
+
+Defines a row of tiles to display to the left of each inventory item button.
+
+Usage:
+```
+inv_empty [tiles]
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| tiles | Tile | 1-38 | Tiles to display, from left to right |
+
+Found in:
+* [Inventory File](README.md#inventory-file)
+
+### inv_right_margin
+
+Defines a row of tiles to display to the right of each inventory item button.
+
+Usage:
+```
+inv_empty [tiles]
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| tiles | Tile | 1-38 tiles | Tiles to display, from left to right |
+
+Found in:
+* [Inventory File](README.md#inventory-file)
+
+### inv_quant
+
+Defines the appearance of inventory item quantities.
+
+Usage:
+```
+inv_quant style width
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| style | Integer | 0-3 | Text style for quantity display (0 = menu style) |
+| width | Integer | 1-5 | Width of quantity display in digits/tiles |
+
+Found in:
+* [Inventory File](README.md#inventory-file)
+
+### inv_quant_margin
+
+Defines the tiles to display above the inventory item quantity box if the item button is taller than 1 tile. May be a single tile or sequence that repeats for the width of the quantity display.
+
+Usage:
+```
+inv_quant_margin [tiles]
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| tiles | Tile | 1-5 tiles | Tiles to display, from left to right |
+
+Found in:
+* [Inventory File](README.md#inventory-file)
+
+### inv_scroll
+
+Defines the inventory scrollbar tiles.
+
+Usage:
+```
+inv_scroll up middle down
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| up | Tile | Any | Tile for scroll-up button |
+| middle | Tile | Any | Tile to fill in column between scroll buttons |
+| down | Tile | Any | Tile for scroll-down button |
+
+Found in:
+* [Inventory File](README.md#inventory-file)
+
+### inv_scroll_margin
+
+Defines the tiles to display to the left of the inventory scrollbar.
+
+Usage:
+```
+inv_scroll_margin [tiles]
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| tiles | Tile | 1-38 tiles | Tiles to display, from left to right |
+
+Found in:
+* [Inventory File](README.md#inventory-file)
+
+### inv_item
+
+Defines an inventory item, its initial and potential quantity, its mouse cursor frame (cannot be flipped) and its button tile map.
+
+Usage:
+```
+inv_item name init max cursor [tiles]
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| name | Identifier | Unique item name | Name of item to be used in [**item_trigger**](#item_trigger) and [**get_item**](#get_item) arguments |
+| init | Integer | 0-65535 | Initial quantity of item |
+| max | Integer | 1-65535 | Maximum quantity of item |
+| cursor | Integer | 0-511 | Item cursor frame |
+| tiles | Tile | Number of tiles specified by [**inv_item_dim**](#inv_item_dim) | Tilemap for item button, rows going down |
+
+
+Found in:
+* [Inventory File](README.md#inventory-file)
