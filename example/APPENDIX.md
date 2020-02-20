@@ -8,23 +8,23 @@ This guide is a level-by-level walkthrough of the game configuration, showing ho
 
 * [Top-Level Configuration](#top-level-configuration)
 * [Zone 0](#zone-0)
-   * [Level 0](#zone-0,-level-0)
-   * [Level 1](#zone-0,-level-1)
+   * [Level 0](#zone-0-level-0)
+   * [Level 1](#zone-0-level-1)
 * [Zone 1](#zone-1)
-   * [Level 0](#zone-1,-level-0)
-   * [Level 1](#zone-1,-level-1)
-   * [Level 2](#zone-1,-level-2)
+   * [Level 0](#zone-1-level-0)
+   * [Level 1](#zone-1-level-1)
+   * [Level 2](#zone-1-level-2)
 * [Zone 2](#zone-2)
-   * [Level 0](#zone-2,-level-0)
-   * [Level 1](#zone-2,-level-1)
-   * [Level 2](#zone-2,-level-2)
-   * [Level 3](#zone-2,-level-3)
-   * [Level 4](#zone-2,-level-4)
-   * [Level 5](#zone-2,-level-5)
-   * [Level 6](#zone-2,-level-6)
-   * [Level 7](#zone-2,-level-7)
-   * [Level 8](#zone-2,-level-8)
-   * [Level 9](#zone-2,-level-9)
+   * [Level 0](#zone-2-level-0)
+   * [Level 1](#zone-2-level-1)
+   * [Level 2](#zone-2-level-2)
+   * [Level 3](#zone-2-level-3)
+   * [Level 4](#zone-2-level-4)
+   * [Level 5](#zone-2-level-5)
+   * [Level 6](#zone-2-level-6)
+   * [Level 7](#zone-2-level-7)
+   * [Level 8](#zone-2-level-8)
+   * [Level 9](#zone-2-level-9)
 
 
 ## Top-Level Configuration
@@ -130,7 +130,7 @@ end_if
 end_anim
 ```
 
-The first trigger is for "using" the front door. If the avatar is near the door, we go to one of the levels that take place in front of the house ([1:1](#zone-1,-level-1) or [2:6](##zone-2,-level-6)). As we'll see later in the game, we can come back to this level after having driven away and then back to the house. This can only happen if the ```got_screwdriver``` state is true, so that decides which level we go to when going through the front door, as each of those levels has a different placement of the car sprites and different destination levels when driving away. There is also a subsequence in case the avatar is still standing by the kitchen doorway, and the player is informed that they can't reach the door from there.
+The first trigger is for "using" the front door. If the avatar is near the door, we go to one of the levels that take place in front of the house ([1:1](#zone-1-level-1) or [2:6](##zone-2-level-6)). As we'll see later in the game, we can come back to this level after having driven away and then back to the house. This can only happen if the ```got_screwdriver``` state is true, so that decides which level we go to when going through the front door, as each of those levels has a different placement of the car sprites and different destination levels when driving away. There is also a subsequence in case the avatar is still standing by the kitchen doorway, and the player is informed that they can't reach the door from there.
 
 ```
 tool_trigger look  0 8  1 18
@@ -155,7 +155,7 @@ end_if
 end_anim
 ```
 
-This trigger is for "using" the door to the living room. Like with the front door, the avatar must be near it to open the door and go to the living room level ([1:2](#zone-1,-level-2)). Otherwise, the player will again be reminded that they can't reach the door from the kitchen doorway.
+This trigger is for "using" the door to the living room. Like with the front door, the avatar must be near it to open the door and go to the living room level ([1:2](#zone-1-level-2)). Otherwise, the player will again be reminded that they can't reach the door from the kitchen doorway.
 
 ```
 tool_trigger look  3 13  5 16
@@ -212,7 +212,7 @@ end_if
 end_anim
 ```
 
-This trigger is for "walking" through the kitchen doorway. In this case, since there is no door to "use", the player will always end up back in the [kitchen](#zone-0,-level-0). It's just a matter of the animation required to do that. If the avatar is near the door, it will need to walk across the screen, a reverse of the previous "walk" trigger. If the avatar is already by the doorway, it will simply face the doorway, then go there a half-second later.
+This trigger is for "walking" through the kitchen doorway. In this case, since there is no door to "use", the player will always end up back in the [kitchen](#zone-0-level-0). It's just a matter of the animation required to do that. If the avatar is near the door, it will need to walk across the screen, a reverse of the previous "walk" trigger. If the avatar is already by the doorway, it will simply face the doorway, then go there a half-second later.
 
 ```
 tool_trigger run  38 13  39 18
@@ -232,7 +232,7 @@ end_if
 end_anim
 ```
 
-This trigger is for "running" through the kitchen doorway, which works the same as the previous trigger, except that it will move twice as quickly, so the wait time is cut in half before moving on to the [kitchen](#zone-0,-level-1). This will make the avatar reach the kitchen twice as quickly, but will require the player to explicity select the "run" tool as it comes after the "walk" trigger. If the avatar is already by the doorway, it does the same animation as the "walk" trigger in this state.
+This trigger is for "running" through the kitchen doorway, which works the same as the previous trigger, except that it will move twice as quickly, so the wait time is cut in half before moving on to the [kitchen](#zone-0-level-1). This will make the avatar reach the kitchen twice as quickly, but will require the player to explicity select the "run" tool as it comes after the "walk" trigger. If the avatar is already by the doorway, it does the same animation as the "walk" trigger in this state.
 
 ```
 tool_trigger look  38 13  39 18
@@ -272,7 +272,7 @@ bitmap mygame_house.data
 music zone0.vgm
 ```
 
-We can see that the house background is being reused for this level after having appeared in [the very first level](#zone-0,-level-0). Because of this, we can reuse much of the animation for this level.
+We can see that the house background is being reused for this level after having appeared in [the very first level](#zone-0-level-0). Because of this, we can reuse much of the animation for this level.
 
 ```
 init
@@ -402,7 +402,7 @@ go_level 2 0
 end_anim
 ```
 
-Finally, we have the trigger that lets us move forward in the game, by applying the keys to the car. We start the animation by turning the avatar to the left and walking him toward the car using a new frame loop. We don't use the "walk" or "run" tools here as this is a more specialized animation and the avatar is already sufficiently close to the car that it makes visual sense just to apply the keys at this point. Once the avatar is finished walking toward the car, the avatar is immediately hidden and the sprite for the rear of the car gets a new frame sequence showing the avatar's head inside the window. Then we start a pair of sprite movements that will keep both halves of the car moving together until they get to the far left of the screen. At that point, we go to [level 0 of zone 2](#zone-2,-level-0).
+Finally, we have the trigger that lets us move forward in the game, by applying the keys to the car. We start the animation by turning the avatar to the left and walking him toward the car using a new frame loop. We don't use the "walk" or "run" tools here as this is a more specialized animation and the avatar is already sufficiently close to the car that it makes visual sense just to apply the keys at this point. Once the avatar is finished walking toward the car, the avatar is immediately hidden and the sprite for the rear of the car gets a new frame sequence showing the avatar's head inside the window. Then we start a pair of sprite movements that will keep both halves of the car moving together until they get to the far left of the screen. At that point, we go to [level 0 of zone 2](#zone-2-level-0).
 
 ```
 tool_trigger use  19 16  22 21
@@ -413,4 +413,4 @@ go_level 1 0
 end_anim
 ```
 
-The last trigger is for the front door so that we can go back to the [foyer](#zone-1,-level-0). First the avatar sprite is given a new frame to turn towards the house.  Then a half-second later we set the ```front_to_foyer``` state to true so that the avatar will be by the door when that level is loaded.
+The last trigger is for the front door so that we can go back to the [foyer](#zone-1-level-0). First the avatar sprite is given a new frame to turn towards the house.  Then a half-second later we set the ```front_to_foyer``` state to true so that the avatar will be by the door when that level is loaded.
