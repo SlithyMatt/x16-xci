@@ -428,7 +428,7 @@ music zone0.vgm
 
 This level takes place in the living room, which introduces a new background bitmap.
 
-![Living Room](#mygame_livingroom.png)
+![Living Room](mygame_livingroom.png)
 
 This is another scene, like the [kitchen](#zone-0-level-1), where the perspective switches to first-person. We don't need to keep things on the scale of the avatar, which makes it easier to accurately render items that can be added to the inventory. One could make a game that is all first-person and have more sprite frames freed up for in-scene animation.
 
