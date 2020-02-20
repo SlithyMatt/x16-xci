@@ -43,11 +43,11 @@ Zone 0 was covered comprehensively in the [main documentation](../README.md). Th
 
 ### Zone 0, Level 0
 
-This level is covered in the main [**Level Files**](#level-files) documentation.
+This level is covered in the main [**Level Files**](../README.md#level-files) documentation.
 
 ### Zone 0, Level 1
 
-This level is covered in the [**More Level Examples**](#more-level-examples) sub-section of the main [**Level Files**](#level-files) documentation.
+This level is covered in the [**More Level Examples**](../README.md#more-level-examples) sub-section of the main [**Level Files**](../README.md#level-files) documentation.
 
 ## Zone 1
 
@@ -232,7 +232,7 @@ end_if
 end_anim
 ```
 
-This trigger is for "running" through the kitchen doorway, which works the same as the previous trigger, except that it will move twice as quickly, so the wait time is cut in half before moving on to the [kitchen](#zone-0,-level-0). This will make the avatar reach the kitchen twice as quickly, but will require the player to explicity select the "run" tool as it comes after the "walk" trigger. If the avatar is already by the doorway, it does the same animation as the "walk" trigger in this state.
+This trigger is for "running" through the kitchen doorway, which works the same as the previous trigger, except that it will move twice as quickly, so the wait time is cut in half before moving on to the [kitchen](#zone-0,-level-1). This will make the avatar reach the kitchen twice as quickly, but will require the player to explicity select the "run" tool as it comes after the "walk" trigger. If the avatar is already by the doorway, it does the same animation as the "walk" trigger in this state.
 
 ```
 tool_trigger look  38 13  39 18
@@ -271,3 +271,146 @@ This level uses [**mygame_z1_level1.xci**](mygame_z1_level1.xci):
 bitmap mygame_house.data
 music zone0.vgm
 ```
+
+We can see that the house background is being reused for this level after having appeared in [the very first level](#zone-0,-level-0). Because of this, we can reuse much of the animation for this level.
+
+```
+init
+sprite_frames 2  0  30 31 32 33 34 35 36 37 # Flag waving
+sprite 2  282 50                            # Top-right of pole
+sprite_move 2  6  255  0 0                  # Fixed position, 10 fps, 25.5 s
+sprite_frames 3  0  38 39  # Front of car
+sprite 3  86 170           # Parked, not moving
+sprite_frames 4  0  40     # Rear of car
+sprite 4  102 170          # Parked, not moving
+sprite_frames 1  0  6
+sprite 1  148 170
+end_anim
+```
+
+Like before, the **init** sequence sets up the waving flag and the car, this time with frames already defined for the front end of the car to drive away. Since the rear of the car is empty in the beginning, only a single frame is defined. that will change once the avatar "enters" the car to drive away and the sprite frames will change to reflect that. What's new in this level is that the avatar is also placed in front of the house, facing front. Again, only a single frame is defined as the only move coming up will require him to turn to the left and never face front again.
+
+Note that there is no **first** sequence as this level has no need for one. We've seen this scenery before and don't need any further exposition.
+
+```
+tool_trigger look  18 21  19 22
+clear
+text 1 There we are.
+end_anim
+```
+
+The first trigger is for "looking" at the avatar. We know that this level is only interactive when the avatar is located precisely within this rectangle, so we can use it as an unconditional trigger area.
+
+```
+tool_trigger talk  18 21  19 22
+clear
+text 2 "Lookin' good!"
+end_anim
+```
+
+This trigger is for the same area containing the avatar, but requires the "talk" tool to be explicitly selected because it comes after the "look" trigger.  Again, we use text style 2 for the playable character to talk, in this case to himself.
+
+```
+item_trigger banana 1 1  18 21  19 22
+clear
+if first_banana
+text 1 We're not hungry anymore.
+wait 60
+text 2 Not even for bananas.
+get_item banana 1 # replenish lost banana
+end_if
+if_not first_banana
+text 1 We could use a snack for the road.
+wait 60
+text 2 Mmm... banana!
+set_state first_banana
+end_if
+end_anim
+```
+
+This trigger is also for the avatar area, but this time with a banana from the inventory. This is the first **item_trigger** we see with a non-zero cost argument. This means that the banana quantity will be debited by 1 as a result of this trigger. However, as we see in the first sub-sequence, if ```first_banana``` is already set, we tell the player that the character isn't hungry anymore and re-credit the banana that was debited with a **get_item**. This way, the player never notices that they were ever short a banana. However, if this is the first time it was triggered, ```first_banana``` will not have been defined and therefore initialized to false and the second sub-sequence is executed. Now we indicate in the text that the banana is being eaten and the inventory debit goes through along with ```first_banana``` being set to true. After this first trigger, the player will be able to see that the quantity of bananas has gone down to 2, but it will never go any lower because of the first sub-sequence.
+
+```
+item_trigger coffee 1 0  18 21  19 22
+clear
+text 1 We're still pretty awake.
+wait 60
+text 1 Let's save the coffee for later.
+end_anim
+```
+
+This trigger attempts to do the same with the coffee, but has a zero cost and lets the player know that they don't need coffee now.
+
+```
+item_trigger phone 1 0  18 21  19 22
+clear
+text 1 Don't need to call for a ride.
+wait 60
+text 1 Our car is right here.
+end_anim
+```
+
+This final trigger for the avatar is with the phone item, which the player has had since the start of the game. The phone is not consumable, so it has a zero cost. This makes it effectively a use trigger on an inventory item. But in this case, we say that there's no need to use the phone at this time. Perhaps in a different version of the game the player could use the phone to call for a ride or do some other task.
+
+```
+tool_trigger look  10 21  15 24
+clear
+text 1 That's our car.
+wait 60
+text 1 We should have our keys.
+end_anim
+```
+
+The default trigger for the car is with the "look" tool. This provides a hint that to use the car, the player needs to use the keys from the inventory.
+
+```
+tool_trigger use  10 21  15 24
+clear
+text 1 Not much you can do with a car
+text 1 without keys.
+end_anim
+```
+
+This trigger is for the case where the player explicitly tries to apply the "use" tool on the car, which is not how we want the game to proceed. Here's another, stronger hint that the player should use the keys.
+
+```
+tool_trigger talk  10 21  15 24
+clear
+text 2 "Hello, car."
+wait 60
+text 3 "Hello, Michael."
+wait 60
+text 2 "Um... My name is John."
+wait 60
+text 3 "Sorry. Wrong game."
+end_anim
+```
+
+The last **tool_trigger** for the car is for "talking" to the car. This is just a little Easter Egg, as it is not what a player would be expected to do unless they were really exploring the level. So, we reward that curiosity with our first dialog between the playable character and a non-playable character (NPC). As before, we show the playable character using text style 2 for their own dialog. The NPC (in this case, the car) uses text style 3 (blue on black) for its dialog, as will all future NPCs.
+
+```
+item_trigger keys 1 0  10 21  15 24
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_move 1  4  26  -2 0
+wait 104
+sprite_hide 1
+sprite_frames 4  0  41 42
+sprite_move 3  2  42  -2 0
+sprite_move 4  2  42  -2 0
+wait 84
+go_level 2 0
+end_anim
+```
+
+Finally, we have the trigger that lets us move forward in the game, by applying the keys to the car. We start the animation by turning the avatar to the left and walking him toward the car using a new frame loop. We don't use the "walk" or "run" tools here as this is a more specialized animation and the avatar is already sufficiently close to the car that it makes visual sense just to apply the keys at this point. Once the avatar is finished walking toward the car, the avatar is immediately hidden and the sprite for the rear of the car gets a new frame sequence showing the avatar's head inside the window. Then we start a pair of sprite movements that will keep both halves of the car moving together until they get to the far left of the screen. At that point, we go to [level 0 of zone 2](#zone-2,-level-0).
+
+```
+tool_trigger use  19 16  22 21
+sprite_frames 1  0  11
+wait 30
+set_state front_to_foyer
+go_level 1 0
+end_anim
+```
+
+The last trigger is for the front door so that we can go back to the [foyer](#zone-1,-level-0). First the avatar sprite is given a new frame to turn towards the house.  Then a half-second later we set the ```front_to_foyer``` state to true so that the avatar will be by the door when that level is loaded.
