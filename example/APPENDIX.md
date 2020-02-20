@@ -414,3 +414,184 @@ end_anim
 ```
 
 The last trigger is for the front door so that we can go back to the [foyer](#zone-1-level-0). First the avatar sprite is given a new frame to turn towards the house.  Then a half-second later we set the ```front_to_foyer``` state to true so that the avatar will be by the door when that level is loaded.
+
+### Zone 1, Level 2
+
+This level uses [**mygame_z1_level2.xci**](mygame_z1_level2.xci):
+
+```
+# Zone 1, level 2
+
+bitmap mygame_livingroom.data
+music zone0.vgm
+```
+
+This level takes place in the living room, which introduces a new background bitmap.
+
+![Living Room](#mygame_livingroom.png)
+
+This is another scene, like the [kitchen](#zone-0-level-1), where the perspective switches to first-person. We don't need to keep things on the scale of the avatar, which makes it easier to accurately render items that can be added to the inventory. One could make a game that is all first-person and have more sprite frames freed up for in-scene animation.
+
+```
+init
+sprite_frames 2  0  47 48
+if_not laptop_taken
+tiles  0  22 17  176 177 176H
+tiles  0  22 18  178 179 178H
+if_not usb_taken
+tiles  0  26 19  183
+end_if
+if usb_inserted
+tiles  0  22 19  180 181 182
+sprite 2  180 139
+sprite_move 2  15  255  0 0
+end_if
+if_not usb_inserted
+tiles  0  22 19  180 181 180H
+end_if
+end_if
+end_anim
+```
+
+The **init** sequence sets up tiles for any items that have not yet been taken from the scene and added to the inventory. We use state variables for that. Unconditionally, we set the sprite frame sequence for the laptop screen, which is simply a blinking cursor. The rest of the sequence is a sub-sequence that is executed if the laptop has not been taken, so it needs to be rendered on the coffee table, starting with a two-row tilemap for the upper two-thirds. Then within that sub-sequence are three sub-sequences based what has been done with the USB drive.  If it wasn't taken, it is rendered on the table as a single tile. The next sub-sequence checks if it has been inserted into the laptop. If it has, the bottom third of the laptop is rendered with the USB drive sticking out and then the screen sprite is placed to show the prompt blinking.  If the USB drive hasn't been inserted, the last sub-sequence is executed, rendering the bottom without anything inserted.
+
+```
+first
+text 1 Welcome to our living room.
+end_anim
+```
+
+
+
+```
+tool_trigger use  38 3  39 25
+set_state lr_to_foyer
+go_level 1 0
+end_anim
+```
+
+
+
+```
+tool_trigger look  38 3  39 25
+clear
+text 1 That's the door back to the foyer.
+end_anim
+```
+
+
+
+```
+tool_trigger look  7 4  11 17
+clear
+text 1 That's our bedroom.
+wait 60
+text 1 Nobody goes in there.
+end_anim
+```
+
+
+
+```
+tool_trigger use  7 4  11 17
+clear
+text 1 We can't go in the bedroom now.
+wait 60
+text 1 Any kind of business in there
+text 1 would be a holy grail moment.
+end_anim
+```
+
+
+
+```
+tool_trigger look  20 4  29 10
+clear
+text 2 Yeah, we really like bananas.
+end_anim
+```
+
+
+
+```
+tool_trigger use 22 17  24 19
+if_not laptop_taken
+if usb_inserted
+clear
+text 1 Ok, we'll take the laptop with us.
+wait 30
+sprite_hide 2
+tiles  0  22 17  0 0 0
+tiles  0  22 18  0 0 0
+tiles  0  22 19  0 0 0
+get_item laptop 1
+get_item thumbdrive 1
+set_state laptop_taken
+end_if
+if_not usb_inserted
+clear
+text 1 It's not working. It needs to
+text 1 boot from a thumbdrive.
+end_if
+end_if
+end_anim
+```
+
+
+
+```
+tool_trigger look 22 17  24 19
+if_not laptop_taken
+if usb_inserted
+text 1 Oh yeah, that's the stuff.
+end_if
+if_not usb_inserted
+text 1 That's our trusty laptop.
+wait 60
+text 1 Works great except that
+text 1 it won't boot on its own.
+end_if
+end_if
+end_anim
+```
+
+
+
+```
+item_trigger thumbdrive  1 1  22 17  24 19
+tiles 0  24 19  182
+clear
+text 1 Ok, now we can boot the laptop
+wait 60
+sprite 2  180 139
+sprite_move 2  15  255  0 0
+set_state usb_inserted
+end_anim
+```
+
+
+
+```
+tool_trigger use  26 19  26 19
+if_not usb_taken
+clear
+text 1 This thumbdrive should come in handy.
+get_item thumbdrive 1
+tiles  0  26 19  0
+set_state usb_taken
+end_if
+end_anim
+```
+
+
+
+```
+tool_trigger look  26 19  26 19
+if_not usb_taken
+clear
+text 1 It's a USB thumbdrive.
+wait 60
+text 1 Might be a bootable image.
+end_if
+end_anim
+```

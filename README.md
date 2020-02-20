@@ -1014,7 +1014,7 @@ The next triggers are for the bananas on the counter, and like the coffee cup th
 
 The other banana trigger is for the ```look``` tool, which again throws up some yellow text, but doesn't modify any state or inventory quantities, just again gently guides the player into taking the bananas so that the game can continue.
 
-The last triggers are for the doorway, starting with the default tool: ```walk```.  Here, we set the ```kitchen_to_foyer``` state before proceeding to level 0 of zone 1 without any further animation. This state will inform the next level where to place the avatar, as it could be entering the foyer from different locations.  The [appendix](examples/APPENDIX.md) shows how this is handled in zone 1.
+The last triggers are for the doorway, starting with the default tool: ```walk```.  Here, we set the ```kitchen_to_foyer``` state before proceeding to level 0 of zone 1 without any further animation. This state will inform the next level where to place the avatar, as it could be entering the foyer from different locations.  The [appendix](example/APPENDIX.md) shows how this is handled in zone 1.
 
 The other doorway triggers are for the ```run``` and ```look``` tools. In levels where there is an animated player avatar, it might mike sense to run to a location to shorten the animation time, but since the level transition is both instantaneous and has no avatar to move, we can have a little joke. And finally, as before, looking at something can give a helpful hint or just a little exposition before taking the default action.
 
