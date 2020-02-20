@@ -38,6 +38,7 @@ An adventure game engine for the Commander X16
 * [Building XCI Game Binaries](#building-xci-game-binaries)
 * [Deploying XCI Game](#deploying-xci-game)
 * [Licensing](#licensing)
+* [Supplemental Documentation](#supplemental-documentation)
 
 ## Overview
 XCI is an adventure game engine designed to be as compact as
@@ -1094,3 +1095,8 @@ $ x16emu
 
 ## Licensing
 The XCI [license](LICENSE) is free and open source, and you can use and/or modify the SDK and engine any way you want. You may re-distribute the compatible version of the engine with your game. While your game may be copyrighted and require a paid license, the engine itself must remain free, i.e. you may not charge a license fee for just the engine in its original form.
+
+## Supplemental Documentation
+
+* A more concise guide to the [XCI configuration file syntax](XCI_SYNTAX.md).
+* An appendix containing a [complete configuration walkthrough of the example game](example/APPENDIX.md).

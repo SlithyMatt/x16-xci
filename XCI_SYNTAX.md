@@ -62,11 +62,10 @@ Skip to [Title Screen File](README.md#title-screen-file) keys:
 
 Skip to [Inventory File](README.md#inventory-file) keys:
 
-| [**inv_dim**](#inv_dim) | [**inv_item_dim**](#inv_item_dim) | [**inv_item_dim**](#inv_item_dim) |
-|--|--|--|
-| [**inv_empty**](#inv_empty) | [**inv_left_margin**](#inv_left_margin) | [**inv_right_margin**](#inv_right_margin) |
-| [**inv_quant**](#inv_quant) | [**inv_quant_margin**](#inv_quant_margin) | [**inv_scroll**](#inv_scroll) |
-| [**inv_scroll_margin**](#inv_scroll_margin) |  [**inv_item**](#inv_item) |
+| [**inv_dim**](#inv_dim) | [**inv_item_dim**](#inv_item_dim) | [**inv_empty**](#inv_empty) | [**inv_left_margin**](#inv_left_margin) |
+|--|--|--|--|
+| [**inv_right_margin**](#inv_right_margin) | [**inv_quant**](#inv_quant) | [**inv_quant_margin**](#inv_quant_margin) | [**inv_scroll**](#inv_scroll) |
+| [**inv_scroll_margin**](#inv_scroll_margin) | [**inv_item**](#inv_item) |
 
 Skip to [Zone File](README.md#zone-files) key:
 
@@ -74,15 +73,13 @@ Skip to [Zone File](README.md#zone-files) key:
 
 Skip to [Level File](README.md#level-files) keys:
 
-|[**bitmap**](#bitmap) | [**music**](#music) | [**sprite_frames**](#sprite_frames)
-|--|--|--|
-| [**sprite**](#sprite) | [**tiles**](#tiles) | [**wait**](#wait) |
-| [**sprite_move**](#sprite_move) | [**end_anim**](#end_anim) | [**sprite_hide**](#sprite_hide) |
-| [**init**](#init) | [**first**](#first) | [**text**](#text) |
-| [**scroll**](#scroll) | [**line**](#line) | [**clear**](#clear) |
-| [**go_level**](#go_level) | [**tool_trigger**](#tool_trigger) | [**item_trigger**](#item_trigger) |
-| [**if**](#if) | [**if_not**](#if_not) | [**end_if**](#end_if) |
-| [**set_state**](#set_state) | [**clear_state**](#clear_state) | [**get_item**](#get_item) |
+|[**bitmap**](#bitmap) | [**music**](#music) | [**sprite_frames**](#sprite_frames) | [**sprite**](#sprite) |
+|--|--|--|--|
+| [**tiles**](#tiles) | [**wait**](#wait) | [**sprite_move**](#sprite_move) | [**end_anim**](#end_anim) |
+| [**sprite_hide**](#sprite_hide) | [**init**](#init) | [**first**](#first) | [**text**](#text) |
+| [**scroll**](#scroll) | [**line**](#line) | [**clear**](#clear) | [**go_level**](#go_level) |
+| [**tool_trigger**](#tool_trigger) | [**item_trigger**](#item_trigger) | [**if**](#if) | [**if_not**](#if_not) |
+| [**end_if**](#end_if) | [**set_state**](#set_state) | [**clear_state**](#clear_state) | [**get_item**](#get_item) |
 
 ### title
 
@@ -761,7 +758,7 @@ sprite index x y
 |--|--|--|--|
 | index | Integer | 1-127 | Sprite index |
 | x | Integer | 0-319 | Screen position x-coordinate, in pixels |
-| y | Integer | 8-207 | Screen position y-coordinate, in pixels |
+| y | Integer | Title Screen: 0-239; Level: 8-207 | Screen position y-coordinate, in pixels |
 
 Found in:
 * [Title Screen File](README.md#title-screen-file)
@@ -780,7 +777,7 @@ tiles offset x y [tiles]
 |--|--|--|--|
 | offset | Integer | 0-15 | Color palette offset |
 | x | Integer | 0-39 | Screen position x-coordinate, in tiles |
-| y | Integer | 1-25 | Screen position y-coordinate, in tiles |
+| y | Integer | Title Screen: 0-29; Level: 1-25 | Screen position y-coordinate, in tiles |
 | tiles | Tile | 1-40 tiles | Tiles to display, from left to right |
 
 Found in:
@@ -995,3 +992,292 @@ inv_item name init max cursor [tiles]
 
 Found in:
 * [Inventory File](README.md#inventory-file)
+
+### level
+
+Defines the filename for a [Level File](README.md#level-files). Each level will be indexed (starting with zero) based on the order in which the levels are defined.
+
+Usage:
+```
+level filename
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| filename | String | 1-995 characters | Filename for a level file |
+
+Found in:
+* [Zone Files](README.md#zone-files)
+
+### end_anim
+
+Marks the end of an animation sequence that began with [**init**](#init), [**first**](#first), [**tool_trigger**](#tool_trigger) or [**item_trigger**](#item_trigger).
+
+Usage:
+```
+end_anim
+```
+
+No arguments.
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### sprite_hide
+
+Stops displaying a sprite.
+
+Usage:
+```
+sprite_hide index
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| index | Integer | 1-127 | Sprite index |
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### init
+
+Marks the beginning of an animation sequence that will always be played first when a level is loaded.
+
+Usage:
+```
+init
+```
+
+No arguments.
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### first
+
+Marks the beginning of an animation sequence that will only be played when a level is loaded for the first time.  Will be played immediately after the [**init**](#init) sequence, if defined, otherwise is played first upon loading.
+
+Usage:
+```
+first
+```
+
+No arguments.
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### text
+
+Prints a line of text to the text area at the current line. Scrolls the text area up one line before printing if the current line is past the bottom.
+
+Usage:
+```
+text style [line]
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| style | Integer | 0-3 | Text style for this line (0 = menu style) |
+| line | String | 1-38 characters, including spaces after concatenation | Line to print |
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### scroll
+
+Scrolls the text area up by the specified number of lines.
+
+Usage:
+```
+scroll lines
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| lines | Integer | 1-4 | Number of text area lines to scroll up |
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### line
+
+Skips a line in the text area, moving the current line down to the next line. Scrolls the text area up one line if the current line is past the bottom.
+
+Usage:
+```
+line
+```
+
+No arguments.
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### clear
+
+Clears the text area and resets the current line to the top.
+
+Usage:
+```
+clear
+```
+
+No arguments.
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### go_level
+
+Loads a new level.
+
+Usage:
+```
+go_level zone level
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| zone | Integer | 0-255 | Zone index |
+| level | Integer | 0-9 | Level index |
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### tool_trigger
+
+Begins an animation sequence triggered by applying a tool to a location within a rectangle of tile squares.
+
+Usage:
+```
+tool_trigger tool x1 y1 x2 y2
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| tool | Identifier | ```walk```, ```run```, ```look```, ```use```, ```talk```, ```strike``` | Tool that triggers the sequence |
+| x1 | Integer | 0-39 | Minimum tile square x-coordinate |
+| y1 | Integer | 1-25 | Minimum tile square y-coordinate |
+| x2 | Integer | 0-39 | Maximum tile square x-coordinate |
+| y2 | Integer | 1-25 | Maximum tile square y-coordinate |
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### item_trigger
+
+Begins an animation sequence triggered by applying an inventory item to a location within a rectangle of tile squares.
+
+Usage:
+```
+item_trigger item requirement cost x1 y1 x2 y2
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| item | Identifier | Any name defined by an [**inv_item**](#inv_item) key in the [Inventory File](README.md#inventory-file) | Item that triggers the sequence |
+| requirement | Integer | 1-65535 | Quantity of item required to trigger sequence |
+| cost | Integer | 0-65535, must be no greater than requirement | Quantity of item to be debited from inventory after sequence |
+| x1 | Integer | 0-39 | Minimum tile square x-coordinate |
+| y1 | Integer | 1-25 | Minimum tile square y-coordinate |
+| x2 | Integer | 0-39 | Maximum tile square x-coordinate |
+| y2 | Integer | 1-25 | Maximum tile square y-coordinate |
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### if
+
+Begins a sub-sequence that will only be executed if the specified state is true.
+
+Usage:
+```
+if state
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| state | Identifier | Any | State to test for true. If not previously defined, will be initialized to false and sub-sequence will not be executed |
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### if_not
+
+Begins a sub-sequence that will only be executed if the specified state is false.
+
+Usage:
+```
+if state
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| state | Identifier | Any | State to test for false. If not previously defined, will be initialized to false and sub-sequence will be executed |
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### end_if
+
+Ends a sub-sequence that began with [**if**](#if) or [**if_not**](#if_not).
+
+Usage:
+```
+end_if
+```
+
+No arguments.
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### set_state
+
+Sets a state to true.
+
+Usage:
+```
+set_state state
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| state | Identifier | Any | State to set to true |
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### clear_state
+
+Sets a state to false.
+
+Usage:
+```
+clear_state state
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| state | Identifier | Any | State to set to false |
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### get_item
+
+Adds a quantity of an item to the inventory.
+
+Usage:
+```
+get_item item quantity
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| item | Identifier | Any name defined by an [**inv_item**](#inv_item) key in the [Inventory File](README.md#inventory-file) | Item to add to inventory |
+| quantity | Integer | 1-65535 | Quantity of item to add |
+
+Found in:
+* [Level Files](README.md#level-files)
