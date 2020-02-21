@@ -461,7 +461,7 @@ text 1 Welcome to our living room.
 end_anim
 ```
 
-
+The **first** sequence simply tells the player where we are. No need to say that again in future visits.
 
 ```
 tool_trigger use  38 3  39 25
@@ -470,7 +470,7 @@ go_level 1 0
 end_anim
 ```
 
-
+The first trigger is for "using" the door back to the [foyer](#zone-1-level-0). This unconditionally returns to that level after setting the ```lr_to_foyer``` state so that the avatar will be by the door.
 
 ```
 tool_trigger look  38 3  39 25
@@ -479,7 +479,7 @@ text 1 That's the door back to the foyer.
 end_anim
 ```
 
-
+This trigger is for "looking" at the door to the foyer, which requires the player to explicity select the "look" tool, coming after the "use" trigger for the same area. It simply tells the player what the door is.
 
 ```
 tool_trigger look  7 4  11 17
@@ -490,7 +490,7 @@ text 1 Nobody goes in there.
 end_anim
 ```
 
-
+This trigger is for "looking" at the bedroom door, which is the default action since it can't be opened in this level.
 
 ```
 tool_trigger use  7 4  11 17
@@ -502,7 +502,7 @@ text 1 would be a holy grail moment.
 end_anim
 ```
 
-
+This trigger is for when the player tries to explicity "use" the bedroom door, which also provides a clue as to what that would require.
 
 ```
 tool_trigger look  20 4  29 10
@@ -511,7 +511,7 @@ text 2 Yeah, we really like bananas.
 end_anim
 ```
 
-
+This trigger is for "looking" at the big banana picture.
 
 ```
 tool_trigger use 22 17  24 19
@@ -537,7 +537,7 @@ end_if
 end_anim
 ```
 
-
+This trigger is for "using" the laptop, which is the default action.  The sequence is entirely taken up by a sub-sequence that will only execute if the laptop hasn't yet been taken into the inventory. Within that are two sub-sequences that test for the USB drive being inserted. The first executes if the drive is inserted, in which case the screen sprite and all the laptop tiles are removed from the display, then the laptop and attached USB drive are both added to the inventory.  The second sub-sequence executes if the USB drive has not been inserted, in which case the player is given a clue about ahat needs to be done to use the laptop.
 
 ```
 tool_trigger look 22 17  24 19
@@ -555,10 +555,11 @@ end_if
 end_anim
 ```
 
-
+This trigger is for "looking" at the laptop, which requires the player to explicity select the "use" tool. The entire sequence is taken up with a sub-sequence that will only execute if the laptop has not yet been taken, just like the "use" trigger. If the USB drive has been inserted, you get a nice comment about the awesome screen prompt. Otherwise, you get another clue about how to use the laptop.
 
 ```
 item_trigger thumbdrive  1 1  22 17  24 19
+if_not laptop_taken
 tiles 0  24 19  182
 clear
 text 1 Ok, now we can boot the laptop
@@ -566,10 +567,11 @@ wait 60
 sprite 2  180 139
 sprite_move 2  15  255  0 0
 set_state usb_inserted
+end_if
 end_anim
 ```
 
-
+This trigger is for applying the USB drive to the laptop. WE only want this to work if the laptop is still on the table, so the entire sequence is taken up with a sub-sequence that will only execute if the laptop has not been taken. It first replaces a tile of the laptop with one that shows the drive sticking out, then starts the screen prompt animation and finally setting ```usb_inserted``` to true so that the laptop can be added to the inventory when it is next "used".
 
 ```
 tool_trigger use  26 19  26 19
@@ -583,7 +585,7 @@ end_if
 end_anim
 ```
 
-
+This trigger is for "using" the USB drive while it is still on the table. If it hasn't been taken yet, it is added to the inventory and then the tile is removed. The ```usb_taken``` state is set to true so that this trigger sequence won't execute again.
 
 ```
 tool_trigger look  26 19  26 19
@@ -593,5 +595,277 @@ text 1 It's a USB thumbdrive.
 wait 60
 text 1 Might be a bootable image.
 end_if
+end_anim
+```
+
+This trigger is for "looking" at the USB drive while it is still on the table, which requires the player to explicity select the "look" tool because the previous "use" trigger is for the same area.  If the drive hasn't been taken yet, the player gets a description and a clue as to what it could be used for.
+
+## Zone 2
+
+This is the final zone of the game. It has a full 10 levels, the maximum for any XCI game zone. This results in a noticeable delay when loading the zone compared to the others since over 300kB of files are loaded into banked RAM for the transition. This should be instructive, to make sure that when you are loading a big zone, the transition should be able to handle the delay organically. In the case of this game, it is happening during a car ride, which is a good, cinematic reason to "fade to black" for a few seconds.
+
+Again, most of the levels still use the "zone0.vgm" music, until the surprise ending.
+
+### Zone 2, Level 0
+
+This level uses [**mygame_z2_level0.xci**](mygame_z2_level0.xci):
+
+```
+# Zone 2, level 0
+
+bitmap mygame_bar_ext.data
+music zone0.vgm
+```
+
+This level introduces a new background: the exterior of Izzy's Bar.
+
+![Bar Exterior](mygame_bar_ext.png)
+
+```
+init
+sprite_frames 2  0  49 50  # beacon
+sprite 2  182 8
+sprite_move 2  60  255  0 0
+sprite_frames 5  0  51 52  # beer sign
+sprite 5  191 134
+sprite_move 5  45  255  0 0
+end_anim
+```
+
+The **init** sequence starts two sprite animations. First is a flashing red beacon at the top of a skyscraper in the background. It changes between on and off every second.  The other sprite is a neon "BEER" sign in the window of Izzy's that also flashes on and off, but every 0.75 seconds so that it is out-of-phase with the beacon. Both animations will continue for the maximum amount of frames.
+
+```
+first
+sprite_frames 3  0  38 39  # Front of car
+sprite_frames 4  0  41 42  # Rear of car, driving
+sprite 3  320 170
+sprite 4  336 170
+sprite_move 3  2  42  -2 0
+sprite_move 4  2  42  -2 0
+wait 60
+text 1 This is Izquierdito's.
+wait 30
+sprite_frames 4  0  40     # Rear of car, parked
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite 1 244 170
+wait 30
+text 1 Or Izzy's, for short.
+sprite_move 1  4  12  -2 0
+wait 48
+sprite_frames 1  0  9 10 11 10 9 10H 11H 10H
+sprite_move 1  4  12  0 -2
+wait 48
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+text 1 Let's go in for a drink.
+end_anim
+```
+
+The **first** sequence contains an animation of the car pulling up to Izzy's and the avatare getting out and walking up onto the sidewalk, all the while providing exposition in the text area. This is done by reusing the frame sequences for the car sprites from [the previous level](#zone-1-level-1) and placing the car sprites just off screen then moving them to the left. After 1.5 seconds, the car sprites have just stopped moving 6 jiffys ago and the rear sprite is replaced with the empty frame and the avatar sprite is placed in front of the car. After half a second, the avatar moves to the left using the frame sequence we've seen before. After taking 12 steps over 48 jiffys, the avatar turns toward the building and starts moving up using a new frame sequence for upward movement, facing "away from the camera". Then, after another 48 jiffys the frame sequence is reverted to the previous one and the avatar is ready to start moving to the left again in response to the next "walk" or "run" trigger.
+
+```
+tool_trigger use  20 16  21 18
+if near_izzys
+sprite_frames 1  0  9
+wait 30
+go_level 2 1
+end_if
+if_not near_izzys
+clear
+text 1 We're not close enough to the door.
+end_if
+end_anim
+```
+
+The first trigger is for "using" the door to Izzy's. Like the doors in the [foyer](#zone-1-level-0), the avatar needs to be near it to open. If the avatar is near the door, its frame changes to face the door and then a half second later we go "inside" to [level 1](#zone-2-level-1).
+
+```
+tool_trigger walk  20 19  21 21
+if_not near_izzys
+if_not near_garage
+sprite_move 1  4  28  -2 0
+wait 112
+set_state near_izzys
+end_if
+if near_garage
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite_move 1  4  54  2 0
+clear_state near_garage
+wait 216
+set_state near_izzys
+end_if
+end_if
+end_anim
+```
+
+This trigger is for "walking" to the part of the sidewalk in front of Izzy's door. The entire sequence is taken up by a sub-sequence that will only execute if the avatar is not already in front of Izzy's. This level has three different locations that the avatar can be, starting with near the car. After that, the avatar can move up and down the sidewalk between the areas in front of Izzy's and the garage to the left. If avatar is not near Izzy's or the garage, then it must still be in the initial position after exiting the car, so the avatar moves to the left until it reaches the destination. Otherwise, if the avatar is in front of the garage, it will move to the right. This is the only scenario in which the avatar moves to the right, so the frame sequence only changes to that here. In each case, the ```near_izzys``` state is set to true, which is mutually exclusive to the ```near_garage``` state, which will be false after this sequence.
+
+```
+tool_trigger run  20 19  21 21
+if_not near_izzys
+if_not near_garage
+sprite_move 1  2  28  -2 0
+wait 56
+set_state near_izzys
+end_if
+if near_garage
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite_move 1  2  54  2 0
+clear_state near_garage
+wait 108
+set_state near_izzys
+end_if
+end_if
+end_anim
+```
+
+This sequence is for "running" to Izzy's door. It works exactly the same as the previous "walk" trigger, but requires the player to explicity select the "run" tool and then executes twice as quickly.
+
+```
+tool_trigger use 4 15  10 18
+if near_garage
+clear
+text 1 The door appears to be jammed.
+wait 60
+text 1 It only opens a tiny bit.
+wait 30
+text 1 If only we had something
+text 1 to pry it open...
+end_if
+if_not near_garage
+clear
+text 1 We're not close enough to the door.
+end_if
+end_anim
+```
+
+This trigger is for "using" the garage door.  If the avatar is near the garage, the player gets a clue about how to open it.  Otherwise, it tells the player that the avatar isn't close enough.
+
+```
+tool_trigger look 4 15  10 18
+clear
+text 1 That old garage looks abandoned.
+wait 60
+text 1 The door doesn't even have a lock.
+end_anim
+```
+
+This trigger is for "looking" at the garage door, which requires the player to explicity select the "look" tool because the previous "use" trigger is for the same area. It clues the player into the fact that it might be able to be opened.
+
+```
+tool_trigger walk  4 19  10 21
+if_not near_garage
+if_not near_izzys
+sprite_move 1  4  82  -2 0
+wait 255
+wait 73
+set_state near_garage
+end_if
+if near_izzys
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_move 1  4  54  -2 0
+clear_state near_izzys
+wait 216
+set_state near_garage
+end_if
+end_if
+end_anim
+```
+
+This trigger is for "walking" to the sidewalk area in front of the garage door. The sequence is completely taken up with a sub-sequence that only executes if the avatar is not already in front of the garage. If the avatar is not in front of Izzy's, it must be just outside of the car, so the it will need to move 164 pixels to the left. If it is in front of Izzy's, it only has to move 108 pixels, but the frame sequence needs to re-established as the avatar might be turned to the right. In all cases, the ```near_garage``` state will be true and ```near_izzys``` will be false by the end of the sequence.
+
+```
+tool_trigger run  4 19  10 21
+if_not near_garage
+if_not near_izzys
+sprite_move 1  2  82  -2 0
+wait 164
+set_state near_garage
+end_if
+if near_izzys
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_move 1  2  54  -2 0
+clear_state near_izzys
+wait 108
+set_state near_garage
+end_if
+end_if
+end_anim
+```
+
+This trigger is for "running" to the garage door, so it works the same as the previous "walk" trigger except that it requires the player to explicity select the "run" tool and the resulting animation takes half the time.
+
+### Zone 2, Level 1
+
+This level uses [**mygame_z2_level1.xci**](mygame_z2_level1.xci):
+
+```
+# Zone 2, level 1
+
+bitmap izzy.data
+music zone0.vgm
+```
+
+
+
+```
+init
+if from_menu
+wait 30
+text 3 "That'll be five bucks."
+clear_state from_menu
+end_if
+if got_screwdriver
+wait 30
+text 3 "Enjoy your screwdriver."
+wait 60
+text 2 "Thanks. I'll take it to go."
+wait 60
+text 3 "OK. Adios, amigo!"
+wait 90
+go_level 2 4
+end_if
+end_anim
+```
+
+
+
+```
+first
+text 3 "Hey, welcome back, John!"
+wait 60
+text 2 "Hi, Izzy."
+wait 90
+text 3 "Whatcha having?"
+wait 60
+text 2 "I don't know. It's kinda early."
+wait 90
+text 3 "No problem! We got a breakfast menu."
+wait 120
+go_level 2 2
+end_anim
+```
+
+
+
+```
+item_trigger money 5 5  0 1  39 25
+clear
+wait 30
+text 3 "Thanks! Just a sec..."
+wait 60
+text 3 "OK, here you go!"
+wait 90
+go_level 2 3
+end_anim
+```
+
+
+
+```
+tool_trigger talk  13 2  33 25
+clear
+text 2 "How much again?"
+wait 60
+text 3 "Five bucks. Got it?"
 end_anim
 ```

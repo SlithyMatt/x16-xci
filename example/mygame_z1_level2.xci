@@ -93,6 +93,7 @@ end_if
 end_anim
 
 item_trigger thumbdrive  1 1  22 17  24 19
+if_not laptop_taken
 tiles 0  24 19  182
 clear
 text 1 Ok, now we can boot the laptop
@@ -100,6 +101,7 @@ wait 60
 sprite 2  180 139
 sprite_move 2  15  255  0 0
 set_state usb_inserted
+end_if
 end_anim
 
 tool_trigger use  26 19  26 19
