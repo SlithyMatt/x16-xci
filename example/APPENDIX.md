@@ -952,7 +952,7 @@ music zone0.vgm
 
 This level introduces an entirely new background: a plate with a screwdriver on it.
 
-![Screwdriver](#screwdriver.png)
+![Screwdriver](screwdriver.png)
 
 The entire purpose of this level is to give the player an opportunity to add a screwdriver to their inventory, so we have a nice big target for a use trigger.
 
@@ -1031,7 +1031,7 @@ end_if
 end_anim
 ```
 
-The init starts the same way as [Level 0](#zone-2-level-0), with the beacon and the beer sign flashing. Then there are subsequences that are run based on how this level was entered. If it was from Izzy's, then this must be the first visit, so that is handled in the **first** sequence. Subsequently, this scene could be re-visited from either the garage interior (in which case ```near_garage``` would still be true) or from the house (in which case both ```near_garage``` and ```near_izzys``` would be false). If we're coming from the garage, the avatar sprite i splaced on the sidewalk in front of the garage, facing left, and the car sprites are placed where is was parked last time. For simplicity, the car is parked at the same location on re-visits to this level as it was when we virst visited Izzy's. If we are coming from home, the earlier animation of driving up and walking onto the sidewalk is repeated with the addition of setting the new ```near_car``` state to true.
+The init starts the same way as [Level 0](#zone-2-level-0), with the beacon and the beer sign flashing. Then there are sub-sequences that are run based on how this level was entered. If it was from Izzy's, then this must be the first visit, so that is handled in the **first** sequence. Subsequently, this scene could be re-visited from either the garage interior (in which case ```near_garage``` would still be true) or from the house (in which case both ```near_garage``` and ```near_izzys``` would be false). If we're coming from the garage, the avatar sprite i splaced on the sidewalk in front of the garage, facing left, and the car sprites are placed where is was parked last time. For simplicity, the car is parked at the same location on re-visits to this level as it was when we virst visited Izzy's. If we are coming from home, the earlier animation of driving up and walking onto the sidewalk is repeated with the addition of setting the new ```near_car``` state to true.
 
 ```
 first
@@ -1224,7 +1224,7 @@ music zone0.vgm
 
 This level introduces a new background: the interior of the garage.
 
-![Garage](#garage.png)
+![Garage](garage.png)
 
 It has a table for holding the grail during the first visit, and other detritus of long-ago adventures on the floor around it.
 
@@ -1627,7 +1627,7 @@ music jingle.vgm
 
 This final level introduces not only a new background (a first-person view of the bedroom) but finally some new music inspired by the unexpected decor.
 
-![Bedroom](mygame_bedfroom.png)
+![Bedroom](mygame_bedroom.png)
 
 It appears that the bedroom hasn't been entered since some long ago Christmas, to the point the "Jingle Bells" is playing in the background instead of the music we've been hearing all along.
 
