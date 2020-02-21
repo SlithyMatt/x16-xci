@@ -805,7 +805,9 @@ bitmap izzy.data
 music zone0.vgm
 ```
 
+This level introduces the only human NPC in the game, Izzy. This level is for general interaction with him and it is visited three times within a 5-level sequence. So, the background is just a free stock photo of a bartender and the only animation is in the text field.
 
+![Izzy](izzy.png)
 
 ```
 init
@@ -827,7 +829,7 @@ end_if
 end_anim
 ```
 
-
+The **init** sequence starts the last two of the three visits to this level. The second visit happens after we [view the menu](#zone-2-level-2), and Izzy asks for $5.  The third visit happens after we [take the screwdriver](#zone-2-level-3) and Izzy bids us farewell and we go [back outside](#zone-2-level-4). During the first visit, neither ```from_menu``` nor ```got_screwdriver``` is set, so no animation is executed.
 
 ```
 first
@@ -845,7 +847,7 @@ go_level 2 2
 end_anim
 ```
 
-
+The **first** sequence introduces Izzy, as nothing happened in the **init** sequence during the first visit. Again, the NPC dialog uses text style 3 and the playable character's dialog uses text style 2. After the dialog, there is a 2-second delay before automatically proceeding to [the next level and see the menu](#zone-2-level-2).
 
 ```
 item_trigger money 5 5  0 1  39 25
@@ -859,7 +861,7 @@ go_level 2 3
 end_anim
 ```
 
-
+This trigger is only possible during the second visit when there is no automatic level transition. The player must have $5 in their inventory, then click anywhere on the level background to pay for the screwdriver. After a few words from Izzy, we proceed to the [the next level and see our order](#zone-2-level-3).
 
 ```
 tool_trigger talk  13 2  33 25
@@ -869,3 +871,847 @@ wait 60
 text 3 "Five bucks. Got it?"
 end_anim
 ```
+
+This trigger is for "talking" to Izzy during the second visit. It is the only default action as an **item_trigger** always requires the player to explicity select the item from the inventory, even if it comes first. Unlike the previous trigger, the area for this one is only for the rectangle containing Izzy's figure and not the whole background. This trigger mainly exists so that there is some sort of default action in case the player somehow missed that they were supposed to pay for their order.
+
+### Zone 2, Level 2
+
+This level uses [**mygame_z2_level2.xci**](mygame_z2_level2.xci):
+
+```
+# Zone 2, level 2
+
+bitmap breakfast.data
+music zone0.vgm
+```
+
+This level uses a background that modifies [the previous level](#zone-2-level-1) to have a menu superimposed over the center. This could have been done with tiles, but this ended up being a simpler approach that made it easier to use existing graphics tools to create while also saving VRAM from having to persistently store single-use tiles.
+
+![Breakfast Menu](breakfast.png)
+
+Each item on the menu provides an area for easy triggering, as we will see.
+
+```
+init
+wait 30
+text 3 "So, whatcha thinking?"
+end_anim
+```
+
+The **init** sequence simply has Izzy ask us what we're having, prompting the player to select something from the menu.
+
+```
+tool_trigger use  12 10  27 11
+clear
+text 3 "Sorry, out of whiskey."
+end_anim
+```
+
+This trigger is for "using" the Irish Coffee selection on the menu. Izzy tells us we can't have it.
+
+```
+tool_trigger use  12 12  27 13
+clear
+text 3 "Sorry, out of champagne."
+end_anim
+```
+
+This trigger is for "using" the Mimosa selection on the menu. Izzy tells us we can't have it.
+
+```
+tool_trigger use  12 14  27 15
+clear
+text 3 "Sorry, out of tomato juice."
+end_anim
+```
+
+This trigger is for "using" the Bloody Mary selection on the menu. Izzy tells us we can't have it.
+
+```
+tool_trigger use  12 16  27 17
+clear
+text 3 "One screwdriver, coming up!"
+wait 90
+set_state from_menu
+go_level 2 1
+end_anim
+```
+
+This trigger is for "using" the Screwdriver selection on the menu. Izzy finally lets us have something, and we return to [the previous level](#zone-2-level-1) after setting the ```from_menu``` state to true, indicating that it will be our second visit.
+
+### Zone 2, Level 3
+
+This level uses [**mygame_z2_level3.xci**](mygame_z2_level3.xci):
+
+```
+# Zone 2, level 3
+
+bitmap screwdriver.data
+music zone0.vgm
+```
+
+This level introduces an entirely new background: a plate with a screwdriver on it.
+
+![Screwdriver](#screwdriver.png)
+
+The entire purpose of this level is to give the player an opportunity to add a screwdriver to their inventory, so we have a nice big target for a use trigger.
+
+```
+init
+wait 30
+text 3 "My last one. You were lucky!"
+end_anim
+```
+
+The init sequence simply has some words from Izzy, and then all that's left to do is wait for the one and only trigger.
+
+```
+tool_trigger use  10 11  30 16
+wait 30
+text 1 Hmm... it might come in handy.
+wait 90
+get_item screwdriver 1
+set_state got_screwdriver
+go_level 2 1
+end_anim
+```
+
+The trigger "uses" the screwdriver, resulting in it being added to the inventory and returning to [the previous level](#zone-2-level-1) for the third and final visit. Note that the narration at the beginning is not preceded by a **clear** key, so it will be placed under the line from Izzy in the text area, and then 1.5 seconds later the level transition happens.
+
+### Zone 2, Level 4
+
+This level uses [**mygame_z2_level4.xci**](mygame_z2_level4.xci):
+
+```
+# Zone 2, level 4
+
+bitmap mygame_bar_ext.data
+music zone0.vgm
+```
+
+This level returns us to the exterior of Izzy's, but it has a different set of triggers from [the last level at this scene](#zone-2-level-0). It also allows for freer movement, so this level may be revisited after driving back home.
+
+```
+init
+sprite_frames 3  0  38 39  # Front of car
+sprite_frames 2  0  49 50  # beacon
+sprite 2  182 8
+sprite_move 2  60  255  0 0
+sprite_frames 5  0  51 52  # beer sign
+sprite 5  191 134
+sprite_move 5  45  255  0 0
+if near_garage
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite 1  56 146
+sprite_frames 4  0  40     # Rear of car, parked
+sprite 3  236 170
+sprite 4  252 170
+end_if
+if_not near_garage
+if_not near_izzys
+sprite_frames 4  0  41 42  # Rear of car, driving
+sprite 3  320 170
+sprite 4  336 170
+sprite_move 3  2  42  -2 0
+sprite_move 4  2  42  -2 0
+wait 90
+sprite_frames 4  0  40     # Rear of car, parked
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite 1 244 170
+wait 30
+sprite_move 1  4  12  -2 0
+wait 48
+sprite_frames 1  0  9 10 11 10 9 10H 11H 10H
+sprite_move 1  4  12  0 -2
+wait 48
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+set_state near_car
+end_if
+end_if
+end_anim
+```
+
+The init starts the same way as [Level 0](#zone-2-level-0), with the beacon and the beer sign flashing. Then there are subsequences that are run based on how this level was entered. If it was from Izzy's, then this must be the first visit, so that is handled in the **first** sequence. Subsequently, this scene could be re-visited from either the garage interior (in which case ```near_garage``` would still be true) or from the house (in which case both ```near_garage``` and ```near_izzys``` would be false). If we're coming from the garage, the avatar sprite i splaced on the sidewalk in front of the garage, facing left, and the car sprites are placed where is was parked last time. For simplicity, the car is parked at the same location on re-visits to this level as it was when we virst visited Izzy's. If we are coming from home, the earlier animation of driving up and walking onto the sidewalk is repeated with the addition of setting the new ```near_car``` state to true.
+
+```
+first
+sprite_frames 1  0  6
+sprite 1  164 146
+sprite_frames 4  0  40     # Rear of car, parked
+sprite 3  236 170
+sprite 4  252 170
+end_anim
+```
+
+In the **first** sequence, the avatar is placed in front of Izzy's door (```near_izzys``` will already be set to true) and the car is parked where we left it. This is the only point in this level where the avatar can be in front of Izzy's door as there are no triggers here to return to that spot or state.
+
+```
+tool_trigger use 4 15  10 18
+if near_garage
+clear
+text 1 The door appears to be jammed.
+wait 60
+text 1 It only opens a tiny bit.
+wait 60
+text 1 If only we had something
+text 1 to pry it open...
+end_if
+if_not near_garage
+clear
+text 1 We're not close enough to the door.
+end_if
+end_anim
+```
+
+The first trigger is to "use" the garage door. The resulting sequence is identical to the same **tool_trigger** from [Level 0](#zone-2-level-0).
+
+```
+tool_trigger look 4 15  10 18
+clear
+text 1 That old garage looks abandoned.
+wait 60
+text 1 The door doesn't even have a lock.
+end_anim
+```
+
+This trigger is another repeat, where we are "looking" at the garage door after explicity selecting the "look" tool. The same sequence from [Level 0](#zone-2-level-0) is executed.
+
+```
+item_trigger screwdriver 1 0  4 15  10 18
+clear
+text 1 That should do the trick...
+wait 60
+text 1 It's opening!
+wait 90
+go_level 2 5
+end_anim
+```
+
+This trigger is new, as now we have a screwdriver in our inventory to pry the garage door open. After the screwdriver is applied to the door, there is some narration and 1.5 seconds later we go [inside the garage](#zone-2-level-5).
+
+```
+tool_trigger walk  4 19  10 21
+if_not near_garage
+if_not near_izzys
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_move 1  4  82  -2 0
+wait 255
+wait 73
+set_state near_garage
+end_if
+if near_izzys
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_move 1  4  54  -2 0
+clear_state near_izzys
+wait 216
+set_state near_garage
+end_if
+end_if
+end_anim
+```
+
+This trigger is another repeat from [Level 0](#zone-2-level-0) for "walking" to the garage door, which again is the default action for the sidewalk area in front of it. The resulting sequence is identical, allowing the avatar to walk from either Izzy's door or the car.
+
+```
+tool_trigger run  4 19  10 21
+if_not near_garage
+if_not near_izzys
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_move 1  2  82  -2 0
+wait 164
+set_state near_garage
+end_if
+if near_izzys
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_move 1  2  54  -2 0
+clear_state near_izzys
+wait 108
+set_state near_garage
+end_if
+end_if
+end_anim
+```
+
+This trigger is also a repeat from [Level 0](#zone-2-level-0) for "running" to the garage door, whcih requires the player to explicity select the "run" tool and then get there in half the time using the same exact sequence as before.
+
+```
+tool_trigger walk  27 18  34 24
+if near_garage
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite_move 1  4  82  2 0
+clear_state near_garage
+wait 255
+wait 73
+set_state near_car
+end_if
+if near_izzys
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite_move 1  4  28  2 0
+clear_state near_izzys
+wait 112
+set_state near_car
+end_if
+end_anim
+```
+
+This is a new trigger to allow the avatar to "walk" back to the car from either Izzy's door or the garage. It's the reverse of the "walk" triggers from [Level 0](#zone-2-level-0), where the avatar could only walk away from the car. At the end of this sequence, the ```near_car``` state will be set to true and both ```near_izzys``` and ```near_garage``` are set to false.
+
+```
+tool_trigger run  27 18  34 24
+if near_garage
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite_move 1  2  82  2 0
+clear_state near_garage
+wait 164
+set_state near_car
+end_if
+if near_izzys
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite_move 1  2  28  2 0
+clear_state near_izzys
+wait 56
+set_state near_car
+end_if
+end_anim
+```
+
+This trigger is for "running" to the car, which requires the player to explicity select the "run" tool. It dexecutes the same sequence as the default "walk" trigger, but in half the time.
+
+```
+tool_trigger look 29 21  34 24
+clear
+text 1 Hey, our car didn't get stolen!
+end_anim
+```
+
+This trigger is for "looking" at the car, using an area that fits inside the preceding two triggers, so it requires the player to explicity select the "look" tool and apply it directly to the car. Its rectangle does not include the sidewalk and street area around the car that the previous triggers cover. All it does is comment on the fact that the car is still there.
+
+```
+item_trigger keys 1 0  29 21  34 24
+if near_car
+sprite_frames 1  0  6 7 8 7 6 7H 8H 7H 6
+sprite_move 1  4  12  0 2
+wait 48
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite_move 1  4  12  2 0
+wait 48
+sprite_hide 1
+sprite_frames 4  0  41 42
+sprite_move 3  2  118  -2 0
+sprite_move 4  2  118  -2 0
+wait 236
+go_level 2 6
+end_if
+if_not near_car
+clear
+text 1 We aren't close enough to the car.
+end_if
+end_anim
+```
+
+The last trigger is for applying the keys from the inventory on the car, using the same constrained rectangle as the preceding "look" trigger. If the avatar is already near the car, it triggers a new animation sequence for turning the avatar "toward the camera" and walking down to the street, turning right and then walking toward the car. Once in front of the car, the avatar is hidden and the car's rear sprite is again given the sequence for driving with the avatar's head visible through the window. The car then drives off to the left, presumably going around the block and back to [the house](#zone-2-level-6).  If the avatar is not near the car, there is only some narration telling the player.
+
+### Zone 2, Level 5
+
+This level uses [**mygame_z2_level5.xci**](mygame_z2_level5.xci):
+
+```
+# Zone 2, level 5
+
+bitmap garage.data
+music zone0.vgm
+```
+
+This level introduces a new background: the interior of the garage.
+
+![Garage](#garage.png)
+
+It has a table for holding the grail during the first visit, and other detritus of long-ago adventures on the floor around it.
+
+```
+init
+if got_grail
+wait 30
+text 1 We already have the grail.
+wait 60
+text 1 Let's go home.
+wait 60
+go_level 2 4
+end_if
+end_anim
+```
+
+The **init** sequence only checks to see if we are re-visiting the level. If ```got_grail``` is true, we know that we've been here before, so we are automatically sent back to [the street](#zone-2-level-4) after some narration with another clue of what to do next.
+
+```
+first
+sprite_frames 2  0  53
+sprite  2 152 88
+wait 30
+text 1 Behold, the grail!
+end_anim
+```
+
+The **first** sequence places the grail sprite on the table and then gives a little narration directing the player's attention to the grail.
+
+```
+tool_trigger use  19 11  20 12
+sprite_hide 2
+get_item grail 1
+set_state got_grail
+text 1 At last, we have the grail!
+wait 60
+text 1 It's just what we need at home!
+wait 90
+go_level 2 4
+end_anim
+```
+
+The first trigger is for "using" the grail. It hides the grail sprite then adds the grail to the inventory. It then give a little narration with a clue about where we should take the grail, then takes us back to [the street](#zone-2-level-4). After this sequence, the ```got_grail``` state is set to true so that if we re-open the garage, the grail won't be there anymore.
+
+```
+tool_trigger look  19 11  20 12
+clear
+text 1 It's the holy grail!
+wait 60
+text 1 We need one of those.
+end_anim
+```
+
+This trigger is for "looking" at the grail, which requires the player to explicity select the "look" tool. It provides some more explicit narration of what the player is seeing and needs to do.
+
+```
+tool_trigger look  5 18  16 25
+clear
+text 1 It's an old, stuffed owl.
+wait 60
+text 1 Nobody wants that dusty old thing.
+end_anim
+```
+
+This trigger is for "looking" at the owl on the floor, which is the default action for that area. We just get a little narration letting you know that's not why we're in here.
+
+```
+tool_trigger look  32 12  36 20
+clear
+text 1 Whoever owned this mop
+wait 30
+text 1 never did much cleaning.
+end_anim
+```
+
+This trigger is for "looking" at the mop on the floor, which is the default action for that area. We just get a little narration letting you know that's not why we're in here.
+
+### Zone 2, Level 6
+
+This level uses [**mygame_z2_level6.xci**](mygame_z2_level6.xci):
+
+```
+# Zone 2, level 6
+
+bitmap mygame_house.data
+music zone0.vgm
+```
+
+This level returns to the front of the house for its third and final appearance in the game. This time, the car is coming from the left, so it must either drive into the scene (if coming from Izzy's) or be parked facing right (if coming from the house). This recycles some of the animation from [the last level at this scene](#zone-1-level-1) but has a reduced trigger set and different destinations based on state.
+
+```
+init
+sprite_frames 2  0  30 31 32 33 34 35 36 37 # Flag waving
+sprite 2  282 50                            # Top-right of pole
+sprite_move 2  6  255  0 0                  # Fixed position, 10 fps, 25.5 s
+sprite_frames 3  0  38H 39H   # Front of car
+if_not from_house
+sprite_frames 4  0  41H 42H
+sprite 3  16 170
+sprite 4  0 170
+sprite_move 3  2  42  2 0
+sprite_move 4  2  42  2 0
+wait 84
+sprite_frames 4  0  40H
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite 1  96 170
+sprite_move 1  4  26  2 0
+wait 104
+sprite_frames 1  0  11
+end_if
+if from_house
+sprite 3  102 170
+sprite_frames 4  0  40H
+sprite 4  86 170
+sprite_frames 1  0  6
+sprite 1  148 170
+clear_state from_house
+end_if
+end_anim
+```
+
+The **init** sequence again starts with the waving flag animation and setting up the frames for the front sprite of the car, this time horizontally flipped to face right. Then there are a pair of opposing sub-sequences that will be executed based on the ```from_house``` state. If ```from_house``` is false, we are driving back from Izzy's, so there is a new animation for driving from the left end of the road up to the house. When the car parks, the avatar appears in front of the car facing right, then immediately starts walking towards the door. Once directly in front of the door, the avatar turns toward the house and "away from the camera", and there it awaits the first trigger. If ```from_house``` is true, then we must have gone back into the house without the grail and come out again. This gives the player an opportunity to drive back to Izzy's and get the grail. In this case, the car is immediately placed in its facing-right parked position and the avatar is placed in front of the house "facing the camera".
+
+```
+tool_trigger use  19 16  22 21
+sprite_frames 1  0  11
+wait 30
+set_state front_to_foyer
+if got_grail
+go_level 2 7
+end_if
+if_not got_grail
+go_level 1 0
+end_if
+end_anim
+```
+
+The first trigger is for "using" the front door. This causes the avatar to turn toward the house and "away from the camera". Then the ```front_to_foyer``` state is set to true again so that once in the foyer, the avatar will be placed by the front door. The ```got_grail``` state determines which foyer lever this action will take us to. If we got the grail, the state is true and we proceed to [the next level](#zone-2-level-7). If we didn't get the grail, we go back to the [Zone 1 foyer](#zone-1-level-0), which will let us leave the house again and go back for the grail.
+
+```
+item_trigger keys 1 0  10 21  15 24
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_move 1  4  26  -2 0
+wait 104
+sprite_hide 1
+sprite_frames 4  0  41H 42H
+sprite_move 3  2  118  2 0
+sprite_move 4  2  118  2 0
+wait 84
+go_level 2 4
+end_anim
+```
+
+The other trigger is another **item_trigger** to apply the keys to the car and drive away. This time, there is a new animation as the car is now facing right. The avatar gets into the car much as before, but now drives off to the right. Once the car reaches the end of the screen, we go back to [Izzy's](#zone-2-level-4).
+
+### Zone 2, Level 7
+
+This level uses [**mygame_z2_level7.xci**](mygame_z2_level7.xci):
+
+```
+# Zone 2, level 7
+
+bitmap mygame_foyer.data
+music zone0.vgm
+```
+
+This level returns to the foyer, but with fewer available triggers. We only reach this level if we already have the grail and need to take it to the bedroom by first going throught the living room.
+
+```
+init
+if lr_to_foyer
+sprite_frames 1  0  6
+clear_state lr_to_foyer
+end_if
+if front_to_foyer
+sprite_frames 1  0  1
+clear_state front_to_foyer
+end_if
+sprite 1  18 128
+end_anim
+```
+
+The **init** sequence is only responsible for placing the avatar in the scene. If we are coming from the living room, the ```lr_to_foyer``` state is true, so the avatar is "facing the camera".  If we are coming from out front, the ```front_to_foyer``` state is true, so the avatar is facing right. There is no avatar movement in this level, so only one frame needs to be defined at a time.
+
+```
+tool_trigger look  38 13  39 18
+clear
+text 1  We have the grail.
+wait 30
+text 1  The kitchen isn't where we need to go.
+end_anim
+```
+
+This trigger is here in case the player wants to return to the kitchen. This time, the default action is to "look" at the doorway, and they player gets narration saying that with the grail, we don't need to go the kitchen anymore, implying that we need to take it elsewhere.
+
+```
+tool_trigger look  19 12  22 15
+clear
+text 1  We really love bananas.
+end_anim
+```
+
+This trigger is recycled from the [Zone 1 foyer](#zone-1-level-0), because we can always appreciate bananas and "look" at their picture.
+
+```
+tool_trigger talk  19 12  22 15
+clear
+text 2  "I love you, bananas!"
+end_anim
+```
+
+This trigger is also recycled from the [Zone 1 foyer](#zone-1-level-0), because we might still want to "talk" to the banana picture if they player explicitly selects the "talk" tool.
+
+```
+tool_trigger use  3 13  5 16
+sprite_frames 1  0  11
+wait 30
+go_level  2 8
+end_anim
+```
+
+This trigger is for "using" the living room door, which is the default action. This makes the avatar turn "away from the camera" and toward the door, then half a second later we continue to [the next level](#zone-2-level-8). This is the only way out of this level.
+
+```
+tool_trigger look  3 13  5 16
+clear
+text 1 That's the door to the living room.
+wait 60
+text 1 The bedroom door is in there.
+end_anim
+```
+
+This trigger is for "looking" at the bedroom door when the player explicitly selects the "look" tool. This trigger expands upon the same one in the [Zone 1 foyer](#zone-1-level-0) by adding a second line of narration reminding the player that the bedroom is accessible through the living room.
+
+```
+tool_trigger look  0 8  1 18
+clear
+text 1 We have the grail.
+wait 30
+text 1 We can't leave now!
+end_anim
+```
+
+This trigger is for "looking" at the front door, which is the default action in this level. The sequence is just narration telling the user that we can't leave the house now that we have the grail.
+
+### Zone 2, Level 8
+
+This level uses [**mygame_z2_level8.xci**](mygame_z2_level8.xci):
+
+```
+# Zone 2, level 8
+
+bitmap mygame_livingroom.data
+music zone0.vgm
+```
+
+This level returns to the living room, and recycles most of the triggers from the [Zone 1 living room](#zone-1-level-2). This level just removes the trigger to return to the foyer and replaces the trigger for using the bedroom door to finally go inside.  The business with the laptop and USB drive remain if the player didn't go through it last time.
+
+```
+init
+sprite_frames 2  0  47 48
+if_not laptop_taken
+tiles  0  22 17  176 177 176H
+tiles  0  22 18  178 179 178H
+if_not usb_taken
+tiles  0  26 19  183
+end_if
+if usb_inserted
+tiles  0  22 19  180 181 182
+sprite 2  180 139
+sprite_move 2  15  255  0 0
+end_if
+if_not usb_inserted
+tiles  0  22 19  180 181 180H
+end_if
+end_if
+end_anim
+```
+
+The **init** sequence is the same as last time, just setting up the laptop and thumbdrive if they are still there.
+
+```
+tool_trigger look  38 3  39 25
+clear
+text 1 We can't go back now!
+end_anim
+```
+
+The first trigger is for "looking" at the door to the foyer, which is now the default action. It simply tells the player that we can't go back now that we have the grail.
+
+```
+tool_trigger use  7 4  11 17
+clear
+text 1 It's been so long...
+wait 30
+text 1 Here we go!
+wait 60
+go_level 2 9
+end_anim
+```
+
+This trigger is for "using" the bedroom door, which is now the default action as this trigger has switched places with the "look" trigger. It just provides a little narration then takes us to [the final level](#zone-2-level-9).
+
+```
+tool_trigger look  7 4  11 17
+clear
+text 1 That's our bedroom.
+wait 60
+text 1 We can finally go back inside
+text 1 now that we have the grail!
+end_anim
+```
+
+This trigger is for "looking" at the bedroom door, which now requires the player to explicity select the "look" tool. It just has some narration to tell the player that this is where we want to go.
+
+```
+tool_trigger look  20 4  29 10
+clear
+text 2 Yeah, we really like bananas.
+end_anim
+
+tool_trigger use 22 17  24 19
+if_not laptop_taken
+if usb_inserted
+clear
+text 1 Ok, we'll take the laptop with us.
+wait 30
+sprite_hide 2
+tiles  0  22 17  0 0 0
+tiles  0  22 18  0 0 0
+tiles  0  22 19  0 0 0
+get_item laptop 1
+get_item thumbdrive 1
+set_state laptop_taken
+end_if
+if_not usb_inserted
+clear
+text 1 It's not working. It needs to
+text 1 boot from a thumbdrive.
+end_if
+end_if
+end_anim
+
+tool_trigger look 22 17  24 19
+if_not laptop_taken
+if usb_inserted
+text 1 Oh yeah, that's the stuff.
+end_if
+if_not usb_inserted
+text 1 That's our trusty laptop.
+wait 60
+text 1 Works great except that
+text 1 it won't boot on its own.
+end_if
+end_if
+end_anim
+
+item_trigger thumbdrive  1 1  22 17  24 19
+tiles 0  24 19  182
+clear
+text 1 Ok, now we can boot the laptop
+wait 60
+sprite 2  180 139
+sprite_move 2  15  255  0 0
+set_state usb_inserted
+end_anim
+
+tool_trigger use  26 19  26 19
+if_not usb_taken
+clear
+text 1 This thumbdrive should come in handy.
+get_item thumbdrive 1
+tiles  0  26 19  0
+set_state usb_taken
+end_if
+end_anim
+
+tool_trigger look  26 19  26 19
+if_not usb_taken
+clear
+text 1 It's a USB thumbdrive.
+wait 60
+text 1 Might be a bootable image.
+end_if
+end_anim
+```
+
+The rest of the triggers are all exact copies from the [Zone 1 living room](#zone-1-level-2). This includes business with looking at the big banana picture and dealing with the laptop and USB drive.
+
+### Zone 2, Level 9
+
+This level uses [**mygame_z2_level9.xci**](mygame_z2_level9.xci):
+
+```
+# Zone 2, level 9
+
+bitmap mygame_bedroom.data
+music jingle.vgm
+```
+
+This final level introduces not only a new background (a first-person view of the bedroom) but finally some new music inspired by the unexpected decor.
+
+![Bedroom](mygame_bedfroom.png)
+
+It appears that the bedroom hasn't been entered since some long ago Christmas, to the point the "Jingle Bells" is playing in the background instead of the music we've been hearing all along.
+
+```
+init
+wait 30
+text 1 Oh dear. It has been a while.
+wait 60
+text 1 How many Christmases ago was it?
+end_anim
+```
+
+The **init** sequence just has some narration commenting on the decor.
+
+```
+tool_trigger look  27 5  34 6
+clear
+text 1 That's our grail shelf.
+wait 60
+text 1 Looks a little empty...
+end_anim
+```
+
+The first trigger is for "looking" at the shelf up on the wall, which the narration tells the player is the "grail shelf" and that it looks empty.
+
+```
+item_trigger grail 1 1  27 3  34 6
+sprite_frames 6  0  53
+sprite 6  235 26
+clear
+wait 30
+text 1 At last!
+wait 30
+text 1 The grail is in its rightful place!
+wait 60
+line
+text 1 We win!
+wait 120
+clear
+text 1 Make your own game for the XCI Engine
+wait 60
+text 1 Visit the official GitHub page at:
+wait 60
+text 1 https://github.com/SlithyMatt/x16-xci
+wait 60
+text 1 Thanks, and have fun!
+end_anim
+```
+
+This trigger is for applying the grail to the grail shelf, which results in the grail sprite immediately appearing on top of the shelf. This is followed by several lines of narration telling the player that we won the game and then plugs the GitHub site you are probably reading this guide on right now. After this sequence there is nothing left to do, but the music will continue to playh and the grail will stay up there, but you can still "look" at other stuff in the room with the following triggers.
+
+```
+tool_trigger look  18 13  38 21
+clear
+text 1 Chicks dig Santa blankets.
+wait 60
+text 1 Well, in theory, at least.
+end_anim
+```
+
+This trigger is for "looking" at the bed spread. It just gives a little incidental narration.
+
+```
+tool_trigger look  2 3  11 20
+clear
+text 1 Luckily, it's a fake tree.
+end_anim
+```
+
+This trigger is for "looking" at the tree. It just gives a little incidental narration.
+
+```
+tool_trigger look  18 4  26 12
+clear
+text 1 You stare longingly out the window.
+end_anim
+```
+
+This trigger is for "looking" at the window. It just gives a little incidental narration.
+
+## Conclusion
+
+And that's the whole game! If you want to see a video of the walkthrough, check it out on YouTube:
+
+[![Example Game Walkthrough](http://img.youtube.com/vi/K_dQHSNvkLo/0.jpg)](https://youtu.be/K_dQHSNvkLo)
+
+Link: https://youtu.be/K_dQHSNvkLo
