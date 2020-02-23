@@ -174,8 +174,9 @@ start:
 mainloop:
    wai
    jsr check_vsync
-   bra mainloop
-
+   lda exit_req
+   beq mainloop
+   rts
 
 ; ----- Configuration
 

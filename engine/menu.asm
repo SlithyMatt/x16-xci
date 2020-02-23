@@ -599,8 +599,9 @@ __menu_exit:
    sta ROM_BANK
    lda #0
    jsr MOUSE_CONFIG
-   brk ; TODO: find more graceful exit
-
+   lda #1
+   sta exit_req
+   rts
 
 __menu_toggle_music:
    lda __menu_music_check_tile
