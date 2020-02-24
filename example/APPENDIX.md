@@ -6,6 +6,7 @@ This guide is a level-by-level walkthrough of the game configuration, showing ho
 
 ## Contents
 
+* [Level Flow Chart](#level-flow-chart)
 * [Top-Level Configuration](#top-level-configuration)
 * [Zone 0](#zone-0)
    * [Level 0](#zone-0-level-0)
@@ -25,7 +26,15 @@ This guide is a level-by-level walkthrough of the game configuration, showing ho
    * [Level 7](#zone-2-level-7)
    * [Level 8](#zone-2-level-8)
    * [Level 9](#zone-2-level-9)
+* [Conclusion](#conclusion)
 
+## Level Flow Chart
+
+A helpful tool for planning out a game is a flow chart to keep track of all the possible level transistions to make sure you aren't creating unbreakable loops or dead ends. You can even use states as decision points. Below is the complete flow chart for the example game.
+
+![Flow Chart](level_flow.png)
+
+For a more fleshed-out game, you will probably want to create individual flow charts for each zone. That can also help while planning where zone borders need to be in order to minimize zone transitions, which require a longer load time. As shown above, this flow chart simply does color coding to help visualize which zone each level is in.
 
 ## Top-Level Configuration
 The [main documentation](../README.md) goes through all of the top-level configuration files for this game.
