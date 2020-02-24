@@ -40,7 +40,6 @@ tool_trigger use  20 16  21 18
 if near_izzys
 sprite_frames 1  0  9
 wait 30
-gif_pause
 go_level 2 1
 end_if
 if_not near_izzys

@@ -1,0 +1,15 @@
+ALL_OBJS = $(patsubst %.c,%.o,$(wildcard *.c))
+ALL_HDRS = $(wildcard *.h)
+
+all: $(ALL_OBJS) $(ALL_HDRS)
+	x86_64-w64-mingw32-gcc -o xci.exe $(ALL_OBJS)
+%.o: %.c
+	x86_64-w64-mingw32-gcc -c $< -o $@
+
+clean:
+	rm -f xci.exe $(ALL_OBJS)
+
+test: bitmap_test
+
+bitmap_test: bitmap.h bitmap.c
+	x86_64-w64-mingw32-gcc -o bitmap.exe -DTEST bitmap.c

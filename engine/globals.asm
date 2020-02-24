@@ -167,5 +167,6 @@ mouse_tile_y:     .byte 0
 mouse_buttons:    .byte 0
 mouse_left_click: .byte 0
 
+exit_req:         .byte 0
 
 .endif

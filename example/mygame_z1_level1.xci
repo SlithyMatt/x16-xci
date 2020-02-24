@@ -13,7 +13,6 @@ sprite_frames 4  0  40     # Rear of car
 sprite 4  102 170          # Parked, not moving
 sprite_frames 1  0  6
 sprite 1  148 170
-gif_start
 end_anim
 
 tool_trigger look  18 21  19 22
