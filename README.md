@@ -96,6 +96,10 @@ VRAM:
 ## Data Format
 All game data (except for background bitmaps and music files) are described in text files, starting with a main file. This file defines the top-level game data, providing references to all other source files. Its filename is the only command-line input to the software development kit (SDK) executable (**xci.exe**). It is simply a set of key-value pairs. There are certain mandatory keys that are required for the game to be successfully built. Unrecognized keys are ignored by the build utility, as are comments, which begin with a hash (```#```) symbol. Keys have no spaces and are not case-sensitive, but values may be case-sensitive and consist of all text after the first whitespace after the key up to the end of the line or the start of a comment. A value can contain a hash character by escaping it with a backslash (i.e. ```\#```). And if a value contains a backslash character, that can be escaped with a double backslash (```\\```).
 
+In this guide we will be looking at the example game, which is located in this repository in the [example](example) directory.  It is a fully playable but simple game that was designed to illustrate how to make a game and serve as a basic test of the SDK and game engine.
+
+If you are looking to start from scratch, start with the files in the [template](template) directory. It is fully buildable and runnable, but has no gameplay. It's just a minimal skeleton on which you can build your own game.
+
 ### Main File
 The following is an example of a main file, showing all required keys.
 
@@ -780,7 +784,6 @@ Let's take a look at the next level (Zone 0, Level 1) to see game state and trig
 
 ```
 # Zone 0, level 1
-# Zone 0, level 1
 
 bitmap mygame_kitchen.data
 music zone0.vgm
@@ -793,17 +796,17 @@ tiles 0  19 13  166 167
 # steam loop
 sprite_frames 2  0  43 44 45 46
 if_not bananas_taken
-# bananas
-tiles 0  35 12  172 173
-tiles 0  35 13  174 175
+   # bananas
+   tiles 0  35 12  172 173
+   tiles 0  35 13  174 175
 end_if
 if_not cup_taken
-# coffee cup
-tiles 0  21 12  170
-tiles 0  21 13  171
-clear_state coffee_made
-clear_state holding_carafe
-clear_state coffee_poured
+   # coffee cup
+   tiles 0  21 12  170
+   tiles 0  21 13  171
+   clear_state coffee_made
+   clear_state holding_carafe
+   clear_state coffee_poured
 end_if
 end_anim
 
@@ -821,49 +824,49 @@ end_anim
 # clicking on the coffee maker with use tool (default)
 tool_trigger use  19 11  20 13
 if coffee_made
-if holding_carafe
-clear
-text 1  Let's not make more coffee with this
-text 1  fresh coffee. Perc sucks.
-wait 60
-text 1  Find a cup
-end_if # holding_carafe
-if_not holding_carafe
-clear
-text 1  Yes, nice fresh coffee.
-wait 60
-text 1  Let's find a good cup to pour it into
-set_state holding_carafe
-end_if # not holding_carafe
+   if holding_carafe
+      clear
+      text 1  Let's not make more coffee with this
+      text 1  fresh coffee. Perc sucks.
+      wait 60
+      text 1  Find a cup
+   end_if # holding_carafe
+   if_not holding_carafe
+      clear
+      text 1  Yes, nice fresh coffee.
+      wait 60
+      text 1  Let's find a good cup to pour it into
+      set_state holding_carafe
+   end_if # not holding_carafe
 end_if # coffee_made
 if_not coffee_made
-clear
-text 1  Ok, I'll make some coffee
-wait 60
-# show steam
-sprite 2  153 76
-sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
-wait 120
-# fill carafe
-tiles 0  19 12  168 169
-text 1  Done! Smells good...
-set_state coffee_made
+   clear
+   text 1  Ok, I'll make some coffee
+   wait 60
+   # show steam
+   sprite 2  153 76
+   sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
+   wait 120
+   # fill carafe
+   tiles 0  19 12  168 169
+   text 1  Done! Smells good...
+   set_state coffee_made
 end_if # not coffee_made
 end_anim # use coffee maker
 
 # clicking on the coffee maker with look tool
 tool_trigger look  19 11  20 13
 if_not coffee_made
-clear
-text 1  That's my coffee maker.
-wait 60
-text 1  Need a little pick-me-up?
+   clear
+   text 1  That's my coffee maker.
+   wait 60
+   text 1  Need a little pick-me-up?
 end_if
 if coffee_made
-clear
-text 1  The coffee's still done.
-wait 60
-text 1  Gonna pour it?
+   clear
+   text 1  The coffee's still done.
+   wait 60
+   text 1  Gonna pour it?
 end_if
 end_anim # look at coffee maker
 
@@ -878,82 +881,82 @@ end_anim
 # clicking on the coffee cup with use tool (default)
 tool_trigger use  21 12  21 13
 if_not cup_taken
-if_not holding_carafe
-if_not coffee_poured
-clear
-text 1  It's an empty cup.
-wait 60
-text 1  You don't need one of those.
-wait 60
-text 1  Maybe you should fill it.
-end_if # not coffee_poured
-if coffee_poured
-clear
-text 1  Go ahead, take it with you.
-sprite_hide 2 # no more steam
-# remove cup
-tiles 0  21 12  0
-tiles 0  21 13  0
-get_item coffee 1 # add 1 coffee to inventory
-clear_state coffee_poured
-set_state cup_taken
-end_if # coffee_poured
-end_if # not holding_carafe
-if holding_carafe
-clear
-text 1  Sure, pour the whole pot.
-wait 60
-# empty carafe
-tiles 0  19 12  164 165
-clear_state holding_carafe
-clear_state coffee_made
-set_state coffee_poured
-# move steam to over cup
-sprite 2  164 86
-sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
-end_if # holding_carafe
+   if_not holding_carafe
+      if_not coffee_poured
+         clear
+         text 1  It's an empty cup.
+         wait 60
+         text 1  You don't need one of those.
+         wait 60
+         text 1  Maybe you should fill it.
+      end_if # not coffee_poured
+      if coffee_poured
+         clear
+         text 1  Go ahead, take it with you.
+         sprite_hide 2 # no more steam
+         # remove cup
+         tiles 0  21 12  0
+         tiles 0  21 13  0
+         get_item coffee 1 # add 1 coffee to inventory
+         clear_state coffee_poured
+         set_state cup_taken
+      end_if # coffee_poured
+   end_if # not holding_carafe
+   if holding_carafe
+      clear
+      text 1  Sure, pour the whole pot.
+      wait 60
+      # empty carafe
+      tiles 0  19 12  164 165
+      clear_state holding_carafe
+      clear_state coffee_made
+      set_state coffee_poured
+      # move steam to over cup
+      sprite 2  164 86
+      sprite_move 2  12  150  0 0 # fixed position, 5 fps, 30 s
+   end_if # holding_carafe
 end_if # not cup_taken
 end_anim # use coffee cup
 
 # clicking on the coffee cup with look tool
 tool_trigger look  21 12  21 13
 if_not cup_taken
-clear
-text 1  That's a coffee cup.
-if coffee_poured
-wait 60
-text 1  Maybe you should take it.
-end_if # coffee_poured
-if_not coffee_poured
-wait 60
-text 1 Conveniently placed, you think?
-end_if # not coffee_poured
+   clear
+   text 1  That's a coffee cup.
+   if coffee_poured
+      wait 60
+      text 1  Maybe you should take it.
+   end_if # coffee_poured
+   if_not coffee_poured
+      wait 60
+      text 1 Conveniently placed, you think?
+   end_if # not coffee_poured
 end_if # not cup_taken
 end_anim # look at coffee cup
 
 # clicking on the bananas with use tool (default)
 tool_trigger use  35 12  36 13
 if_not bananas_taken
-clear
-text 2  Go ahead and take the bananas. # make it yellow, because bananas
-wait 30
-# remove bananas
-tiles 0  35 12  0 0
-tiles 0  35 13  0 0
-get_item banana 3 # add 3 bananas to inventory
-set_state bananas_taken
-text 1  You may get hungry later.
+   clear
+   text 2  Go ahead and take the bananas. # make it yellow, because bananas
+   wait 30
+   # remove bananas
+   tiles 0  35 12  0 0
+   tiles 0  35 13  0 0
+   get_item banana 3 # add 3 bananas to inventory
+   set_state bananas_taken
+   text 1  You may get hungry later.
 end_if # not bananas_taken
 end_anim # use bananas
 
 # clicking on the bananas with look tool
 tool_trigger look  35 12  36 13
 if_not bananas_taken
-clear
-text 2  Those are my bananas. # make it yellow, because bananas
-wait 60
-text 1  You should take them in case
-text 1  you get hungry.
+   clear
+   text 2  Those are my bananas. # make it yellow, because bananas
+   wait 60
+   text 1  You should take them in case
+   text 1  you get hungry.
 end_if # not bananas_taken
 end_anim # look at bananas
 

@@ -1,0 +1,24 @@
+# XCI Inventory Template
+
+# This is a minimal 1x2 inventory layout, even though only one item is defined.
+# All spaces are done with tile 1, which is a plain white square, or an
+# ASCII space in Text Style 1, which is a black background, in the case of the
+# quantity display. Note that all margins and even the quantity and scroll bars
+# are optional. The inventory will initially appear as:
+# " $  100 ^"
+# "        V"
+
+# Inventory layout
+inv_dim 9 2
+inv_item_dim 1 1
+inv_empty 1
+inv_left_margin 1
+inv_right_margin 1
+inv_quant 1 4
+inv_quant_margin 1 # won't be used unless inv_item_dim height > 1
+inv_scroll 94 1 86 # middle value won't be used unless inv_dim height > 2
+inv_scroll_margin 1
+
+# Item list
+inv_item money 100 9999 0 36 # may be modified/replaced
+# up to 126 more items may be defined

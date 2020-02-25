@@ -368,6 +368,9 @@ int parse_inv_config(const char *cfg_fn, inventory_config_t *cfg_bin) {
       if (row == (num_rows - 1)) {
          cfg_bin->tilemap[tilemap_idx++] = scroll_down[0];
          cfg_bin->tilemap[tilemap_idx++] = scroll_down[1];
+      } else if ((row == 0) && (cfg_bin->item_height == 1)) {
+         cfg_bin->tilemap[tilemap_idx++] = scroll_up[0];
+         cfg_bin->tilemap[tilemap_idx++] = scroll_up[1];
       } else {
          cfg_bin->tilemap[tilemap_idx++] = scroll_middle[0];
          cfg_bin->tilemap[tilemap_idx++] = scroll_middle[1];

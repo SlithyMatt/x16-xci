@@ -157,16 +157,24 @@ start:
    lda cfg_cursor+1
    ora #(^VRAM_SPRITES << 3) ; Add bank
    sta def_cursor+1
+   jsr init_mouse
    lda cfg_zones
    sta num_zones
    lda cfg_ts_dur
    sta ts_dur
    lda cfg_ts_dur+1
    sta ts_dur+1
+   bne @title
+   lda ts_dur
+   bne @title
+   ; Title screen duration = 0, cut straight to menu
+   stz ts_playing
+   jsr init_menu
+   jsr init_toolbar
+   bra mainloop
 
-
+@title:
    ; start title screen
-   jsr init_mouse
    jsr init_music
    jsr start_music
    jsr start_anim

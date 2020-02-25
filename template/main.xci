@@ -1,0 +1,12 @@
+# Template XCI Main File
+title          Change Me
+author         Change Me
+palette        pal.hex
+tiles_hex      tiles.hex
+sprites_hex    sprites.hex
+menu_xci       menu.xci
+title_screen   title.xci
+init_cursor    0           # sprite frame index
+zone           zone.xci    # the first zone defined will be loaded first,
+                           # with its first level the start of the game
+# add up to 255 more zones

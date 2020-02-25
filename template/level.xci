@@ -1,0 +1,15 @@
+# XCI Level Template
+
+# Uncomment below when/if you have level bitmap and/or music
+#bitmap bitmap.data
+#music music.vgm
+
+init
+# Put initial animation here
+end_anim
+
+first
+# Put first-time-only animation here
+end_anim
+
+# Put triggers here

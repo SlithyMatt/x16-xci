@@ -1,0 +1,9 @@
+# XCI Title Screen File Template
+
+duration 0 # End immediately, go to menu
+
+# Uncomment below when/if you have title screen bitmap and/or music
+#bitmap bitmap.data
+#music music.vgm
+
+# Start animation here
