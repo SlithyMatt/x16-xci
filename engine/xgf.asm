@@ -5,7 +5,7 @@ XGF_INC = 1
 .include "globals.asm"
 .include "tilelib.asm"
 
-XGF_STAGE_START         = $BEBE ; bank = STATE_BANK - 1
+XGF_STAGE_START         = $BEBE ; bank = STATE_BANK
 XGF_STAGE_TITLE_OFFSET  = $00
 XGF_STAGE_AUTHOR_OFFSET = $20
 XGF_STAGE_ZONE_OFFSET   = $40
@@ -14,7 +14,6 @@ XGF_STAGE_MUSIC_OFFSET  = $42
 XGF_STAGE_SFX_OFFSET    = $43
 XGF_STAGE_INV_OFFSET    = $44
 XGF_NUM_INV_QUANTS      = 127
-XFG_DATA_SIZE           = $2142
 
 XGF_PREFIX_MAX = 8
 
@@ -125,7 +124,7 @@ save_game:
    sta ZP_PTR_2
    lda #>RAM_CONFIG
    sta ZP_PTR_2+1
-   lda #(STATE_BANK-1)
+   lda #STATE_BANK
    sta RAM_BANK
    ldy #0
 @title_author_loop:
@@ -174,11 +173,10 @@ save_game:
 
    jmp @restore ; just stage RAM, no XGF I/O until new kernal is ready
 
-   ; dead code until @restore:
    lda #KERNAL_ROM_BANK
    sta ROM_BANK
    jsr CLRCHN
-   lda #3
+   lda #1
    ldx #DISK_DEVICE
    ldy #0
    jsr SETLFS        ; SetFileParams(LogNum=3,DevNum=DISK_DEVICE,SA=0)
@@ -186,41 +184,16 @@ save_game:
    ldx #<__xgf_fn
    ldy #>__xgf_fn
    jsr SETNAM        ; SetFileName(__xgf_fn)
-   jsr OPEN
-   ldx #3
-   jsr CHKOUT        ; SetDefaultOutput(LogNum=3)
-   stz ZP_PTR_1
-   lda #>XGF_STAGE_START
-   sta ZP_PTR_1+1
-   lda #ZP_PTR_1
-   ldy #<XGF_STAGE_START
-   stz __xgf_state_done
-@write_loop:
-   lda (ZP_PTR_1),y
-   phy
-   jsr CHROUT
-   ply
-   iny
-   bne @write_loop
-   inc ZP_PTR_1+1
-   lda ZP_PTR_1+1
-   cmp #>(RAM_WIN+RAM_WIN_SIZE)
-   bne @write_loop
-   lda __xgf_state_done
-   bne @close
-   lda #STATE_BANK
-   sta RAM_BANK
    lda #<RAM_WIN
    sta ZP_PTR_1
    lda #>RAM_WIN
    sta ZP_PTR_1+1
-   lda #1
-   sta __xgf_state_done
-   bra @write_loop
-@close:
-   lda #3
-   jsr CLOSE            ; CloseFile(LogNum=3)
-   jsr CLRCHN
+   lda #STATE_BANK
+   sta RAM_BANK
+   lda #ZP_PTR_1
+   ldx #<(RAM_WIN+RAM_WIN_SIZE)
+   ldy #>(RAM_WIN+RAM_WIN_SIZE)
+   jsr SAVE
 @restore:
    jsr tile_restore
 @return:
