@@ -58,6 +58,7 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
    int bank;
    char bin_fn[15];
    FILE *ofp;
+   int bitmap_defined = 0;
 
    if (parse_config(cfg_fn, &cfg) < 0) {
       printf("parse_level_config: error parsing config source (%s)\n", cfg_fn);
@@ -82,6 +83,7 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
                printf("parse_level_config: error converting bitmap\n");
                return -1;
             }
+            bitmap_defined = 1;
             break;
          case MUSIC:
             if (node->num_values < 1) {
@@ -270,6 +272,12 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
          printf("parse_level_config: Level configuration is too large\n");
       }
       node = node->next;
+   }
+
+   if (!bitmap_defined) {
+      bank = level * 6 + 2;
+      sprintf(bin_fn,"Z%03d.L%d.%02d.BIN", zone, level, bank);
+      create_black_bitmap(bin_fn, 200);
    }
 
    bank = level * 6 + 1;

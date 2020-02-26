@@ -11,6 +11,8 @@
 
 #define BITMAP_PAL_OFFSET (16*2)
 
+#define TITLE_BITMAP_FN "TTL.BM.BIN"
+
 int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin) {
    uint8_t *bin = (uint8_t *)cfg_bin;
    int size = 2;
@@ -18,6 +20,7 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
    xci_config_node_t *node;
    xci_val_list_t *val;
    int num;
+   int bitmap_defined = 0;
 
    if (parse_config(cfg_fn, &cfg) < 0) {
       printf("parse_title_screen_config: error parsing config source (%s)\n", cfg_fn);
@@ -40,11 +43,12 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
                printf("parse_title_screen_config: no filename specified for bitmap\n");
                return -1;
             }
-            if (conv_bitmap(node->values->val, "TTL.BM.BIN",
+            if (conv_bitmap(node->values->val, TITLE_BITMAP_FN,
                             &init_pal[BITMAP_PAL_OFFSET]) < 0) {
                printf("parse_title_screen_config: error converting bitmap\n");
                return -1;
             }
+            bitmap_defined = 1;
             break;
          case MUSIC:
             if (node->num_values < 1) {
@@ -76,6 +80,10 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
                    idx2key(node->key));
       }
       node = node->next;
+   }
+
+   if (!bitmap_defined) {
+      create_black_bitmap(TITLE_BITMAP_FN, 240);
    }
 
    delete_config(&cfg);

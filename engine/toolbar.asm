@@ -492,17 +492,32 @@ __tb_pin:
    rts
 
 tool_set_cursor:  ; A: tool index
-   asl
-   asl
-   inc
-   inc
+   bra @start
+@tool: .byte 0
+@start:
+   sta @tool
+   ldy __tb_num_tools
+   ldx #1
+@loop:
+   lda @tool
+   cmp __tb_tools,x
+   beq @set
+   dey
+   beq @return
+   txa
+   clc
+   adc #4
    tax
+   bra @loop
+@set:
+   inx
    lda __tb_tools,x
    sta __tb_cursor
    inx
    lda __tb_tools,x
    sta __tb_cursor+1
    SET_MOUSE_CURSOR __tb_cursor
+@return:
    rts
 
 .endif

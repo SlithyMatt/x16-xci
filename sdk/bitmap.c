@@ -66,6 +66,17 @@ int conv_bitmap_addr(const char *raw_fn, const char *xci_fn,
    return 0;
 }
 
+void create_black_bitmap(const char *xci_fn, int height) {
+   FILE *ofp;
+   int i;
+
+   ofp = fopen(xci_fn, "wb");
+   for (i = 0; i < 160*height+2; i++) {
+      fputc(0,ofp);
+   }
+   fclose(ofp);
+}
+
 #ifdef TEST
 void main(int argc, char **argv) {
    int address;
@@ -84,7 +95,7 @@ void main(int argc, char **argv) {
       // set default load address to 0x0000
       address = 0x0000;
    }
-   
+
    conv_bitmap_addr(argv[1], argv[2], pal, address);
 
    ofp = fopen("PAL.BIN","wb");
