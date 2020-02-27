@@ -715,7 +715,7 @@ Defines the filename of the [VGM file](README.md#vgm-files) to convert for playi
 
 Usage:
 ```
-bitmap filename
+music filename
 ```
 
 | Argument | Type | Range | Meaning |
