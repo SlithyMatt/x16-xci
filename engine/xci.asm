@@ -184,6 +184,42 @@ mainloop:
    jsr check_vsync
    lda exit_req
    beq mainloop
+
+   ; Clear VRAM
+   stz VERA_ctrl
+   VERA_SET_ADDR 0, 1
+   ldx #$00
+   ldy #$40
+@loop:
+   stz VERA_data0
+   dex
+   cpx #$FF
+   bne @loop
+   dey
+   cpy #$FF
+   bne @loop
+
+   ; Reset Layer 1
+   VERA_SET_ADDR VRAM_layer1, 1
+   lda #$01
+   sta VERA_data0
+   lda #$06
+   sta VERA_data0
+   stz VERA_data0
+   stz VERA_data0
+   stz VERA_data0
+   lda #($F8 >> 2)
+   sta VERA_data0
+
+   ; Reset display scale
+   VERA_SET_ADDR VRAM_hscale, 1  ; set display to 2x scale
+   lda #128
+   sta VERA_data0
+   sta VERA_data0
+
+   ; Return to BASIC
+   lda #BASIC_ROM_BANK
+   sta ROM_BANK
    rts
 
 ; ----- Configuration
