@@ -26,6 +26,7 @@ This guide is a level-by-level walkthrough of the game configuration, showing ho
    * [Level 7](#zone-2-level-7)
    * [Level 8](#zone-2-level-8)
    * [Level 9](#zone-2-level-9)
+* [Sprites and Tiles](#sprites-and-tiles)
 * [Conclusion](#conclusion)
 
 ## Level Flow Chart
@@ -1716,6 +1717,12 @@ end_anim
 ```
 
 This trigger is for "looking" at the window. It just gives a little incidental narration.
+
+## Sprites and Tiles
+
+For this game, there are 54 sprite frames and 184 tiles that have been defined. They were designed by using the **sprites_tiles.ods** spreadsheet, which was created using LibreOffice Calc.  Not shown in that spreadsheet are all the ASCII tiles, so here's a single-screen view of all of these graphics, created by using [spritesheet.xci](spritesheet.xci) as the title screen file.
+
+![spritesheet](sprite_tile_sheet.png)
 
 ## Conclusion
 
