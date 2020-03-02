@@ -64,7 +64,8 @@ reset_bank: ; A: bank to set to all zeros
 @return:
    rts
 
-RAM_CONFIG     = $6000
+XGF_STAGE      = $5000
+RAM_CONFIG     = $7000
 
 load_main_cfg:
    lda #0
@@ -97,6 +98,7 @@ HELP_PTR       = $32
 ZL_COUNT_PTR   = $34
 MOUSE_X        = $36
 MOUSE_Y        = $38
+XGF_PTR        = $3A
 
 VRAM_BITMAP    = $00000 ; 4bpp 320x240
 VRAM_TILEMAP   = $09600 ; 64x32 (40x30 visible)

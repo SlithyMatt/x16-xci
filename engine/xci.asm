@@ -101,6 +101,10 @@ start:
    jsr init_irq
 
    ; init global variables
+   lda #<XGF_STAGE
+   sta XGF_PTR
+   lda #>XGF_STAGE
+   sta XGF_PTR+1
    lda #<cfg_ts_anim
    sta ANIM_PTR
    lda #>cfg_ts_anim
@@ -233,6 +237,12 @@ mainloop:
    lda #BASIC_ROM_BANK
    sta ROM_BANK
    rts
+
+; ---- Save game file staging
+
+.org XGF_STAGE
+.byte 0
+
 
 ; ----- Configuration
 

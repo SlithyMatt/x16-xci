@@ -171,11 +171,30 @@ save_game:
    cpx #XGF_NUM_INV_QUANTS
    bmi @inv_loop
 
-   jmp @restore ; just stage RAM, no XGF I/O until new kernal is ready
+   ; Can't save direct from banked RAM, so copying to low RAM for now
+   lda #<RAM_WIN
+   sta ZP_PTR_2
+   lda #>RAM_WIN
+   sta ZP_PTR_2+1
+   lda #<XGF_STAGE
+   sta ZP_PTR_3
+   lda #>XGF_STAGE
+   sta ZP_PTR_3+1
+   ldx #0
+   ldy #0
+@loop:
+   lda (ZP_PTR_2),y
+   sta (ZP_PTR_3),y
+   iny
+   bne @loop
+   inc ZP_PTR_2+1
+   inc ZP_PTR_3+1
+   inx
+   cpx #>RAM_WIN_SIZE
+   bmi @loop
 
    lda #KERNAL_ROM_BANK
    sta ROM_BANK
-   jsr CLRCHN
    lda #1
    ldx #DISK_DEVICE
    ldy #0
@@ -184,15 +203,9 @@ save_game:
    ldx #<__xgf_fn
    ldy #>__xgf_fn
    jsr SETNAM        ; SetFileName(__xgf_fn)
-   lda #<RAM_WIN
-   sta ZP_PTR_1
-   lda #>RAM_WIN
-   sta ZP_PTR_1+1
-   lda #STATE_BANK
-   sta RAM_BANK
-   lda #ZP_PTR_1
-   ldx #<(RAM_WIN+RAM_WIN_SIZE)
-   ldy #>(RAM_WIN+RAM_WIN_SIZE)
+   lda #XGF_PTR
+   ldx #<(XGF_STAGE+RAM_WIN_SIZE)
+   ldy #>(XGF_STAGE+RAM_WIN_SIZE)
    jsr SAVE
 @restore:
    jsr tile_restore
