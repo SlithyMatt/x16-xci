@@ -189,9 +189,12 @@ mainloop:
    stz VERA_ctrl
    VERA_SET_ADDR 0, 1
    ldx #$00
-   ldy #$40
+   ldy #$20
 @loop:
-   stz VERA_data0
+   lda #$20 ; space
+   sta VERA_data0
+   lda #$61 ; blue BG, white FG
+   sta VERA_data0
    dex
    cpx #$FF
    bne @loop
@@ -210,6 +213,15 @@ mainloop:
    stz VERA_data0
    lda #($F8 >> 2)
    sta VERA_data0
+
+   ; Clear sprites
+   VERA_SET_ADDR $F500E, 4 ; sprite 1 byte 6, stride of 8
+   ldx #1
+@clear_sprite_loop:
+   stz VERA_data0
+   inx
+   cpx #128
+   bne @clear_sprite_loop
 
    ; Reset display scale
    VERA_SET_ADDR VRAM_hscale, 1  ; set display to 2x scale
