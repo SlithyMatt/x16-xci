@@ -22,7 +22,9 @@ __xgf_ext:        .byte ".XGF"
 __xgf_fn_length:  .byte 0 ; filename not set if zero
 __xgf_quant:      .word 0
 __xgf_state_done: .byte 0
-__xgf_dir_fn:     .byte "$"
+
+__xgf_dir_fn:     .byte "XGFDIR.BIN"
+__end_xgf_dir_fn:
 
 __xgf_saveas_dialog:
 .byte "                "
@@ -61,12 +63,24 @@ XGF_LOAD_X        = 9
 XGF_LOAD_Y        = 9
 XGF_LOAD_WIDTH    = 22
 XGF_LOAD_HEIGHT   = 9
-XGF_LOAD_R_X_MIN  = XGF_LOAD_X + 2
-XGF_LOAD_R_X_MAX  = XGF_LOAD_R_X_MIN + XGF_PREFIX_MAX
-XGF_LOAD_L_X_MIN  = XGF_LOAD_X + 13
+XGF_LOAD_L_X_MIN  = XGF_LOAD_X + 2
 XGF_LOAD_L_X_MAX  = XGF_LOAD_L_X_MIN + XGF_PREFIX_MAX
+XGF_LOAD_R_X_MIN  = XGF_LOAD_X + 13
+XGF_LOAD_R_X_MAX  = XGF_LOAD_R_X_MIN + XGF_PREFIX_MAX
 XGF_LOAD_Y_MIN    = XGF_LOAD_Y + 3
 XGF_LOAD_Y_MAX    = XGF_LOAD_Y_MIN + 4
+XGF_MAX_FILES     = 8
+
+XGF_NUM_FILES     = XGF_STAGE
+XGF_FN0_LENGTH    = XGF_STAGE+1
+XGF_FN0           = XGF_FN0_LENGTH+1
+XGF_MAX_FN_LEN    = XGF_PREFIX_MAX+XGF_EXT_LENGTH
+
+__xgf_dir_fns:
+   .byte 0, XGF_MAX_FN_LEN+1, XGF_MAX_FN_LEN*2+1, XGF_MAX_FN_LEN*3+1
+   .byte XGF_MAX_FN_LEN*4+1, XGF_MAX_FN_LEN*5+1, XGF_MAX_FN_LEN*6+1, XGF_MAX_FN_LEN*7+1
+
+XGF_DIR_FILE_LENGTH  = 1 + (1 + XGF_MAX_FN_LEN) * XGF_MAX_FILES
 
 
 ASCII_UNDERSCORE  = 95
@@ -109,20 +123,65 @@ load_game:
    bne @row_loop
    lda #1
    sta load_visible
+   jsr load_xgf_dir
+   lda #XGF_LOAD_Y_MIN
+   sta __xgf_row
+   ldx XGF_NUM_FILES
+@file_loop:
+   cpx #0
+   beq @return
+   phx
+   txa
+   ldy __xgf_row
+   bit #$01
+   bne @right_col
+   ldx XGF_LOAD_L_X_MIN
+   bra @print
+@right_col:
+   ldx XGF_LOAD_R_X_MIN
+   inc __xgf_row
+@print:
+   lda #1
+   jsr xy2vaddr
+   stz VERA_ctrl
+   ora #$20 ; stride = 2 to only replace tile indices
+   sta VERA_addr_bank
+   stx VERA_addr_low
+   sty VERA_addr_high
+   plx
+   phx
+   ldy __xgf_dir_fns,x
+   ldx XGF_FN0_LENGTH,y
+@char_loop:
+   lda XGF_FN0,y
+   sta VERA_data0
+   iny
+   dex
+   bne @char_loop
+   plx
+   dex
+   bra @file_loop
+@return:
+   rts
+
+load_xgf_dir:
    lda #KERNAL_ROM_BANK
    sta ROM_BANK
    lda #1
    ldx #DISK_DEVICE
    ldy #0
    jsr SETLFS        ; SetFileParams(LogNum=1,DevNum=DISK_DEVICE,SA=0)
-   lda #1
+   lda #(__end_xgf_dir_fn-__xgf_dir_fn)
    ldx #<__xgf_dir_fn
    ldy #>__xgf_dir_fn
    jsr SETNAM        ; SetFileName(__xgf_fn)
    lda #0
    ldx #<XGF_STAGE
    ldy #>XGF_STAGE
-   ;jsr LOAD
+   jsr LOAD
+   bcc @return
+   stz XGF_NUM_FILES ; assume no files defined
+@return:
    rts
 
 save_game:
@@ -340,21 +399,97 @@ __xgf_saveas_tick:
    rts
 
 __xgf_save_btn_click:
-   lda __xgf_fn_length
-   beq @return
-   tax
+   bra @start
+@match: .byte $FF
+@match_mask: .byte $FE
+@start:
+   jsr load_xgf_dir
+   lda XGF_NUM_FILES
+   cmp #XGF_MAX_FILES
+   bpl @check_prefix
+   inc XGF_NUM_FILES
+   jmp @add_ext
+@check_prefix:
+   lda #$FF
+   sta @match
+   ldx #0   ; char index
+@char_loop:
+   phx
+   lda #$FE
+   sta @match_mask
+   ldy #0   ; slot index
+@slot_loop:
+   ldx __xgf_dir_fns,y
+   lda XGF_FN0,x
+   plx
+   phx
+   cmp __xgf_fn,x
+   beq @next_slot
+   lda @match
+   and @match_mask
+   sta @match
+@next_slot:
+   iny
+   cpy #XGF_MAX_FILES
+   beq @next_char
+   sec
+   rol @match_mask
+   bra @slot_loop
+@next_char:
+   plx
+   inx
+   cpx __xgf_fn_length
+   beq @check_match
+   bra @char_loop
+@check_match:
+   lda @match
+   beq @reject
    ldy #0
-@loop:
+@match_loop:
+   lda @match
+   bit #$01
+   beq @next_match
+   lda __xgf_dir_fns,y
+   clc
+   adc __xgf_fn_length
+   tax
+   lda XGF_FN0,x
+   cmp __xgf_ext     ; check to see that the extension starts where expected
+   bne @next_match   ; requested prefix only a substring of one from directory
+   bra @add_ext      ; filename matches one from directory, overwrite
+@next_match:
+   lsr @match
+   iny
+   cpy #XGF_MAX_FILES
+   beq @reject
+   bra @match_loop
+@reject:
+   jsr __xgf_reject_fn
+   bra @return
+@add_ext:
+   ldx __xgf_fn_length
+   beq @return
+   ldy #0
+@add_ext_loop:
    lda __xgf_ext,y
    sta __xgf_fn,x
    inc __xgf_fn_length
    inx
    iny
    cpy #XGF_EXT_LENGTH
-   bmi @loop
+   bmi @add_ext_loop
+   jsr __xgf_update_dir
    jsr save_game
    stz saveas_visible
 @return:
+   rts
+
+__xgf_update_dir:
+   ; TODO: add __xgf_fn to directory file, if not already there
+   rts
+
+__xgf_reject_fn:
+   ; TODO: print error message
    rts
 
 __xgf_clear_btn_click:

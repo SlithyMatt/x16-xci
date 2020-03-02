@@ -241,7 +241,33 @@ mainloop:
 ; ---- Save game file staging
 
 .org XGF_STAGE
-.byte 0
+
+; --- directory file structure
+xgf_num_files: .byte 0
+xgf_filenames:
+   .byte 0
+   .byte "            "
+
+   .byte 0
+   .byte "            "
+
+   .byte 0
+   .byte "            "
+
+   .byte 0
+   .byte "            "
+
+   .byte 0
+   .byte "            "
+
+   .byte 0
+   .byte "            "
+
+   .byte 0
+   .byte "            "
+
+   .byte 0
+   .byte "            "
 
 
 ; ----- Configuration
