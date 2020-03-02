@@ -22,6 +22,7 @@ __xgf_ext:        .byte ".XGF"
 __xgf_fn_length:  .byte 0 ; filename not set if zero
 __xgf_quant:      .word 0
 __xgf_state_done: .byte 0
+__xgf_dir_fn:     .byte "$"
 
 __xgf_saveas_dialog:
 .byte "                "
@@ -108,6 +109,20 @@ load_game:
    bne @row_loop
    lda #1
    sta load_visible
+   lda #KERNAL_ROM_BANK
+   sta ROM_BANK
+   lda #1
+   ldx #DISK_DEVICE
+   ldy #0
+   jsr SETLFS        ; SetFileParams(LogNum=1,DevNum=DISK_DEVICE,SA=0)
+   lda #1
+   ldx #<__xgf_dir_fn
+   ldy #>__xgf_dir_fn
+   jsr SETNAM        ; SetFileName(__xgf_fn)
+   lda #0
+   ldx #<XGF_STAGE
+   ldy #>XGF_STAGE
+   ;jsr LOAD
    rts
 
 save_game:
@@ -198,7 +213,7 @@ save_game:
    lda #1
    ldx #DISK_DEVICE
    ldy #0
-   jsr SETLFS        ; SetFileParams(LogNum=3,DevNum=DISK_DEVICE,SA=0)
+   jsr SETLFS        ; SetFileParams(LogNum=1,DevNum=DISK_DEVICE,SA=0)
    lda __xgf_fn_length
    ldx #<__xgf_fn
    ldy #>__xgf_fn
