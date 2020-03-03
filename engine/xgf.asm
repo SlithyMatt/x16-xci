@@ -607,7 +607,7 @@ __xgf_load_tick:
    inc
 @copy_fn:
    tay
-   ldx __xgf_fn,y
+   ldx __xgf_dir_fns,y
    lda XGF_FN0_LENGTH,x
    beq @return    ; no file in this slot
    sta __xgf_fn_length
@@ -643,6 +643,8 @@ __xgf_load:
    ldx #<RAM_WIN
    ldy #>RAM_WIN
    jsr LOAD
+   lda #STATE_BANK
+   sta RAM_BANK
    ldx #0
 @id_loop:
    lda XGF_STAGE_START,x
@@ -680,17 +682,28 @@ __xgf_load:
    iny
    lda (ZP_PTR_3),y
    tay
+   cpx #0
+   bne @add
+   cpy #0
+   beq @next_inv
+@add:
    pla
    pha
    jsr inv_add_item
+@next_inv:
    pla
    inc
    cmp __inv_max_items
-   beq @return
+   beq @resume
    ply
    iny
    iny
    bra @inv_loop
+@resume:
+   ply   ; clear stack
+   jsr load_zone
+   jsr load_level
+   bra @return
 @mismatch:
    ; load file does not match game, no way to recover, just exit
    lda #1
