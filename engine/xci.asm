@@ -245,29 +245,37 @@ mainloop:
 ; --- directory file structure
 xgf_num_files: .byte 0
 xgf_filenames:
-   .byte 0
+   .byte 0  ; length
    .byte "            "
+   .word 0  ; checksum
 
    .byte 0
    .byte "            "
+   .word 0
 
    .byte 0
    .byte "            "
+   .word 0
 
    .byte 0
    .byte "            "
+   .word 0
 
    .byte 0
    .byte "            "
+   .word 0
 
    .byte 0
    .byte "            "
+   .word 0
 
    .byte 0
    .byte "            "
+   .word 0
 
    .byte 0
    .byte "            "
+   .word 0
 
 
 ; ----- Configuration

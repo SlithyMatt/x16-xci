@@ -387,6 +387,21 @@ inv_hide:
    stz inv_visible
    rts
 
+inv_clear:
+   lda #0
+@loop:
+   cmp __inv_max_items
+   beq @return
+   pha
+   jsr inv_get_quant
+   pla
+   pha
+   jsr inv_lose_item
+   pla
+   inc
+   bra @loop
+@return:
+   rts
 
 inv_tick:
    lda inv_visible

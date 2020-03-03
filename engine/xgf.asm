@@ -17,11 +17,12 @@ XGF_NUM_INV_QUANTS      = 127
 
 XGF_PREFIX_MAX = 8
 
-__xgf_fn:         .byte "SAVEGAME.XGF"
-__xgf_ext:        .byte ".XGF"
-__xgf_fn_length:  .byte 0 ; filename not set if zero
-__xgf_quant:      .word 0
-__xgf_state_done: .byte 0
+__xgf_fn:            .byte "SAVEGAME.XGF"
+__xgf_ext:           .byte ".XGF"
+__xgf_fn_length:     .byte 0 ; filename not set if zero
+__xgf_fn_checksum:   .word 0
+__xgf_quant:         .word 0
+__xgf_state_done:    .byte 0
 
 __xgf_dir_fn:     .byte "XGFDIR.BIN"
 __end_xgf_dir_fn:
@@ -72,15 +73,16 @@ XGF_LOAD_Y_MAX    = XGF_LOAD_Y_MIN + 4
 XGF_MAX_FILES     = 8
 
 XGF_NUM_FILES     = XGF_STAGE
-XGF_FN0_LENGTH    = XGF_STAGE+1
-XGF_FN0           = XGF_FN0_LENGTH+1
-XGF_MAX_FN_LEN    = XGF_PREFIX_MAX+XGF_EXT_LENGTH
+XGF_FN0_LENGTH    = XGF_STAGE + 1
+XGF_FN0           = XGF_FN0_LENGTH + 1
+XGF_MAX_FN_LEN    = XGF_PREFIX_MAX + XGF_EXT_LENGTH
+XGF_FN0_CHECKSUM  = XGF_FN0 + XGF_MAX_FN_LEN
 
 __xgf_dir_fns:
-   .byte 0, XGF_MAX_FN_LEN+1, XGF_MAX_FN_LEN*2+1, XGF_MAX_FN_LEN*3+1
-   .byte XGF_MAX_FN_LEN*4+1, XGF_MAX_FN_LEN*5+1, XGF_MAX_FN_LEN*6+1, XGF_MAX_FN_LEN*7+1
+   .byte 0, XGF_MAX_FN_LEN+3, XGF_MAX_FN_LEN*2+3, XGF_MAX_FN_LEN*3+3
+   .byte XGF_MAX_FN_LEN*4+3, XGF_MAX_FN_LEN*5+3, XGF_MAX_FN_LEN*6+3, XGF_MAX_FN_LEN*7+3
 
-XGF_DIR_FILE_LENGTH  = 1 + (1 + XGF_MAX_FN_LEN) * XGF_MAX_FILES
+XGF_DIR_FILE_LENGTH  = 1 + (1 + XGF_MAX_FN_LEN + 2) * XGF_MAX_FILES
 
 
 ASCII_UNDERSCORE  = 95
@@ -126,19 +128,19 @@ load_game:
    jsr load_xgf_dir
    lda #XGF_LOAD_Y_MIN
    sta __xgf_row
-   ldx XGF_NUM_FILES
+   ldx #0
 @file_loop:
-   cpx #0
+   cpx XGF_NUM_FILES
    beq @return
    phx
    txa
    ldy __xgf_row
    bit #$01
    bne @right_col
-   ldx XGF_LOAD_L_X_MIN
+   ldx #XGF_LOAD_L_X_MIN
    bra @print
 @right_col:
-   ldx XGF_LOAD_R_X_MIN
+   ldx #XGF_LOAD_R_X_MIN
    inc __xgf_row
 @print:
    lda #1
@@ -151,7 +153,10 @@ load_game:
    plx
    phx
    ldy __xgf_dir_fns,x
-   ldx XGF_FN0_LENGTH,y
+   lda XGF_FN0_LENGTH,y
+   sec
+   sbc #XGF_EXT_LENGTH
+   tax
 @char_loop:
    lda XGF_FN0,y
    sta VERA_data0
@@ -159,7 +164,7 @@ load_game:
    dex
    bne @char_loop
    plx
-   dex
+   inx
    bra @file_loop
 @return:
    rts
@@ -399,70 +404,60 @@ __xgf_saveas_tick:
    rts
 
 __xgf_save_btn_click:
-   bra @start
-@match: .byte $FF
-@match_mask: .byte $FE
-@start:
+   stz __xgf_fn_checksum
+   stz __xgf_fn_checksum+1
+   ldx #0
+@cs_loop:
+   cpx __xgf_fn_length
+   beq @load_dir
+   lda __xgf_fn_checksum
+   clc
+   adc __xgf_fn,x
+   sta __xgf_fn_checksum
+   clc
+   adc __xgf_fn_checksum+1
+   sta __xgf_fn_checksum+1
+   inx
+   bra @cs_loop
+@load_dir:
    jsr load_xgf_dir
    lda XGF_NUM_FILES
    cmp #XGF_MAX_FILES
    bpl @check_prefix
-   inc XGF_NUM_FILES
    jmp @add_ext
 @check_prefix:
-   lda #$FF
-   sta @match
-   ldx #0   ; char index
-@char_loop:
-   phx
-   lda #$FE
-   sta @match_mask
-   ldy #0   ; slot index
-@slot_loop:
-   ldx __xgf_dir_fns,y
-   lda XGF_FN0,x
-   plx
-   phx
-   cmp __xgf_fn,x
-   beq @next_slot
-   lda @match
-   and @match_mask
-   sta @match
-@next_slot:
-   iny
-   cpy #XGF_MAX_FILES
-   beq @next_char
-   sec
-   rol @match_mask
-   bra @slot_loop
-@next_char:
-   plx
-   inx
-   cpx __xgf_fn_length
-   beq @check_match
-   bra @char_loop
-@check_match:
-   lda @match
-   beq @reject
    ldy #0
-@match_loop:
-   lda @match
-   bit #$01
-   beq @next_match
-   lda __xgf_dir_fns,y
-   clc
-   adc __xgf_fn_length
-   tax
-   lda XGF_FN0,x
-   cmp __xgf_ext     ; check to see that the extension starts where expected
-   bne @next_match   ; requested prefix only a substring of one from directory
-   bra @add_ext      ; filename matches one from directory, overwrite
-@next_match:
-   lsr @match
+@check_loop:
+   ldx __xgf_dir_fns,y
+   lda XGF_FN0_CHECKSUM,x
+   cmp __xgf_fn_checksum
+   bne @next
+   inx
+   lda XGF_FN0_CHECKSUM,x
+   cmp __xgf_fn_checksum+1
+   beq @check_filename
+@next:
    iny
    cpy #XGF_MAX_FILES
    beq @reject
-   bra @match_loop
+   bra @check_loop
+@check_filename:
+   ldx __xgf_dir_fns,y
+   lda XGF_FN0_LENGTH,x
+   sec
+   sbc #XGF_EXT_LENGTH
+   cmp __xgf_fn_length
+   bne @reject
+   ldy #0
+@check_fn_loop:
+   cpy __xgf_fn_length
+   beq @add_ext   ; all characters match
+   lda XGF_FN0,x
+   cmp __xgf_fn,y
+   bne @reject
+   inx
+   iny
+   bra @check_fn_loop
 @reject:
    jsr __xgf_reject_fn
    bra @return
@@ -485,7 +480,71 @@ __xgf_save_btn_click:
    rts
 
 __xgf_update_dir:
-   ; TODO: add __xgf_fn to directory file, if not already there
+   ; check if already in directory
+   ldy #0
+@slot_loop:
+   cpy XGF_NUM_FILES
+   beq @add_file
+   ldx __xgf_dir_fns,y
+   lda XGF_FN0_CHECKSUM,x
+   cmp __xgf_fn_checksum
+   bne @next_slot
+   inx
+   lda XGF_FN0_CHECKSUM,x
+   cmp __xgf_fn_checksum+1
+   bne @next_slot
+   ldx __xgf_dir_fns,y
+   lda XGF_FN0_LENGTH,x
+   cmp __xgf_fn_length
+   bne @next_slot
+   ldy #0
+@check_fn_loop:
+   cpy __xgf_fn_length
+   beq @return   ; all characters match, no update needed
+   lda XGF_FN0,x
+   cmp __xgf_fn,y
+   bne @add_file
+   bra @check_fn_loop
+@next_slot:
+   iny
+   bra @slot_loop
+@add_file:
+   lda __xgf_fn_length
+   ldy XGF_NUM_FILES
+   ldx __xgf_dir_fns,y
+   sta XGF_FN0_LENGTH,x
+   ldy #0
+@copy_loop:
+   lda __xgf_fn,y
+   sta XGF_FN0,x
+   inx
+   iny
+   cpy __xgf_fn_length
+   bne @copy_loop
+   ldy XGF_NUM_FILES
+   ldx __xgf_dir_fns,y
+   lda __xgf_fn_checksum
+   sta XGF_FN0_CHECKSUM,x
+   inx
+   lda __xgf_fn_checksum+1
+   sta XGF_FN0_CHECKSUM,x
+   inc XGF_NUM_FILES
+   ; save directory
+   lda #KERNAL_ROM_BANK
+   sta ROM_BANK
+   lda #1
+   ldx #DISK_DEVICE
+   ldy #0
+   jsr SETLFS        ; SetFileParams(LogNum=1,DevNum=DISK_DEVICE,SA=0)
+   lda #(__end_xgf_dir_fn-__xgf_dir_fn)
+   ldx #<__xgf_dir_fn
+   ldy #>__xgf_dir_fn
+   jsr SETNAM        ; SetFileName(__xgf_fn)
+   lda #XGF_PTR
+   ldx #<(XGF_STAGE+XGF_DIR_FILE_LENGTH)
+   ldy #>(XGF_STAGE+XGF_DIR_FILE_LENGTH)
+   jsr SAVE
+@return:
    rts
 
 __xgf_reject_fn:
@@ -518,8 +577,124 @@ __xgf_clear_btn_click:
 __xgf_load_tick:
    lda mouse_left_click
    beq @return
+   lda mouse_tile_y
+   cmp #XGF_LOAD_Y_MIN
+   bmi @return
+   cmp #XGF_LOAD_Y_MAX
+   bpl @return
+   lda mouse_tile_x
+   cmp #XGF_LOAD_L_X_MIN
+   bmi @return
+   cmp #XGF_LOAD_R_X_MAX
+   bpl @return
+   cmp #XGF_LOAD_L_X_MAX
+   bmi @left_col
+   cmp #XGF_LOAD_R_X_MIN
+   bpl @right_col
+   bra @return
+@left_col:
+   ldx #0
+   bra @check_num
+@right_col:
+   ldx #1
+@check_num:
+   lda mouse_tile_y
+   sec
+   sbc #XGF_LOAD_Y_MIN
+   asl
+   cpx #0
+   beq @copy_fn
+   inc
+@copy_fn:
+   tay
+   ldx __xgf_fn,y
+   lda XGF_FN0_LENGTH,x
+   beq @return    ; no file in this slot
+   sta __xgf_fn_length
+   ldy #0
+@copy_loop:
+   lda XGF_FN0,x
+   sta __xgf_fn,y
+   inx
+   iny
+   cpy __xgf_fn_length
+   bne @copy_loop
+   jsr __xgf_load
+@restore:
    jsr tile_restore
    stz load_visible
+@return:
+   rts
+
+__xgf_load:
+   lda #KERNAL_ROM_BANK
+   sta ROM_BANK
+   lda #1
+   ldx #DISK_DEVICE
+   ldy #0
+   jsr SETLFS        ; SetFileParams(LogNum=1,DevNum=DISK_DEVICE,SA=0)
+   lda __xgf_fn_length
+   ldx #<__xgf_fn
+   ldy #>__xgf_fn
+   jsr SETNAM        ; SetFileName(__xgf_fn)
+   lda #STATE_BANK
+   sta RAM_BANK
+   lda #0
+   ldx #<RAM_WIN
+   ldy #>RAM_WIN
+   jsr LOAD
+   ldx #0
+@id_loop:
+   lda XGF_STAGE_START,x
+   cmp RAM_CONFIG,x
+   bne @mismatch
+   inx
+   cpx #XGF_STAGE_ZONE_OFFSET
+   bne @id_loop
+   lda XGF_STAGE_START,x
+   sta zone
+   inx
+   lda XGF_STAGE_START,x
+   sta level
+   inx
+   lda XGF_STAGE_START,x
+   sta  music_enabled
+   inx
+   lda XGF_STAGE_START,x
+   sta sfx_enabled
+   jsr inv_clear
+   lda #<XGF_STAGE_START
+   clc
+   adc #XGF_STAGE_INV_OFFSET
+   sta ZP_PTR_3
+   lda #>XGF_STAGE_START
+   adc #0
+   sta ZP_PTR_3+1
+   lda #0
+   ldy #0
+@inv_loop:
+   phy
+   pha
+   lda (ZP_PTR_3),y
+   tax
+   iny
+   lda (ZP_PTR_3),y
+   tay
+   pla
+   pha
+   jsr inv_add_item
+   pla
+   inc
+   cmp __inv_max_items
+   beq @return
+   ply
+   iny
+   iny
+   bra @inv_loop
+@mismatch:
+   ; load file does not match game, no way to recover, just exit
+   lda #1
+   sta exit_req
 @return:
    rts
 
