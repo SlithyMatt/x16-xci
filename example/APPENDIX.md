@@ -639,10 +639,37 @@ sprite_move 2  60  255  0 0
 sprite_frames 5  0  51 52  # beer sign
 sprite 5  191 134
 sprite_move 5  45  255  0 0
+if near_car
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_frames 3  0  38
+sprite_frames 4  0  40     # Rear of car, parked
+sprite 1  220 146
+sprite 3  236 170
+sprite 4  252 170
+end_if
+if near_izzys
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite_frames 3  0  38
+sprite_frames 4  0  40     # Rear of car, parked
+sprite 1  164 146
+sprite 3  236 170
+sprite 4  252 170
+end_if
+if near_garage
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite_frames 3  0  38
+sprite_frames 4  0  40     # Rear of car, parked
+sprite 1  56 146
+sprite 3  236 170
+sprite 4  252 170
+end_if
+end_if
 end_anim
 ```
 
 The **init** sequence starts two sprite animations. First is a flashing red beacon at the top of a skyscraper in the background. It changes between on and off every second.  The other sprite is a neon "BEER" sign in the window of Izzy's that also flashes on and off, but every 0.75 seconds so that it is out-of-phase with the beacon. Both animations will continue for the maximum amount of frames.
+
+While, as we will see in the **first** sequence, this level is always entered via driving during gameplay, the **init** sequence also has to take game loading into consideration. If a game is saved during this level, the avatar will already be out on the sidewalk and the car parked, so these cases are all handled by three sub-sequences that determine the position of the avatar based on state.
 
 ```
 first
@@ -667,6 +694,7 @@ sprite_move 1  4  12  0 -2
 wait 48
 sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
 text 1 Let's go in for a drink.
+set_state near_car
 end_anim
 ```
 
@@ -691,7 +719,8 @@ The first trigger is for "using" the door to Izzy's. Like the doors in the [foye
 ```
 tool_trigger walk  20 19  21 21
 if_not near_izzys
-if_not near_garage
+if near_car
+clear_state near_car
 sprite_move 1  4  28  -2 0
 wait 112
 set_state near_izzys
@@ -707,12 +736,13 @@ end_if
 end_anim
 ```
 
-This trigger is for "walking" to the part of the sidewalk in front of Izzy's door. The entire sequence is taken up by a sub-sequence that will only execute if the avatar is not already in front of Izzy's. This level has three different locations that the avatar can be, starting with near the car. After that, the avatar can move up and down the sidewalk between the areas in front of Izzy's and the garage to the left. If avatar is not near Izzy's or the garage, then it must still be in the initial position after exiting the car, so the avatar moves to the left until it reaches the destination. Otherwise, if the avatar is in front of the garage, it will move to the right. This is the only scenario in which the avatar moves to the right, so the frame sequence only changes to that here. In each case, the ```near_izzys``` state is set to true, which is mutually exclusive to the ```near_garage``` state, which will be false after this sequence.
+This trigger is for "walking" to the part of the sidewalk in front of Izzy's door. The entire sequence is taken up by a sub-sequence that will only execute if the avatar is not already in front of Izzy's. This level has three different locations that the avatar can be, starting with near the car. After that, the avatar can move up and down the sidewalk between the areas in front of Izzy's and the garage to the left. If the avatar is near the car, it moves to the left until it reaches the destination. Otherwise, if the avatar is in front of the garage, it will move to the right. This is the only scenario in which the avatar moves to the right, so the frame sequence only changes to that here. In each case, the ```near_izzys``` state is set to true, which is mutually exclusive to the ```near_garage``` state, which will be false after this sequence.
 
 ```
 tool_trigger run  20 19  21 21
 if_not near_izzys
-if_not near_garage
+if near_car
+clear_state near_car
 sprite_move 1  2  28  -2 0
 wait 56
 set_state near_izzys
@@ -764,7 +794,8 @@ This trigger is for "looking" at the garage door, which requires the player to e
 ```
 tool_trigger walk  4 19  10 21
 if_not near_garage
-if_not near_izzys
+if near_car
+clear_state near_car
 sprite_move 1  4  82  -2 0
 wait 255
 wait 73
@@ -781,12 +812,13 @@ end_if
 end_anim
 ```
 
-This trigger is for "walking" to the sidewalk area in front of the garage door. The sequence is completely taken up with a sub-sequence that only executes if the avatar is not already in front of the garage. If the avatar is not in front of Izzy's, it must be just outside of the car, so the it will need to move 164 pixels to the left. If it is in front of Izzy's, it only has to move 108 pixels, but the frame sequence needs to re-established as the avatar might be turned to the right. In all cases, the ```near_garage``` state will be true and ```near_izzys``` will be false by the end of the sequence.
+This trigger is for "walking" to the sidewalk area in front of the garage door. The sequence is completely taken up with a sub-sequence that only executes if the avatar is not already in front of the garage. If the avatar is just outside of the car, it will need to move 164 pixels to the left. If it is in front of Izzy's, it only has to move 108 pixels, but the frame sequence needs to re-established as the avatar might be turned to the right. In all cases, the ```near_garage``` state will be true and ```near_izzys``` will be false by the end of the sequence.
 
 ```
 tool_trigger run  4 19  10 21
 if_not near_garage
-if_not near_izzys
+if near_car
+clear_state near_car
 sprite_move 1  2  82  -2 0
 wait 164
 set_state near_garage
@@ -1038,22 +1070,17 @@ sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
 set_state near_car
 end_if
 end_if
-end_anim
-```
-
-The init starts the same way as [Level 0](#zone-2-level-0), with the beacon and the beer sign flashing. Then there are sub-sequences that are run based on how this level was entered. If it was from Izzy's, then this must be the first visit, so that is handled in the **first** sequence. Subsequently, this scene could be re-visited from either the garage interior (in which case ```near_garage``` would still be true) or from the house (in which case both ```near_garage``` and ```near_izzys``` would be false). If we're coming from the garage, the avatar sprite i splaced on the sidewalk in front of the garage, facing left, and the car sprites are placed where is was parked last time. For simplicity, the car is parked at the same location on re-visits to this level as it was when we virst visited Izzy's. If we are coming from home, the earlier animation of driving up and walking onto the sidewalk is repeated with the addition of setting the new ```near_car``` state to true.
-
-```
-first
+if near_izzys
 sprite_frames 1  0  6
 sprite 1  164 146
 sprite_frames 4  0  40     # Rear of car, parked
 sprite 3  236 170
 sprite 4  252 170
+end_if
 end_anim
 ```
 
-In the **first** sequence, the avatar is placed in front of Izzy's door (```near_izzys``` will already be set to true) and the car is parked where we left it. This is the only point in this level where the avatar can be in front of Izzy's door as there are no triggers here to return to that spot or state.
+The init starts the same way as [Level 0](#zone-2-level-0), with the beacon and the beer sign flashing. Then there are sub-sequences that are run based on how this level was entered. This scene could be re-visited from either the garage interior (in which case ```near_garage``` would still be true) or from the house (in which case both ```near_garage``` and ```near_izzys``` would be false). If we're coming from the garage, the avatar sprite i splaced on the sidewalk in front of the garage, facing left, and the car sprites are placed where is was parked last time. For simplicity, the car is parked at the same location on re-visits to this level as it was when we virst visited Izzy's. If we are coming from home, the earlier animation of driving up and walking onto the sidewalk is repeated with the addition of setting the new ```near_car``` state to true. If we're in front of Izzy's, this is either the first time the level is visited, or the game was saved and reloaded at the very beginning of the level, so the car is parked where we left it. This is the only point in this level where the avatar can be in front of Izzy's door as there are no triggers here to return to that spot or state.
 
 ```
 tool_trigger use 4 15  10 18
