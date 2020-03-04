@@ -79,8 +79,8 @@ XGF_MAX_FN_LEN    = XGF_PREFIX_MAX + XGF_EXT_LENGTH
 XGF_FN0_CHECKSUM  = XGF_FN0 + XGF_MAX_FN_LEN
 
 __xgf_dir_fns:
-   .byte 0, XGF_MAX_FN_LEN+3, XGF_MAX_FN_LEN*2+3, XGF_MAX_FN_LEN*3+3
-   .byte XGF_MAX_FN_LEN*4+3, XGF_MAX_FN_LEN*5+3, XGF_MAX_FN_LEN*6+3, XGF_MAX_FN_LEN*7+3
+   .byte 0, XGF_MAX_FN_LEN+3, (XGF_MAX_FN_LEN+3)*2, (XGF_MAX_FN_LEN+3)*3
+   .byte (XGF_MAX_FN_LEN+3)*4, (XGF_MAX_FN_LEN+3)*5, (XGF_MAX_FN_LEN+3)*6, (XGF_MAX_FN_LEN+3)*7
 
 XGF_DIR_FILE_LENGTH  = 1 + (1 + XGF_MAX_FN_LEN + 2) * XGF_MAX_FILES
 
@@ -346,7 +346,7 @@ xgf_tick:
 __xgf_saveas_tick:
    ldx __xgf_cursor_x
    cpx #(XGF_CURSOR_X_MIN+XGF_PREFIX_MAX)
-   bpl @return
+   bpl @check_saveas_click
    ldy #XGF_CURSOR_Y
    lda #1
    jsr xy2vaddr
@@ -504,6 +504,8 @@ __xgf_update_dir:
    lda XGF_FN0,x
    cmp __xgf_fn,y
    bne @add_file
+   inx
+   iny
    bra @check_fn_loop
 @next_slot:
    iny

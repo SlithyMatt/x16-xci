@@ -39,14 +39,13 @@ sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
 set_state near_car
 end_if
 end_if
-end_anim
-
-first
+if near_izzys
 sprite_frames 1  0  6
 sprite 1  164 146
 sprite_frames 4  0  40     # Rear of car, parked
 sprite 3  236 170
 sprite 4  252 170
+end_if
 end_anim
 
 tool_trigger use 4 15  10 18
