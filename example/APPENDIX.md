@@ -85,27 +85,30 @@ This was done to better scale the level to the avatar sprite, which makes its fi
 ```
 init
 if kitchen_to_foyer
-sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
-sprite 1  288 128
 clear_state near_door
 clear_state kitchen_to_foyer
+set_state near_kitchen
+end_if
+if near_kitchen
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite 1  288 128
 end_if
 if lr_to_foyer
-sprite_frames 1  0  1 2 3 2 1 4 5 4
-sprite 1  18 128
 clear_state lr_to_foyer
 set_state near_door
 end_if
 if front_to_foyer
-sprite_frames 1  0  1 2 3 2 1 4 5 4
-sprite 1  18 128
 clear_state front_to_foyer
 set_state near_door
+end_if
+if near_door
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite 1  18 128
 end_if
 end_anim
 ```
 
-The **init** sequence consists entirely of conditional sub-sequences, so there is no animation that is guaranteed to run during this level. Each sub-sequence is based on a state that indicates which level we came from.  The first time we reach this level it is from the kitchen, so ```kitchen_to_foyer``` will be true.  So, the avatar sprite (index 1) is placed by the doorway to the kitchen and facing left. Sprite frames 1-5 are the avatar facing left, so the defined sequence has all of those frames flipped horizontally. The other two sub-sequences start the avatar from the opposite end of the foyer, within reach of both doors. Here you can see that in each case the sprite is set to use the left-facing frames and the ```near_door``` state is set to true so that the player can immediately open either door, but would have to walk across the foyer to get back to the kitchen.
+The **init** sequence consists entirely of conditional sub-sequences, so there is no animation that is guaranteed to run during this level. Each sub-sequence is based on a state that indicates which level we came from.  The first time we reach this level it is from the kitchen, so ```kitchen_to_foyer``` will be true, and then ```near_kitchen``` will be set to true.  So, the avatar sprite (index 1) is placed by the doorway to the kitchen and facing left. Sprite frames 1-5 are the avatar facing left, so the defined sequence has all of those frames flipped horizontally. The other two sub-sequences start the avatar from the opposite end of the foyer, within reach of both doors. Here you can see that in each case the sprite is set to use the left-facing frames and the ```near_door``` state is set to true so that the player can immediately open either door, but would have to walk across the foyer to get back to the kitchen.
 
 ```
 first
@@ -178,7 +181,8 @@ This trigger is also for the living room door, but this time for "looking" at it
 
 ```
 tool_trigger walk  0 8  5 18
-if_not near_door
+if near_kitchen
+clear_state near_kitchen
 sprite_move  1  4  135  -2 0
 wait 255
 wait 255
@@ -188,11 +192,12 @@ end_if
 end_anim
 ```
 
-This trigger is for "walking" to the left end of the foyer. The trigger area included both the doors, but also has some previously unclaimed space between them, so the "walk" cursor will automatically appear when the mouse is moved there. The whole area can be used for the trigger if the "walk" tool is explicitly selected. First, it checks to make sure the avatar is not already near the door, then kicks off the animation to walk there 2 pixels at a time every 4 jiffys. This takes a while to accomplish all 135 steps, so three **wait** instructions are needed to wait a grand total of 525 jiffys, or 8.75 seconds. Then the ```near_door``` state is set to true so that the player can open one of the doors. If the avatar is already near the door when this trigger occurs, nothing happens, as the whole sequence is taken up with the ```if_not near_door``` sub-sequence.
+This trigger is for "walking" to the left end of the foyer. The trigger area included both the doors, but also has some previously unclaimed space between them, so the "walk" cursor will automatically appear when the mouse is moved there. The whole area can be used for the trigger if the "walk" tool is explicitly selected. First, it checks to make sure the avatar is near the kitchen, then kicks off the animation to walk there 2 pixels at a time every 4 jiffys. This takes a while to accomplish all 135 steps, so three **wait** instructions are needed to wait a grand total of 525 jiffys, or 8.75 seconds. Then the ```near_door``` state is set to true so that the player can open one of the doors. If the avatar is already near the door when this trigger occurs, nothing happens, as the whole sequence is taken up with the ```if_not near_door``` sub-sequence.
 
 ```
 tool_trigger run  0 8  5 18
-if_not near_door
+if near_kitchen
+clear_state near_kitchen
 sprite_move  1  2  135  -2 0
 wait 255
 wait 15

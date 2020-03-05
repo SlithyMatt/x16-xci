@@ -36,6 +36,8 @@ int parse_config (const char *cfg_fn, xci_config_t *cfg) {
                if (pos == 0) {
                   key = key2idx(tok);
                   if ((int)key < 0) {
+                     printf("WARNING: unknown key \"%s\" found in %s\n",
+                            tok, cfg_fn);
                      break;
                   }
                   node = malloc(sizeof(xci_config_node_t));

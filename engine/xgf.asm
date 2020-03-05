@@ -28,7 +28,7 @@ __xgf_dir_fn:     .byte "XGFDIR.BIN"
 __end_xgf_dir_fn:
 
 __xgf_saveas_dialog:
-.byte "                "
+.byte "               X"
 .byte " NAME: ________ "
 .byte "                "
 .byte " [CLEAR] [SAVE] "
@@ -37,7 +37,7 @@ __xgf_saveas_dialog:
 __xgf_load_lengths:  .byte 0,0,0,0,0,0,0,0
 __xgf_load_num: .byte 0
 __xgf_load_dialog:
-.byte "                      "
+.byte "                     X"
 .byte " Select File to Load: "
 .byte " -------------------- "
 .byte "           |          "
@@ -52,6 +52,8 @@ XGF_SAVEAS_X      = 12
 XGF_SAVEAS_Y      = 6
 XGF_SAVEAS_WIDTH  = 16
 XGF_SAVEAS_HEIGHT = 5
+XGF_SAVEAS_CLOSE_X   = 27
+XGF_SAVEAS_CLOSE_Y   = 6
 XGF_CURSOR_X_MIN  = XGF_SAVEAS_X + 7
 XGF_CURSOR_Y      = XGF_SAVEAS_Y + 1
 XGF_SAVEAS_BTN_Y  = XGF_SAVEAS_Y + 3
@@ -64,6 +66,8 @@ XGF_LOAD_X        = 9
 XGF_LOAD_Y        = 9
 XGF_LOAD_WIDTH    = 22
 XGF_LOAD_HEIGHT   = 9
+XGF_LOAD_CLOSE_X  = 30
+XGF_LOAD_CLOSE_Y  = 9
 XGF_LOAD_L_X_MIN  = XGF_LOAD_X + 2
 XGF_LOAD_L_X_MAX  = XGF_LOAD_L_X_MIN + XGF_PREFIX_MAX
 XGF_LOAD_R_X_MIN  = XGF_LOAD_X + 13
@@ -384,6 +388,8 @@ __xgf_saveas_tick:
    lda mouse_left_click
    beq @return
    lda mouse_tile_y
+   cmp #XGF_SAVEAS_CLOSE_Y
+   beq @check_close
    cmp #XGF_SAVEAS_BTN_Y
    bne @return
    lda mouse_tile_x
@@ -400,6 +406,12 @@ __xgf_saveas_tick:
 @clear:
    jsr __xgf_clear_btn_click
    bra @return
+@check_close:
+   lda mouse_tile_x
+   cmp #XGF_SAVEAS_CLOSE_X
+   bne @return
+   stz saveas_visible
+   jsr tile_restore
 @return:
    rts
 
@@ -580,6 +592,8 @@ __xgf_load_tick:
    lda mouse_left_click
    beq @return
    lda mouse_tile_y
+   cmp #XGF_LOAD_CLOSE_Y
+   beq @check_close
    cmp #XGF_LOAD_Y_MIN
    bmi @return
    cmp #XGF_LOAD_Y_MAX
@@ -594,6 +608,11 @@ __xgf_load_tick:
    cmp #XGF_LOAD_R_X_MIN
    bpl @right_col
    bra @return
+@check_close:
+   lda mouse_tile_x
+   cmp #XGF_LOAD_CLOSE_X
+   beq @restore
+   jmp @return
 @left_col:
    ldx #0
    bra @check_num

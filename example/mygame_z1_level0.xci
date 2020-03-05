@@ -5,22 +5,25 @@ music zone0.vgm
 
 init
 if kitchen_to_foyer
-sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
-sprite 1  288 128
 clear_state near_door
 clear_state kitchen_to_foyer
+set_state near_kitchen
+end_if
+if near_kitchen
+sprite_frames 1  0  1H 2H 3H 2H 1H 4H 5H 4H
+sprite 1  288 128
 end_if
 if lr_to_foyer
-sprite_frames 1  0  1 2 3 2 1 4 5 4
-sprite 1  18 128
 clear_state lr_to_foyer
 set_state near_door
 end_if
 if front_to_foyer
-sprite_frames 1  0  1 2 3 2 1 4 5 4
-sprite 1  18 128
 clear_state front_to_foyer
 set_state near_door
+end_if
+if near_door
+sprite_frames 1  0  1 2 3 2 1 4 5 4
+sprite 1  18 128
 end_if
 end_anim
 
@@ -74,7 +77,8 @@ text 1 That's the door to the living room.
 end_anim
 
 tool_trigger walk  0 8  5 18
-if_not near_door
+if near_kitchen
+clear_state near_kitchen
 sprite_move  1  4  135  -2 0
 wait 255
 wait 255
@@ -84,7 +88,8 @@ end_if
 end_anim
 
 tool_trigger run  0 8  5 18
-if_not near_door
+if near_kitchen
+clear_state near_kitchen
 sprite_move  1  2  135  -2 0
 wait 255
 wait 15
