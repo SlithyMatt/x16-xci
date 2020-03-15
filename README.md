@@ -1103,3 +1103,4 @@ The XCI [license](LICENSE) is free and open source, and you can use and/or modif
 
 * A more concise guide to the [XCI configuration file syntax](XCI_SYNTAX.md).
 * An appendix containing a [complete configuration walkthrough of the example game](example/APPENDIX.md).
+* A series of tutorial videos is available on [YouTube](https://www.youtube.com/playlist?list=PLPSrOWYluVLJFDQUeNzy50hRb_dh9T8nS). In this repository are all of the [slides](slides) used in the videos, and a brief [guide](TUTORIAL.md) to the tutorial series.
