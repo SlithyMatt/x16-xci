@@ -18,30 +18,32 @@
 
 start:
 
-   ; Setup tiles on layer 1
+   ; Disable layers
    stz VERA_ctrl
-   VERA_SET_ADDR VRAM_layer1, 1  ; configure VRAM layer 1
-   lda #$60                      ; 4bpp tiles
-   sta VERA_data0
-   lda #$01                      ; 64x32 map of 8x8 tiles
-   sta VERA_data0
-   lda #((VRAM_TILEMAP >> 2) & $FF)
-   sta VERA_data0
-   lda #((VRAM_TILEMAP >> 10) & $FF)
-   sta VERA_data0
-   lda #((VRAM_TILES >> 2) & $FF)
-   sta VERA_data0
-   lda #((VRAM_TILES >> 10) & $FF)
-   sta VERA_data0
-   stz VERA_data0                ; set scroll position to 0,0
-   stz VERA_data0
-   stz VERA_data0
-   stz VERA_data0
+   lda VERA_dc_video
+   and #$8F
+   sta VERA_dc_video
 
-   VERA_SET_ADDR VRAM_hscale, 1  ; set display to 2x scale
+   ; Setup tiles on layer 1
+   lda #$12                      ; 64x32 map of 4bpp tiles
+   sta VERA_L1_config
+   lda #((VRAM_TILEMAP >> 9) & $FF)
+   sta VERA_L1_mapbase
+   lda #((((VRAM_TILES >> 11) & $3F) << 2) | $00)  ; 8x8 tiles
+   sta VERA_L1_tilebase
+   stz VERA_L1_hscroll_l         ; set scroll position to 0,0
+   stz VERA_L1_hscroll_h
+   stz VERA_L1_vscroll_l
+   stz VERA_L1_vscroll_h
+
+   ; Clear tile map
+   ldy #0
+   jsr tile_clear
+
+   ; set display to 2x scale
    lda #64
-   sta VERA_data0
-   sta VERA_data0
+   sta VERA_dc_hscale
+   sta VERA_dc_vscale
 
    ; load VRAM data from binaries
    lda #>(VRAM_SPRITES>>4)
@@ -68,31 +70,17 @@ start:
    jsr loadbank
 
    ; configure layer 0 for background bitmaps
-   stz VERA_ctrl
-   VERA_SET_ADDR VRAM_layer0, 1  ; configure VRAM layer 0
-   lda #$C1
-   sta VERA_data0 ; 4bpp bitmap
-   stz VERA_data0 ; 320x240
-   stz VERA_data0
-   stz VERA_data0
-   lda #<(VRAM_BITMAP >> 2)
-   sta VERA_data0
-   lda #>(VRAM_BITMAP >> 2)
-   sta VERA_data0
-   stz VERA_data0
+   lda #$06       ; 4bpp bitmap
+   sta VERA_L0_config
+   lda #((((VRAM_BITMAP >> 11) & $3F) << 2) | $00) ; 320x240
+   sta VERA_L0_tilebase
    lda #1
-   sta VERA_data0 ; Palette offset = 1
-   stz VERA_data0
-   stz VERA_data0
+   sta BITMAP_PO ; Palette offset = 1
 
-   VERA_SET_ADDR VRAM_sprreg, 0  ; enable sprites
-   lda #$01
-   sta VERA_data0
-
-   VERA_SET_ADDR VRAM_layer1, 0  ; enable VRAM layer 1
-   lda #$01
-   ora VERA_data0
-   sta VERA_data0
+   ; enable sprites and layers
+   lda VERA_dc_video
+   ora #$70
+   sta VERA_dc_video
 
    ; load configuration
    jsr load_main_cfg
@@ -189,49 +177,9 @@ mainloop:
    lda exit_req
    beq mainloop
 
-   ; Clear VRAM
-   stz VERA_ctrl
-   VERA_SET_ADDR 0, 1
-   ldx #$00
-   ldy #$20
-@loop:
-   lda #$20 ; space
-   sta VERA_data0
-   lda #$61 ; blue BG, white FG
-   sta VERA_data0
-   dex
-   cpx #$FF
-   bne @loop
-   dey
-   cpy #$FF
-   bne @loop
-
-   ; Reset Layer 1
-   VERA_SET_ADDR VRAM_layer1, 1
-   lda #$01
-   sta VERA_data0
-   lda #$06
-   sta VERA_data0
-   stz VERA_data0
-   stz VERA_data0
-   stz VERA_data0
-   lda #($F8 >> 2)
-   sta VERA_data0
-
-   ; Clear sprites
-   VERA_SET_ADDR $F500E, 4 ; sprite 1 byte 6, stride of 8
-   ldx #1
-@clear_sprite_loop:
-   stz VERA_data0
-   inx
-   cpx #128
-   bne @clear_sprite_loop
-
-   ; Reset display scale
-   VERA_SET_ADDR VRAM_hscale, 1  ; set display to 2x scale
-   lda #128
-   sta VERA_data0
-   sta VERA_data0
+   ; Reset VERA
+   lda #$80
+   sta VERA_ctrl
 
    ; Return to BASIC
    lda #BASIC_ROM_BANK

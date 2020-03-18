@@ -12,8 +12,10 @@ __help_show:
    lda #1
    sta help_visible
    stz VERA_ctrl
-   VERA_SET_ADDR VRAM_sprreg, 0  ; disable sprites
-   stz VERA_data0
+   ; disable sprites
+   lda VERA_dc_video
+   and #$BF
+   sta VERA_dc_video
    lda __help_start_ptr
    tay
    stz HELP_PTR
@@ -75,10 +77,12 @@ help_tick:
    lda mouse_left_click
    beq @return
    stz help_visible
+   ldy #1
    jsr tile_restore
-   VERA_SET_ADDR VRAM_sprreg, 0  ; enable sprites
-   lda #$01
-   sta VERA_data0
+   ; enable sprites
+   lda VERA_dc_video
+   ora #$40
+   sta VERA_dc_video
 @return:
    rts
 

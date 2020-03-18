@@ -10,7 +10,8 @@ xy2vaddr:   ; Input:
             ;  X/Y: VRAM addr
    jmp @start
 @vars:
-@ctrl1:     .byte 0
+@config:    .byte 0
+@tilebase:  .byte 0
 @map:       .word 0
 @xoff:      .word 0
 @yoff:      .word 0
@@ -26,32 +27,41 @@ xy2vaddr:   ; Input:
    plx
    cmp #0
    bne @layer1
-   stz VERA_ctrl
-   VERA_SET_ADDR VRAM_layer0, 1
-   jmp @readlayer
-@layer1:
-   stz VERA_ctrl
-   VERA_SET_ADDR VRAM_layer1, 1
-@readlayer:
-   lda VERA_data0 ; ignore CTRL0
-   lda VERA_data0
-   sta @ctrl1
-   lda VERA_data0
-   sta @map
-   lda VERA_data0
+   lda VERA_L0_config
+   sta @config
+   lda VERA_L0_tilebase
+   sta @tilebase
+   stz @map
+   lda VERA_L0_mapbase
    sta @map+1
-   lda VERA_data0 ; ignore TILE_BASE
-   lda VERA_data0
-   lda VERA_data0
+   lda VERA_L0_hscroll_l
    sta @xoff
-   lda VERA_data0
+   lda VERA_L0_hscroll_h
    sta @xoff+1
-   lda VERA_data0
+   lda VERA_L0_vscroll_l
    sta @yoff
-   lda VERA_data0
+   lda VERA_L0_vscroll_h
    sta @yoff+1
-   lda @ctrl1
-   and #$10
+   jmp @do_calc
+@layer1:
+   lda VERA_L1_config
+   sta @config
+   lda VERA_L1_tilebase
+   sta @tilebase
+   stz @map
+   lda VERA_L1_mapbase
+   sta @map+1
+   lda VERA_L1_hscroll_l
+   sta @xoff
+   lda VERA_L1_hscroll_h
+   sta @xoff+1
+   lda VERA_L1_vscroll_l
+   sta @yoff
+   lda VERA_L1_vscroll_h
+   sta @yoff+1
+@do_calc:
+   lda @tilebase
+   and #$01
    beq @xoff_div8
    clc               ; tiles are 16 pixels wide, xoff >> 4
    ror @xoff+1
@@ -71,8 +81,8 @@ xy2vaddr:   ; Input:
    lda #1
    sta @xoff+1
 @calc_yoff:
-   lda @ctrl1
-   and #$20
+   lda @tilebase
+   and #$02
    beq @yoff_div8
    clc               ; tiles are 16 pixels high, yoff >> 4
    ror @yoff+1
@@ -92,8 +102,12 @@ xy2vaddr:   ; Input:
    lda #1
    sta @yoff+1
 @calcaddr:  ; address = map_base+(yoff*MAPW+xoff)*2
-   lda @ctrl1
-   and #$03
+   lda @config
+   and #$30
+   lsr
+   lsr
+   lsr
+   lsr
    clc
    adc #5
    tax            ; X = log2(MAPW)
@@ -114,20 +128,16 @@ xy2vaddr:   ; Input:
    sta @yoff+1    ; yoff = yoff + xoff
    asl @yoff
    rol @yoff+1    ; yoff = yoff * 2
-   asl @map
-   rol @map+1
-   asl @map
-   rol @map+1
+   asl @map+1
    lda #0
    bcc @push_bank
    lda #1
 @push_bank:
    pha
-   lda @map
-   clc
-   adc @yoff
+   lda @yoff
    sta @map
    lda @map+1
+   clc
    adc @yoff+1
    sta @map+1
    ldx #0
@@ -151,7 +161,7 @@ pix2tilexy: ; Input:
             ; X: tile x
             ; Y: tile y
    jmp @start
-@ctrl1:     .byte 0
+@tilebase:  .byte 0
 @xoff:      .word 0
 @yoff:      .word 0
 @xshift:    .byte 3
@@ -161,28 +171,23 @@ pix2tilexy: ; Input:
    and #$10
    cmp #0
    bne @layer1
-   stz VERA_ctrl
-   VERA_SET_ADDR VRAM_layer0, 1
-   bra @readlayer
-@layer1:
-   stz VERA_ctrl
-   VERA_SET_ADDR VRAM_layer1, 1
-@readlayer:
-   lda VERA_data0 ; ignore CTRL0
-   lda VERA_data0
-   sta @ctrl1
-   lda VERA_data0 ; ignore MAP_BASE
-   lda VERA_data0
-   lda VERA_data0 ; ignore TILE_BASE
-   lda VERA_data0
-   lda VERA_data0
+   lda VERA_L0_tilebase
+   sta @tilebase
+   lda VERA_L0_hscroll_l
    sta @xoff
-   lda VERA_data0
-   lda VERA_data0
+   lda VERA_L0_vscroll_l
+   sta @yoff
+   bra @gettw
+@layer1:
+   lda VERA_L1_tilebase
+   sta @tilebase
+   lda VERA_L1_hscroll_l
+   sta @xoff
+   lda VERA_L1_vscroll_l
    sta @yoff
 @gettw:
-   lda @ctrl1
-   and #$10
+   lda @tilebase
+   and #$01
    bne @tw16
    lda #3
    sta @xshift
@@ -224,8 +229,8 @@ pix2tilexy: ; Input:
    dex
    bra @xshift_loop
 @getth:
-   lda @ctrl1
-   and #$20
+   lda @tilebase
+   and #$02
    bne @th16
    lda #3
    sta @yshift
@@ -310,7 +315,6 @@ tile_backup:
    sty VERA_addr_high
    pla
    pha
-   dec
    asl
    tay
    lda __tile_backup_row_table,y
@@ -332,7 +336,6 @@ tile_backup:
    rts
 
 tile_restore:
-   ldy #1
 @row_loop:
    lda #1
    ldx #0
@@ -345,7 +348,6 @@ tile_restore:
    sty VERA_addr_high
    pla
    pha
-   dec
    asl
    tay
    lda __tile_backup_row_table,y
@@ -367,6 +369,7 @@ tile_restore:
    rts
 
 tile_clear:
+   phy
    lda #<__tile_backup_map
    sta r0L
    lda #>__tile_backup_map
@@ -379,6 +382,7 @@ tile_clear:
    sta ROM_BANK
    lda #0
    jsr MEMORY_FILL
+   ply
    jsr tile_restore
    rts
 
