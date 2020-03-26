@@ -55,7 +55,7 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
                printf("parse_title_screen_config: no filename specified for music\n");
                return -1;
             }
-            if (vgm2x16opm(node->values->val, "TTL.MUS.BIN") < 0) {
+            if (vgm2x16opm_f(node->values->val, "TTL.MUS.BIN") < 0) {
                printf("parse_title_screen_config: error converting music VGM file (%s)\n",
                       node->values->val);
                return -1;

@@ -76,6 +76,8 @@ const char xci_key_strings[NUM_XCI_KEYS][MAX_KEY_LENGTH] = {
    "set_state",
    "clear_state",
    "get_item",
+   "sound",
+   "play",
 
    // Emulation only
    "gif_start",

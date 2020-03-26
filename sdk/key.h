@@ -75,6 +75,8 @@ typedef enum xci_key {
    SET_STATE,
    CLEAR_STATE,
    GET_ITEM,
+   SOUND,
+   PLAY,
 
    // Emulation Only
    GIF_START,

@@ -99,6 +99,7 @@ ZL_COUNT_PTR   = $34
 MOUSE_X        = $36
 MOUSE_Y        = $38
 XGF_PTR        = $3A
+SFX_PTR        = $3C
 
 VRAM_BITMAP    = $00000 ; 4bpp 320x240
 VRAM_TILEMAP   = $09600 ; 64x32 (40x30 visible)

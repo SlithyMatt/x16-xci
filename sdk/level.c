@@ -22,6 +22,10 @@ typedef struct state_list_node {
 state_list_node_t *state_list = NULL;
 state_list_node_t *last_state = NULL;
 
+char *sound_ids[127];
+char *sound_fns[127];
+int num_sounds = 0;
+
 int state_index(const char* label) {
    char label_lc[MAX_STATE_LABEL+1];
    state_list_node_t *node = state_list;
@@ -39,6 +43,24 @@ int state_index(const char* label) {
    return -1;
 }
 
+int sfx_index(const char *id) {
+   int index = 0;
+   int found = 0;
+
+   while (!found && index < num_sounds) {
+      if (strcmp(sound_ids[index],id) == 0) {
+         found = 1;
+      } else {
+         index++;
+      }
+   }
+
+   if (!found) {
+      index = -1;
+   }
+
+   return index;
+}
 
 int parse_level_config(int zone, int level, const char *cfg_fn) {
    uint8_t *bin = calloc(MAX_LEVEL_SIZE,1);
@@ -57,8 +79,18 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
    state_list_node_t *new_state = NULL;
    int bank;
    char bin_fn[15];
+   FILE *ifp;
    FILE *ofp;
    int bitmap_defined = 0;
+   int music_defined = 0;
+   char *vgm_fn;
+   uint8_t *music_sfx_buffer;
+   int msb_header_size;
+   int msb_size = 0;
+   int sound_idx;
+   uint8_t sample;
+
+   num_sounds = 0;
 
    if (parse_config(cfg_fn, &cfg) < 0) {
       printf("parse_level_config: error parsing config source (%s)\n", cfg_fn);
@@ -90,13 +122,19 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
                printf("parse_level_config: no filename specified for music\n");
                return -1;
             }
-            bank = level * 6 + 6;
-            sprintf(bin_fn,"Z%03d.L%d.%02d.BIN", zone, level, bank);
-            if (vgm2x16opm(node->values->val, bin_fn) < 0) {
-               printf("parse_level_config: error converting music VGM file (%s)\n",
-                      node->values->val);
+            vgm_fn = node->values->val;
+            music_defined = 1;
+            break;
+         case SOUND:
+            if (node->num_values < 2) {
+               printf("parse_level_config: sound requires at least 2 values\n");
                return -1;
             }
+            val = node->values;
+            sound_ids[num_sounds] = val->val;
+            val = val->next;
+            sound_fns[num_sounds] = val->val;
+            num_sounds++;
             break;
          case INIT_LEVEL:
          case FIRST_VISIT:
@@ -248,6 +286,20 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
             get_item_bin->quantity[1] = (num & 0xFF00) >> 8;
             size += sizeof(get_item_t);
             break;
+
+         case PLAY:
+            if (node->num_values < 1) {
+               printf("parse_level_config: no value specified for play\n");
+               return -1;
+            }
+            bin[size++] = node->key;
+            sound_idx = sfx_index(node->values->val);
+            if (sound_idx < 0) {
+               printf("parse_level_config: undefined sound id: %s\n", node->values->val);
+            }
+            bin[size++] = sound_idx;
+            break;
+
          case SPRITE_FRAMES:
          case SPRITE:
          case SPRITE_HIDE:
@@ -278,6 +330,46 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
       bank = level * 6 + 2;
       sprintf(bin_fn,"Z%03d.L%d.%02d.BIN", zone, level, bank);
       create_black_bitmap(bin_fn, 200);
+   }
+
+   if (music_defined || (num_sounds > 0)) {
+      music_sfx_buffer = malloc(8194);
+      // first, two byte X16 header
+      music_sfx_buffer[0] = 0x00;
+      music_sfx_buffer[1] = 0x00;
+      // calculate header size in loadable data
+      msb_header_size = 3 + 2 * (num_sounds+1);
+      if (music_defined) {
+         music_sfx_buffer[2] = 1; // contains music
+         music_sfx_buffer[3] = (uint8_t)(msb_header_size & 0x00FF);
+         music_sfx_buffer[4] = (uint8_t)((msb_header_size & 0xFF00) >> 8);
+         msb_size = vgm2x16opm(vgm_fn, &music_sfx_buffer[msb_header_size + 2]) + msb_header_size;
+      } else {
+         music_sfx_buffer[2] = 0; // no music
+         msb_size = msb_header_size;
+      }
+      for (sound_idx = 0; sound_idx < num_sounds; sound_idx++) {
+         music_sfx_buffer[5+sound_idx*2] = (uint8_t)(msb_size & 0x00FF);
+         music_sfx_buffer[6+sound_idx*2] = (uint8_t)((msb_size & 0xFF00) >> 8);
+         ifp = fopen(sound_fns[sound_idx], "rb");
+         if (ifp == NULL) {
+            printf("parse_level_config: error opening %s\n", sound_fns[sound_idx]);
+            return -1;
+         }
+         while (!feof(ifp)) {
+            if (fread(&sample,1,1,ifp) > 0) {
+               music_sfx_buffer[2+msb_size++] = sample;
+            }
+         }
+         fclose(ifp);
+      }
+      music_sfx_buffer[5+num_sounds*2] = (uint8_t)(msb_size & 0x00FF);
+      music_sfx_buffer[6+num_sounds*2] = (uint8_t)((msb_size & 0xFF00) >> 8);
+      bank = level * 6 + 6;
+      sprintf(bin_fn,"Z%03d.L%d.%02d.BIN", zone, level, bank);
+      ofp = fopen(bin_fn,"wb");
+      fwrite(music_sfx_buffer,1,msb_size+2,ofp);
+      free(music_sfx_buffer);
    }
 
    bank = level * 6 + 1;

@@ -2,6 +2,7 @@
 
 bitmap mygame_kitchen.data
 music zone0.vgm
+sound coffee coffee.raw
 
 init
 # coffee maker
@@ -120,7 +121,8 @@ if_not cup_taken
    if holding_carafe
       clear
       text 1  Sure, pour the whole pot.
-      wait 60
+      play coffee
+      wait 44
       # empty carafe
       tiles 0  19 12  164 165
       clear_state holding_carafe
