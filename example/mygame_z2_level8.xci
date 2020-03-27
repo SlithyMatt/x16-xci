@@ -1,7 +1,7 @@
 # Zone 2, level 8
 
 bitmap mygame_livingroom.data
-music zone0.vgm
+sound door door.raw
 
 init
 sprite_frames 2  0  47 48
@@ -32,7 +32,9 @@ clear
 text 1 It's been so long...
 wait 30
 text 1 Here we go!
-wait 60
+wait 30
+play door
+wait 30
 go_level 2 9
 end_anim
 

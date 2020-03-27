@@ -8,7 +8,7 @@ ZONE_INC = 1
 .include "bin2dec.asm"
 .include "level.asm"
 
-__zone_filename: .asciiz "Z000.L0.00.BIN"
+__zone_filename: .asciiz "000L0.00.BIN"
 __zone_bank: .byte 0
 ZONE_FN_LENGTH = __zone_bank - __zone_filename - 1
 
@@ -73,9 +73,9 @@ load_zone:
    ldx #DISK_DEVICE
    ldy #0
    jsr SETLFS                 ; SetFileParams(LogNum=1,DevNum=DISK_DEVICE,SA=0)
-   lda #<(__zone_filename+1)  ; overwrite zone number in filename
+   lda #<(__zone_filename)    ; overwrite zone number in filename
    sta ZP_PTR_2
-   lda #>(__zone_filename+1)
+   lda #>(__zone_filename)
    sta ZP_PTR_2+1
    lda zone
    jsr byte2ascii
@@ -90,7 +90,7 @@ load_zone:
    jsr byte2ascii
    plx
    lda __zone_num_string+2
-   sta __zone_filename+6
+   sta __zone_filename+4
    ldy #6
    phx
    jsr byte_mult
@@ -150,9 +150,9 @@ __zone_load_file:
    lda __zone_bank
    jsr byte2ascii
    lda __zone_num_string+1
-   sta __zone_filename+8
+   sta __zone_filename+6
    lda __zone_num_string+2
-   sta __zone_filename+9
+   sta __zone_filename+7
    lda #ZONE_FN_LENGTH
    ldx #<__zone_filename
    ldy #>__zone_filename

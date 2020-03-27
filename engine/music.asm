@@ -62,6 +62,7 @@ disable_music:
    rts
 
 start_music:
+   jsr stop_music
    lda music_enabled
    beq @return
    lda music_bank

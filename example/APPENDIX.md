@@ -74,6 +74,8 @@ Let's start from the beginning.
 
 bitmap mygame_foyer.data
 music zone0.vgm
+sound step step.raw
+sound door door.raw
 ```
 
 This level takes place in the foyer of the house, which is rendered as an absurdly long hallway.
@@ -81,6 +83,8 @@ This level takes place in the foyer of the house, which is rendered as an absurd
 ![Foyer](mygame_foyer.png)
 
 This was done to better scale the level to the avatar sprite, which makes its first appearance since the title screen. For simplicity, a single sprite is used for the avatar, but with a 200-pixel scene height, a 16x16 character can look pretty small. Having a scene matted out like this can help depict a more closed-in space in which an avatar can navigate. Otherwise, you can try using multiple synchronized sprites for the avatar, as shown with the car sprites in later levels.
+
+This is the first level to have multiple sound effects, as seen by the two **sound** instructions. They define the ```step``` and ```door``` sound effects, which are 3263 bytes combined. This leaves plenty of room in the music bank to still have the ```zone0.vgm``` music playing at the same time.
 
 ```
 init
@@ -128,6 +132,7 @@ The **first** sequence displays some text to explain that, in fact, the player i
 tool_trigger use  0 8  1 18
 if near_door
 sprite_frames 1  0  3H
+play door
 wait 30
 if_not got_screwdriver
 go_level 1 1
@@ -143,7 +148,7 @@ end_if
 end_anim
 ```
 
-The first trigger is for "using" the front door. If the avatar is near the door, we go to one of the levels that take place in front of the house ([1:1](#zone-1-level-1) or [2:6](##zone-2-level-6)). As we'll see later in the game, we can come back to this level after having driven away and then back to the house. This can only happen if the ```got_screwdriver``` state is true, so that decides which level we go to when going through the front door, as each of those levels has a different placement of the car sprites and different destination levels when driving away. There is also a subsequence in case the avatar is still standing by the kitchen doorway, and the player is informed that they can't reach the door from there.
+The first trigger is for "using" the front door. If the avatar is near the door, the ```door``` sound effect is played and we go to one of the levels that take place in front of the house ([1:1](#zone-1-level-1) or [2:6](##zone-2-level-6)). As we'll see later in the game, we can come back to this level after having driven away and then back to the house. This can only happen if the ```got_screwdriver``` state is true, so that decides which level we go to when going through the front door, as each of those levels has a different placement of the car sprites and different destination levels when driving away. There is also a subsequence in case the avatar is still standing by the kitchen doorway, and the player is informed that they can't reach the door from there.
 
 ```
 tool_trigger look  0 8  1 18
@@ -158,6 +163,7 @@ This trigger is also for the front door, but this time for "looking" at it. Like
 tool_trigger use  3 13  5 16
 if near_door
 sprite_frames 1  0  11
+play door
 wait 30
 go_level  1 2
 end_if
@@ -184,29 +190,160 @@ tool_trigger walk  0 8  5 18
 if near_kitchen
 clear_state near_kitchen
 sprite_move  1  4  135  -2 0
-wait 255
-wait 255
-wait 30
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 12
 set_state near_door
 end_if
 end_anim
 ```
 
-This trigger is for "walking" to the left end of the foyer. The trigger area included both the doors, but also has some previously unclaimed space between them, so the "walk" cursor will automatically appear when the mouse is moved there. The whole area can be used for the trigger if the "walk" tool is explicitly selected. First, it checks to make sure the avatar is near the kitchen, then kicks off the animation to walk there 2 pixels at a time every 4 jiffys. This takes a while to accomplish all 135 steps, so three **wait** instructions are needed to wait a grand total of 525 jiffys, or 8.75 seconds. Then the ```near_door``` state is set to true so that the player can open one of the doors. If the avatar is already near the door when this trigger occurs, nothing happens, as the whole sequence is taken up with the ```if_not near_door``` sub-sequence.
+This trigger is for "walking" to the left end of the foyer. The trigger area included both the doors, but also has some previously unclaimed space between them, so the "walk" cursor will automatically appear when the mouse is moved there. The whole area can be used for the trigger if the "walk" tool is explicitly selected. First, it checks to make sure the avatar is near the kitchen, then kicks off the animation to walk there 2 pixels at a time every 4 jiffys. Then for each half-cycle, the ```step``` sound effect is played followed by a **wait** of 16 jiffys, until all the steps are played and we **wait** 12 more jiffys to get through the remaining frames. Then the ```near_door``` state is set to true so that the player can open one of the doors. If the avatar is already near the door when this trigger occurs, nothing happens, as the whole sequence is taken up with the ```if_not near_door``` sub-sequence.
 
 ```
 tool_trigger run  0 8  5 18
 if near_kitchen
 clear_state near_kitchen
 sprite_move  1  2  135  -2 0
-wait 255
-wait 15
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 6
 set_state near_door
 end_if
 end_anim
 ```
 
-This trigger is for "running" to the left end of the foyer, using the same area as the previous trigger. This will make the avatar reach the doors twice as quickly, but will require the player to explicity select the "run" tool as it comes after the "walk" trigger. Again, this trigger will do nothing if the avatar is already near the doors.
+This trigger is for "running" to the left end of the foyer, using the same area as the previous trigger. This will make the avatar reach the doors twice as quickly (as seen by having the **wait** times between each ```step``` sound half the duration as the ```walk``` trigger), but will require the player to explicity select the "run" tool as it comes after the "walk" trigger. Again, this trigger will do nothing if the avatar is already near the doors.
 
 ```
 tool_trigger walk  38 13  39 18
@@ -214,9 +351,74 @@ if near_door
 sprite_frames 1  0  1 2 3 2 1 4 5 4
 sprite_move  1  4  135  2 0
 clear_state near_door
-wait 255
-wait 255
-wait 30
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 12
 go_level 0 1
 end_if
 if_not near_door
@@ -235,8 +437,74 @@ if near_door
 sprite_frames 1  0  1 2 3 2 1 4 5 4
 sprite_move  1  2  135  2 0
 clear_state near_door
-wait 255
-wait 15
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 6
 go_level 0 1
 end_if
 if_not near_door
@@ -284,10 +552,10 @@ This level uses [**mygame_z1_level1.xci**](mygame_z1_level1.xci):
 # Zone 1, level 1
 
 bitmap mygame_house.data
-music zone0.vgm
+sound car car.raw
 ```
 
-We can see that the house background is being reused for this level after having appeared in [the very first level](#zone-0-level-0). Because of this, we can reuse much of the animation for this level.
+We can see that the house background is being reused for this level after having appeared in [the very first level](#zone-0-level-0). Because of this, we can reuse much of the animation for this level. Note that there is no music for this level, as the ```car``` **sound** is 7785 bytes, which takes up almost the whole music bank. There would be room for an exceptionally small music file with a little repeating pattern, but that's about it.
 
 ```
 init
@@ -410,6 +678,7 @@ sprite_move 1  4  26  -2 0
 wait 104
 sprite_hide 1
 sprite_frames 4  0  41 42
+play car
 sprite_move 3  2  42  -2 0
 sprite_move 4  2  42  -2 0
 wait 84
@@ -417,7 +686,7 @@ go_level 2 0
 end_anim
 ```
 
-Finally, we have the trigger that lets us move forward in the game, by applying the keys to the car. We start the animation by turning the avatar to the left and walking him toward the car using a new frame loop. We don't use the "walk" or "run" tools here as this is a more specialized animation and the avatar is already sufficiently close to the car that it makes visual sense just to apply the keys at this point. Once the avatar is finished walking toward the car, the avatar is immediately hidden and the sprite for the rear of the car gets a new frame sequence showing the avatar's head inside the window. Then we start a pair of sprite movements that will keep both halves of the car moving together until they get to the far left of the screen. At that point, we go to [level 0 of zone 2](#zone-2-level-0).
+Finally, we have the trigger that lets us move forward in the game, by applying the keys to the car. We start the animation by turning the avatar to the left and walking him toward the car using a new frame loop. We don't use the "walk" or "run" tools here as this is a more specialized animation and the avatar is already sufficiently close to the car that it makes visual sense just to apply the keys at this point. Once the avatar is finished walking toward the car, the avatar is immediately hidden and the sprite for the rear of the car gets a new frame sequence showing the avatar's head inside the window. The ```car``` sound is played, then we start a pair of sprite movements that will keep both halves of the car moving together until they get to the far left of the screen. At that point, we go to [level 0 of zone 2](#zone-2-level-0).
 
 ```
 tool_trigger use  19 16  22 21
@@ -439,6 +708,7 @@ This level uses [**mygame_z1_level2.xci**](mygame_z1_level2.xci):
 
 bitmap mygame_livingroom.data
 music zone0.vgm
+sound door door.raw
 ```
 
 This level takes place in the living room, which introduces a new background bitmap.
@@ -480,6 +750,8 @@ The **first** sequence simply tells the player where we are. No need to say that
 
 ```
 tool_trigger use  38 3  39 25
+play door
+wait 30
 set_state lr_to_foyer
 go_level 1 0
 end_anim
@@ -1033,10 +1305,12 @@ This level uses [**mygame_z2_level4.xci**](mygame_z2_level4.xci):
 # Zone 2, level 4
 
 bitmap mygame_bar_ext.data
-music zone0.vgm
+sound car car.raw
 ```
 
 This level returns us to the exterior of Izzy's, but it has a different set of triggers from [the last level at this scene](#zone-2-level-0). It also allows for freer movement, so this level may be revisited after driving back home.
+
+From this point forward, the ```zone0.music``` is not played, which we've heard enough of at this point. Also, this level needs the ```car``` sound again, so there'e no memory left for the music, anyway.
 
 ```
 init
@@ -1241,6 +1515,7 @@ sprite_hide 1
 sprite_frames 4  0  41 42
 sprite_move 3  2  118  -2 0
 sprite_move 4  2  118  -2 0
+play car
 wait 236
 go_level 2 6
 end_if
@@ -1261,7 +1536,6 @@ This level uses [**mygame_z2_level5.xci**](mygame_z2_level5.xci):
 # Zone 2, level 5
 
 bitmap garage.data
-music zone0.vgm
 ```
 
 This level introduces a new background: the interior of the garage.
@@ -1352,10 +1626,12 @@ This level uses [**mygame_z2_level6.xci**](mygame_z2_level6.xci):
 # Zone 2, level 6
 
 bitmap mygame_house.data
-music zone0.vgm
+sound car car.raw
 ```
 
 This level returns to the front of the house for its third and final appearance in the game. This time, the car is coming from the left, so it must either drive into the scene (if coming from Izzy's) or be parked facing right (if coming from the house). This recycles some of the animation from [the last level at this scene](#zone-1-level-1) but has a reduced trigger set and different destinations based on state.
+
+As the ```car``` sound would be more noticeably absent, the ```door``` sound is omitted from this level to make the sound fit, as the transition into the house is immediate.
 
 ```
 init
@@ -1415,7 +1691,8 @@ sprite_hide 1
 sprite_frames 4  0  41H 42H
 sprite_move 3  2  118  2 0
 sprite_move 4  2  118  2 0
-wait 84
+play car
+wait 236
 go_level 2 4
 end_anim
 ```
@@ -1430,10 +1707,10 @@ This level uses [**mygame_z2_level7.xci**](mygame_z2_level7.xci):
 # Zone 2, level 7
 
 bitmap mygame_foyer.data
-music zone0.vgm
+sound door door.raw
 ```
 
-This level returns to the foyer, but with fewer available triggers. We only reach this level if we already have the grail and need to take it to the bedroom by first going throught the living room.
+This level returns to the foyer, but with fewer available triggers. We only reach this level if we already have the grail and need to take it to the bedroom by first going throught the living room. Still no music, but the ```door``` sound effect will be needed.
 
 ```
 init
@@ -1483,6 +1760,7 @@ This trigger is also recycled from the [Zone 1 foyer](#zone-1-level-0), because 
 ```
 tool_trigger use  3 13  5 16
 sprite_frames 1  0  11
+play door
 wait 30
 go_level  2 8
 end_anim
@@ -1520,10 +1798,10 @@ This level uses [**mygame_z2_level8.xci**](mygame_z2_level8.xci):
 # Zone 2, level 8
 
 bitmap mygame_livingroom.data
-music zone0.vgm
+sound door door.raw
 ```
 
-This level returns to the living room, and recycles most of the triggers from the [Zone 1 living room](#zone-1-level-2). This level just removes the trigger to return to the foyer and replaces the trigger for using the bedroom door to finally go inside.  The business with the laptop and USB drive remain if the player didn't go through it last time.
+This level returns to the living room, and recycles most of the triggers from the [Zone 1 living room](#zone-1-level-2). This level just removes the trigger to return to the foyer and replaces the trigger for using the bedroom door to finally go inside.  The business with the laptop and USB drive remain if the player didn't go through it last time. Still no music, but the ```door``` sound effect is needed this time to open the bedroom door.
 
 ```
 init
@@ -1563,7 +1841,10 @@ clear
 text 1 It's been so long...
 wait 30
 text 1 Here we go!
-wait 60
+play door
+wait 30
+play door
+wait 30
 go_level 2 9
 end_anim
 ```

@@ -1,7 +1,6 @@
 # Zone 2, level 5
 
 bitmap garage.data
-music zone0.vgm
 
 init
 if got_grail

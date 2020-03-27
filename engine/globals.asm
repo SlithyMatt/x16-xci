@@ -142,6 +142,7 @@ START_TEXT_Y   = 26
 
 ; --------- Global Variables ---------
 vsync_trig: .byte 0
+aflow_trig: .byte 0
 frame_num:  .byte 0
 def_cursor: .word 0
 num_zones:  .byte 0

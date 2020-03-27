@@ -110,7 +110,7 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
                return -1;
             }
             bank = level * 6 + 2;
-            sprintf(bin_fn,"Z%03d.L%d.%02d.BIN", zone, level, bank);
+            sprintf(bin_fn,"%03dL%d.%02d.BIN", zone, level, bank);
             if (conv_bitmap(node->values->val, bin_fn, pal) < 0) {
                printf("parse_level_config: error converting bitmap\n");
                return -1;
@@ -328,7 +328,7 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
 
    if (!bitmap_defined) {
       bank = level * 6 + 2;
-      sprintf(bin_fn,"Z%03d.L%d.%02d.BIN", zone, level, bank);
+      sprintf(bin_fn,"%03dL%d.%02d.BIN", zone, level, bank);
       create_black_bitmap(bin_fn, 200);
    }
 
@@ -366,14 +366,27 @@ int parse_level_config(int zone, int level, const char *cfg_fn) {
       music_sfx_buffer[5+num_sounds*2] = (uint8_t)(msb_size & 0x00FF);
       music_sfx_buffer[6+num_sounds*2] = (uint8_t)((msb_size & 0xFF00) >> 8);
       bank = level * 6 + 6;
-      sprintf(bin_fn,"Z%03d.L%d.%02d.BIN", zone, level, bank);
+      sprintf(bin_fn,"%03dL%d.%02d.BIN", zone, level, bank);
       ofp = fopen(bin_fn,"wb");
       fwrite(music_sfx_buffer,1,msb_size+2,ofp);
+      free(music_sfx_buffer);
+   } else {
+      // create blank music file
+      bank = level * 6 + 6;
+      sprintf(bin_fn,"%03dL%d.%02d.BIN", zone, level, bank);
+      ofp = fopen(bin_fn,"wb");
+      music_sfx_buffer = malloc(3);
+      // first, two byte X16 header
+      music_sfx_buffer[0] = 0x00;
+      music_sfx_buffer[1] = 0x00;
+      // then, just a single byte for the payload to indicate no music
+      music_sfx_buffer[2] = 0x00;
+      fwrite(music_sfx_buffer,1,3,ofp);
       free(music_sfx_buffer);
    }
 
    bank = level * 6 + 1;
-   sprintf(bin_fn,"Z%03d.L%d.%02d.BIN", zone, level, bank);
+   sprintf(bin_fn,"%03dL%d.%02d.BIN", zone, level, bank);
    ofp = fopen(bin_fn,"wb");
    fwrite(bin,1,size,ofp);
    fclose(ofp);
