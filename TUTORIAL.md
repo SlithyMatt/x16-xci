@@ -28,4 +28,12 @@ Video Link: https://youtu.be/Q6WG7W3sLgg
 
 Slides: [XCI_menus.odp](slides/XCI_menus.odp)
 
-## Episode 4: Coming Soon!
+## Episode 4: Help Files
+
+[![XCI Tutorial, Episode 4: Help Files](http://img.youtube.com/vi/ZOaXebsw7Tk/0.jpg)](https://youtu.be/ZOaXebsw7Tk)
+
+Video Link: https://youtu.be/ZOaXebsw7Tk
+
+Slides: [XCI_help_files.odp](slides/XCI_help_files.odp)
+
+## Episode 5: Coming Soon!
