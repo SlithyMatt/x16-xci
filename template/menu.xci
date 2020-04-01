@@ -1,22 +1,18 @@
 # XCI Menu Template
 menu_bg 1         # menu text background color = white
 menu_fg 0         # menu text foreground color = black
-menu_lc 1         # Plain white square
+menu_lc 3H         # Plain white square
 menu_sp 1         # Plain white square
-menu_rc 1         # Plain white square
-menu_div 1        # Plain white square
-menu_check   88   # "X" ASCII character
-menu_uncheck 79   # "O" ASCII character
+menu_rc 3         # Plain white square
+menu_div 4        # Plain white square
+menu_check   10   # "X" ASCII character
+menu_uncheck 9  # "O" ASCII character
 
 # Only a single menu is required, and only the "new" menu_item is required
 # By default, all supported menu items are enabled and arranged with dividers
 # in these three menus: File, Sound and Help.
 menu File
 menu_item new
-menu_item load
-menu_item div
-menu_item save
-menu_item saveas
 menu_item div
 menu_item exit
 menu Sound
@@ -40,9 +36,9 @@ text3_bg 0
 text3_fg 14 # light blue
 
 # Toolbar definition
-tb_dim 9 1
+tb_dim 5 2
 tool inventory
-tool_tiles 73 78 86 69 78 84 79 82 89 # Just ASCII "INVENTORY"
+tool_tiles 3H 1 1 73 78 86  # Just ASCII "INVENTORY"
 
 # Below tools may be added
 #tool walk
@@ -51,8 +47,8 @@ tool_tiles 73 78 86 69 78 84 79 82 89 # Just ASCII "INVENTORY"
 #tool_tiles # add tiles
 #tool look
 #tool_tiles # add tiles
-#tool use
-#tool_tiles # add tiles
+tool use
+tool_tiles 5 6 7 8
 #tool talk
 #tool_tiles # add tiles
 #tool strike
@@ -66,6 +62,6 @@ inventory inv.xci
 walk 0   # Default cursor
 run 0    # Default cursor
 look 0   # Default cursor
-use 0    # Default cursor
+use 2    # Default cursor
 talk 0   # Default cursor
 strike 0 # Default cursor
