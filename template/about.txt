@@ -1,3 +1,6 @@
 # XCI Controls File Template
-Place about statement here.
-        click to close Help
+\3H                           \3
+ Tutorial Game
+  by Matt Heffernan
+
+\3HV       click to close Help \3V

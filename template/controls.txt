@@ -1,3 +1,13 @@
 # XCI Controls File Template
-Place controls help here.
-      click to close Help
+\3H                               \3
+ Move mouse to cursor bottom
+ of screen to reveal the toolbar
+
+ Button     Action
+
+ \73\78\86        Show Inventory
+
+ \5\6
+ \7\8         Use
+
+\3HV           click to close Help \3V
