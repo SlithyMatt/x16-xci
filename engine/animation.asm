@@ -4,6 +4,7 @@ ANIMATION_INC = 1
 .include "x16.inc"
 .include "globals.asm"
 .include "tilelib.asm"
+.include "sfx.asm"
 
 SPRITE_FRAMES_KEY    = 40
 SPRITE_KEY           = 41
@@ -23,10 +24,11 @@ END_IF               = 69
 SET_STATE            = 70
 CLEAR_STATE          = 71
 GET_ITEM             = 72
-GIF_START            = 73
-GIF_PAUSE            = 74
-GIF_FRAME            = 75
-SPRITE_DEBUG         = 76
+PLAY                 = 74
+GIF_START            = 75
+GIF_PAUSE            = 76
+GIF_FRAME            = 77
+SPRITE_DEBUG         = 78
 
 NUM_SPRITES          = 128
 
@@ -63,6 +65,46 @@ __anim_text_addr:
 .word TEXT_LINE_3 & $FFFF
 __anim_text_line: .byte 0
 
+__anim_jmp_table:
+   .word __anim_sprite_frames
+   .word __anim_sprite
+   .word __anim_tiles
+   .word 0 ; wait
+   .word __anim_new_sprite_move
+   .word 0 ; inv_dim
+   .word 0 ; inv_item_dim
+   .word 0 ; inv_empty
+   .word 0 ; inv_left_margin
+   .word 0 ; inv_right_margin
+   .word 0 ; inv_quant
+   .word 0 ; inv_quant_margin
+   .word 0 ; inv_scroll
+   .word 0 ; inv_scroll_margin
+   .word 0 ; inv_item
+   .word 0 ; level
+   .word 0 ; end_anim
+   .word __anim_sprite_hide
+   .word 0 ; init
+   .word 0 ; first
+   .word __anim_text_instruction
+   .word __anim_scroll_instruction
+   .word __anim_line_skip
+   .word __anim_clear_text
+   .word 0 ; go_level
+   .word 0 ; tool_trigger
+   .word 0 ; item_trigger
+   .word __anim_if
+   .word __anim_if_not
+   .word 0 ; end_if
+   .word __anim_set_state
+   .word __anim_clear_state
+   .word __anim_get_item
+   .word 0 ; sound
+   .word __anim_play_sfx
+   .word __anim_gif_start
+   .word __anim_gif_pause
+   .word __anim_gif_frame
+   .word __anim_sprite_debug
 
 .macro INC_ANIM_PTR
    lda ANIM_PTR
@@ -96,146 +138,53 @@ stop_anim:
 anim_tick:
    lda __anim_playing
    bne @check_done
-   jmp @return
+   jmp __anim_tick_return
 @check_done:
    lda anim_seq_done
    beq @check_wait
-   jmp @move_all_sprites
+   jmp __anim_tick_move_all_sprites
 @check_wait:
    lda __anim_waiting
-   beq @play
+   beq __anim_tick_play
    dec
    sta __anim_waiting
-   beq @play
-   jmp @move_all_sprites
-@play:
+   beq __anim_tick_play
+   jmp __anim_tick_move_all_sprites
+__anim_tick_play:
    lda anim_bank
    sta RAM_BANK
    lda (ANIM_PTR)
    pha
    INC_ANIM_PTR
    pla
-   cmp #SPRITE_FRAMES_KEY
-   beq @sprite_frames
-   cmp #SPRITE_KEY
-   beq @sprite
-   cmp #SPRITE_HIDE_KEY
-   beq @sprite_hide
-   cmp #SPRITE_DEBUG
-   beq @sprite_debug
-   cmp #TILES_KEY
-   beq @tiles
+   cmp #END_IF
+   beq __anim_tick_play
    cmp #WAIT_KEY
    beq @wait
-   cmp #SPRITE_MOVE_KEY
-   beq @sprite_move
-   cmp #TEXT_LINE
-   beq @text_line
-   cmp #SCROLL_KEY
-   beq @scroll
-   cmp #LINE_SKIP
-   beq @line_skip
-   cmp #CLEAR_TEXT
-   beq @clear_text
    cmp #GO_LEVEL
    beq @go_level
-   cmp #IF_STATE
-   beq @if_state
-   cmp #IF_NOT_STATE
-   beq @if_not_state
-   cmp #END_IF
-   beq @play
-   cmp #SET_STATE
-   beq @set_state
-   cmp #CLEAR_STATE
-   beq @clear_state
-   cmp #GET_ITEM
-   beq @get_item
-   cmp #GIF_START
-   beq @gif_start
-   cmp #GIF_PAUSE
-   beq @gif_pause
-   cmp #GIF_FRAME
-   bne @check_end_anim
-   jmp @gif_frame
-@check_end_anim:
    cmp #END_ANIM_KEY
-   bne @unknown
-   jmp @end_anim
-@unknown:
-   jmp @stop ; unrecognized key, just stop
-@sprite_frames:
-   jsr __anim_sprite_frames
-   jmp @play
-@sprite:
-   jsr __anim_sprite
-   jmp @play
-@sprite_hide:
-   jsr __anim_sprite_hide
-   jmp @play
-@sprite_debug:
-   jsr __anim_sprite_debug
-   jmp @play
-@tiles:
-   jsr __anim_tiles
-   jmp @play
+   beq @end_anim
+   sec
+   sbc #SPRITE_FRAMES_KEY
+   asl
+   tax
+   jmp (__anim_jmp_table,x)
 @wait:
    jsr __anim_wait
-   jmp @move_all_sprites
-@sprite_move:
-   jsr __anim_new_sprite_move
-   jmp @play
-@text_line:
-   jsr __anim_text_instruction
-   jmp @play
-@scroll:
-   jsr __anim_scroll_instruction
-   jmp @play
-@line_skip:
-   jsr __anim_line_skip
-   jmp @play
-@clear_text:
-   jsr __anim_clear_text
-   jmp @play
+   jmp __anim_tick_move_all_sprites
 @go_level:
    jsr __anim_go_level
-   jmp @return
-@if_state:
-   jsr __anim_if
-   jmp @play
-@if_not_state:
-   jsr __anim_if_not
-   jmp @play
-@set_state:
-   jsr __anim_set_state
-   jmp @play
-@clear_state:
-   jsr __anim_clear_state
-   jmp @play
-@get_item:
-   jsr __anim_get_item
-   jmp @play
-@gif_start:
-   lda #2
-   sta GIF_ctrl
-   jmp @play
-@gif_pause:
-   lda #0
-   sta GIF_ctrl
-   jmp @play
-@gif_frame:
-   lda #1
-   sta GIF_ctrl
-   jmp @play
+   jmp __anim_tick_return
 @end_anim:
    lda #1
    sta anim_seq_done
-@move_all_sprites:
+__anim_tick_move_all_sprites:
    jsr __anim_move_sprites
-   bra @return
-@stop:
+   bra __anim_tick_return
+__anim_tick_stop:
    jsr stop_anim
-@return:
+__anim_tick_return:
    rts
 
 __anim_sprite_frames:
@@ -328,7 +277,7 @@ __anim_sprite_frames:
    lda __pal_offset
    ora #SPRITE_DIM
    sta VERA_data0
-   rts
+   jmp __anim_tick_play
 
 __get_sprite_frame_addr:   ; Input: A - sprite index (0-127)
                            ; Output: ZP_PTR_1 - address of frame sequence
@@ -408,7 +357,7 @@ __anim_sprite:
    lda VERA_data0
    lda __sprite_flip
    sta VERA_data0
-   rts
+   jmp __anim_tick_play
 
 __anim_sprite_hide:
    lda anim_bank
@@ -456,7 +405,7 @@ __anim_sprite_hide:
    sta RAM_BANK
    lda #0
    sta (ZP_PTR_1)
-   rts
+   jmp __anim_tick_play
 
 .macro PRINT_BYTE byte_in, char_out
    lda byte_in
@@ -529,7 +478,7 @@ __anim_sprite_debug:
    bne @loop
    inc __anim_text_line
    INC_ANIM_PTR
-   rts
+   jmp __anim_tick_play
 
 __anim_tiles:
    bra @start
@@ -569,7 +518,7 @@ __anim_tiles:
    INC_ANIM_PTR
    bra @loop
 @return:
-   rts
+   jmp __anim_tick_play
 
 __anim_wait:
    lda anim_bank
@@ -646,7 +595,7 @@ __anim_new_sprite_move:
    sta (ZP_PTR_1),y
    INC_ANIM_PTR
    ; two spare bytes for future use
-   rts
+   jmp __anim_tick_play
 
 __anim_text_instruction:
    bra @start
@@ -704,7 +653,7 @@ __anim_text_instruction:
    adc #0
    sta ANIM_PTR+1
 @return:
-   rts
+   jmp __anim_tick_play
 
 __anim_scroll: ; A: lines to scroll
    bra @start
@@ -804,7 +753,7 @@ __anim_scroll_instruction:
 @skip:
    INC_ANIM_PTR
 @return:
-   rts
+   jmp __anim_tick_play
 
 __anim_line_skip:
    lda tb_visible
@@ -816,7 +765,7 @@ __anim_line_skip:
    lda #1
    jsr __anim_scroll
 @return:
-   rts
+   jmp __anim_tick_play
 
 __anim_clear_text:
    stz __anim_text_line
@@ -849,7 +798,7 @@ __anim_clear_text:
    dex
    bne @loop3
 @return:
-   rts
+   jmp __anim_tick_play
 
 __anim_go_level:
    lda anim_bank
@@ -865,7 +814,6 @@ __anim_go_level:
    sta zone
    jsr load_zone
 @level:
-
    lda #1
    sta req_load_level
    stz __anim_text_line
@@ -886,7 +834,7 @@ __anim_if:
    bne @return ; state is set, just continue executing after IF
    jsr __anim_seek_endif
 @return:
-   rts
+   jmp __anim_tick_play
 
 __anim_if_not:
    lda anim_bank
@@ -902,7 +850,7 @@ __anim_if_not:
    beq @return ; state is clear, just continue executing after IF_NOT
    jsr __anim_seek_endif
 @return:
-   rts
+   jmp __anim_tick_play
 
 __anim_seek_endif:
    bra @start
@@ -969,6 +917,8 @@ __anim_seek_next_instruction:
    beq @seek3
    cmp #GET_ITEM
    beq @seek4
+   cmp #PLAY
+   beq @seek2
    jmp @seek1     ; all other keys are single-byte instructions
 @sprite_frames:   ; SPRITE_FRAMES same binary format as TILES
 @tiles:
@@ -1023,7 +973,7 @@ __anim_set_state:
    INC_ANIM_PTR
    lda #1
    jsr set_state
-   rts
+   jmp __anim_tick_play
 
 __anim_clear_state:
    lda anim_bank
@@ -1036,7 +986,7 @@ __anim_clear_state:
    INC_ANIM_PTR
    lda #0
    jsr set_state
-   rts
+   jmp __anim_tick_play
 
 __anim_get_item:
    lda anim_bank
@@ -1052,7 +1002,30 @@ __anim_get_item:
    pla
    jsr inv_add_item
    INC_ANIM_PTR
-   rts
+   jmp __anim_tick_play
+
+__anim_play_sfx:
+   lda anim_bank
+   sta RAM_BANK
+   lda (ANIM_PTR)
+   jsr play_sfx
+   INC_ANIM_PTR
+   jmp __anim_tick_play
+
+__anim_gif_start:
+   lda #2
+   sta GIF_ctrl
+   jmp __anim_tick_play
+
+__anim_gif_pause:
+   lda #0
+   sta GIF_ctrl
+   jmp __anim_tick_play
+
+__anim_gif_frame:
+   lda #1
+   sta GIF_ctrl
+   jmp __anim_tick_play
 
 __anim_move_sprites:
    bra @start

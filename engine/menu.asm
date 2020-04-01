@@ -159,15 +159,8 @@ init_menu:
 @tilemap: .word 0
 @start:
    ; blackout bitmap
-   stz VERA_ctrl
-   lda #LAYER_BM_OFFSET
-   sta VERA_addr_low
-   lda #>VRAM_layer0
-   sta VERA_addr_high
-   lda #(^VRAM_layer0 | $10)
-   sta VERA_addr_bank
    lda #BLACK_PO
-   sta VERA_data0
+   sta BITMAP_PO
 
    ; clear all tiles
    VERA_SET_ADDR VRAM_TILEMAP, 1
@@ -189,7 +182,7 @@ init_menu:
    bne @clear_tile_loop
 
    ; disable all sprites except mouse cursor
-   VERA_SET_ADDR $F500E, 4 ; sprite 1 byte 6, stride of 8
+   VERA_SET_ADDR $1FC0E, 4 ; sprite 1 byte 6, stride of 8
    ldx #1
 @clear_sprite_loop:
    stz VERA_data0
@@ -427,6 +420,7 @@ menu_tick:
    cmp #SAVE_GAME_AS
    beq @auto_hide
 @restore:
+   ldy #1
    jsr tile_restore
 @auto_hide:
    stz __menu_visible

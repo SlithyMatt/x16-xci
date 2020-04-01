@@ -73,8 +73,37 @@ VERA_addr_bank    = $9F22
 VERA_data0        = $9F23
 VERA_data1        = $9F24
 VERA_ctrl         = $9F25
-VERA_irq_ctrl     = $9F26
-VERA_irq          = $9F27
+VERA_ien          = $9F26
+VERA_isr          = $9F27
+VERA_irqline_l    = $9F28
+VERA_dc_video     = $9F29
+VERA_dc_hscale    = $9F2A
+VERA_dc_vscale    = $9F2B
+VERA_dc_border    = $9F2C
+VERA_dc_hstart    = $9F29
+VERA_dc_hstop     = $9F2A
+VERA_dc_vsstart   = $9F2B
+VERA_dc_vstop     = $9F2C
+VERA_L0_config    = $9F2D
+VERA_L0_mapbase   = $9F2E
+VERA_L0_tilebase  = $9F2F
+VERA_L0_hscroll_l = $9F30
+VERA_L0_hscroll_h = $9F31
+VERA_L0_vscroll_l = $9F32
+VERA_L0_vscroll_h = $9F33
+VERA_L1_config    = $9F34
+VERA_L1_mapbase   = $9F35
+VERA_L1_tilebase  = $9F36
+VERA_L1_hscroll_l = $9F37
+VERA_L1_hscroll_h = $9F38
+VERA_L1_vscroll_l = $9F39
+VERA_L1_vscroll_h = $9F3A
+VERA_audio_ctrl   = $9F3B
+VERA_audio_rate   = $9F3C
+VERA_audio_data   = $9F3D
+VERA_spi_data     = $9F3E
+VERA_spi_ctrl     = $9F3F
+
 
 ROM_BANK          = $9F60
 RAM_BANK          = $9F61
@@ -146,28 +175,10 @@ BASIC_INIT        := $C003
 
 
 ; VRAM Addresses
-
-VRAM_composer  = $F0000
-VRAM_hscale    = VRAM_composer+1
-VRAM_vscale    = VRAM_composer+2
-VRAM_palette   = $F1000
-VRAM_layer0    = $F2000
-VRAM_layer1    = $F3000
-VRAM_sprreg    = $F4000
-VRAM_sprattr   = $F5000
-VRAM_audio     = $F6000
-VRAM_spi       = $F7000
-VRAM_uart      = $F8000
-
-LAYER_CTRL_0      = 0
-LAYER_CTRL_1      = 1
-LAYER_MAP_BASE    = 2
-LAYER_TILE_BASE   = 4
-LAYER_HSCROLL     = 6
-LAYER_BM_OFFSET   = 7
-LAYER_VSCROLL     = 8
-
-VROM_petscii   = $1F000
+VRAM_petscii   = $0F800
+VRAM_psg       = $1F9C0
+VRAM_palette   = $1FA00
+VRAM_sprattr   = $1FC00
 
 ; IRQs
 IRQVec         := $0314
@@ -178,7 +189,11 @@ NMIVec         := $0318
 
 .macro VERA_SET_ADDR addr, stride
 	.ifnblank stride
-		lda #((^addr) | (stride << 4))
+      .if stride < 0
+         lda #((^addr) | $08 | ((0-stride) << 4))
+      .else
+         lda #((^addr) | (stride << 4))
+      .endif
 	.else
 		lda #(^addr) | $10
 	.endif

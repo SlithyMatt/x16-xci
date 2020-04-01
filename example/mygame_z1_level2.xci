@@ -2,6 +2,7 @@
 
 bitmap mygame_livingroom.data
 music zone0.vgm
+sound door door.raw
 
 init
 sprite_frames 2  0  47 48
@@ -27,6 +28,8 @@ text 1 Welcome to our living room.
 end_anim
 
 tool_trigger use  38 3  39 25
+play door
+wait 30
 set_state lr_to_foyer
 go_level 1 0
 end_anim

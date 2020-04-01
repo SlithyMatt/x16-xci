@@ -2,6 +2,8 @@
 
 bitmap mygame_foyer.data
 music zone0.vgm
+sound step step.raw
+sound door door.raw
 
 init
 if kitchen_to_foyer
@@ -40,6 +42,7 @@ end_anim
 tool_trigger use  0 8  1 18
 if near_door
 sprite_frames 1  0  3H
+play door
 wait 30
 if_not got_screwdriver
 go_level 1 1
@@ -62,6 +65,7 @@ end_anim
 tool_trigger use  3 13  5 16
 if near_door
 sprite_frames 1  0  11
+play door
 wait 30
 go_level  1 2
 end_if
@@ -80,9 +84,74 @@ tool_trigger walk  0 8  5 18
 if near_kitchen
 clear_state near_kitchen
 sprite_move  1  4  135  -2 0
-wait 255
-wait 255
-wait 30
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 12
 set_state near_door
 end_if
 end_anim
@@ -91,8 +160,74 @@ tool_trigger run  0 8  5 18
 if near_kitchen
 clear_state near_kitchen
 sprite_move  1  2  135  -2 0
-wait 255
-wait 15
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 6
 set_state near_door
 end_if
 end_anim
@@ -102,9 +237,74 @@ if near_door
 sprite_frames 1  0  1 2 3 2 1 4 5 4
 sprite_move  1  4  135  2 0
 clear_state near_door
-wait 255
-wait 255
-wait 30
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 16
+play step
+wait 12
 go_level 0 1
 end_if
 if_not near_door
@@ -119,8 +319,74 @@ if near_door
 sprite_frames 1  0  1 2 3 2 1 4 5 4
 sprite_move  1  2  135  2 0
 clear_state near_door
-wait 255
-wait 15
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 8
+play step
+wait 6
 go_level 0 1
 end_if
 if_not near_door

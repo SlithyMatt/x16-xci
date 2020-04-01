@@ -1,7 +1,7 @@
 # Zone 2, level 6
 
 bitmap mygame_house.data
-music zone0.vgm
+sound car car.raw
 
 init
 sprite_frames 2  0  30 31 32 33 34 35 36 37 # Flag waving
@@ -52,6 +52,7 @@ sprite_hide 1
 sprite_frames 4  0  41H 42H
 sprite_move 3  2  118  2 0
 sprite_move 4  2  118  2 0
-wait 84
+play car
+wait 236
 go_level 2 4
 end_anim

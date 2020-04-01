@@ -99,17 +99,20 @@ ZL_COUNT_PTR   = $34
 MOUSE_X        = $36
 MOUSE_Y        = $38
 XGF_PTR        = $3A
+SFX_PTR        = $3C
 
 VRAM_BITMAP    = $00000 ; 4bpp 320x240
 VRAM_TILEMAP   = $09600 ; 64x32 (40x30 visible)
-VRAM_TILES     = $0A600 ; 720 4bpp 8x8 tiles
-VRAM_SPRITES   = $10000 ; 512 4bpp 16x16 frames
+VRAM_TILES     = $0A800 ; 704 4bpp 8x8 tiles
+VRAM_SPRITES   = $10000 ; 499 4bpp 16x16 frames
 
 LEVEL_BITMAP_OFFSET        = 8*320/2
 VRAM_LEVEL_BITMAP          = VRAM_BITMAP + LEVEL_BITMAP_OFFSET
 LEVEL_BITMAP_SIZE          = 200*320/2
 VRAM_TEXTFIELD_BITMAP_BG   = VRAM_LEVEL_BITMAP + LEVEL_BITMAP_SIZE
 TEXTFIELD_BITMAP_BG_SIZE   = 32*320/2
+
+BITMAP_PO      = VERA_L0_hscroll_h
 
 TILEMAP_SIZE   = VRAM_TILES - VRAM_TILEMAP
 
@@ -139,6 +142,7 @@ START_TEXT_Y   = 26
 
 ; --------- Global Variables ---------
 vsync_trig: .byte 0
+aflow_trig: .byte 0
 frame_num:  .byte 0
 def_cursor: .word 0
 num_zones:  .byte 0

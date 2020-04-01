@@ -291,6 +291,7 @@ save_game:
    ldy #>(XGF_STAGE+RAM_WIN_SIZE)
    jsr SAVE
 @restore:
+   ldy #1
    jsr tile_restore
 @return:
    rts
@@ -411,6 +412,7 @@ __xgf_saveas_tick:
    cmp #XGF_SAVEAS_CLOSE_X
    bne @return
    stz saveas_visible
+   ldy #1
    jsr tile_restore
 @return:
    rts
@@ -642,6 +644,7 @@ __xgf_load_tick:
    bne @copy_loop
    jsr __xgf_load
 @restore:
+   ldy #1
    jsr tile_restore
    stz load_visible
 @return:

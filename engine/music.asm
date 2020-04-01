@@ -8,8 +8,11 @@ MUSIC_INC = 1
 OPM_DELAY_REG   = 2
 OPM_DONE_REG    = 4
 
+MUSIC_AVAILABLE = RAM_WIN
+MUSIC_START_PTR = RAM_WIN+1
+
 __music_delay:    .byte 0
-__music_playing:  .byte 1
+__music_playing:  .byte 0
 
 .macro INC_MUSIC_PTR
    clc
@@ -23,9 +26,14 @@ __music_playing:  .byte 1
 
 init_music:
    stz __music_delay
-   lda #<RAM_WIN
+   lda music_bank
+   sta RAM_BANK
+   lda MUSIC_START_PTR
+   clc
+   adc #<RAM_WIN
    sta MUSIC_PTR
-   lda #>RAM_WIN
+   lda MUSIC_START_PTR+1
+   adc #>RAM_WIN
    sta MUSIC_PTR+1
    rts
 
@@ -54,7 +62,12 @@ disable_music:
    rts
 
 start_music:
+   jsr stop_music
    lda music_enabled
+   beq @return
+   lda music_bank
+   sta RAM_BANK
+   lda MUSIC_AVAILABLE
    beq @return
    lda #1
    sta __music_playing

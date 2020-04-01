@@ -1,7 +1,7 @@
 # Zone 2, level 7
 
 bitmap mygame_foyer.data
-music zone0.vgm
+sound door door.raw
 
 init
 if lr_to_foyer
@@ -34,6 +34,7 @@ end_anim
 
 tool_trigger use  3 13  5 16
 sprite_frames 1  0  11
+play door
 wait 30
 go_level  2 8
 end_anim
