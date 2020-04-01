@@ -127,9 +127,6 @@ int tile_layout(const char *filename, tilemap_t *tilemap) {
                            i++;
                         }
                      }
-                     if ((tile_idx >= MIN_ASCII) && (tile_idx <= MAX_ASCII)) {
-                        byte2 = byte2 | MENU_PAL;
-                     }
                      temp_tm.map[map_i++] = (uint8_t)byte2;
                   }
                } else if (line[i] == '\t') {
