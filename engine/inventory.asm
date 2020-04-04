@@ -328,7 +328,6 @@ __inv_show_item:  ; A: item position in __inv_order
    sec
    sbc @width
    sta @width ; number of leading spaces required
-   beq @ascii
    lda #1
    ldx @x
    ldy @y
@@ -339,6 +338,7 @@ __inv_show_item:  ; A: item position in __inv_order
    stx VERA_addr_low
    sty VERA_addr_high
    ldx @width
+   beq @ascii
    lda #$20 ; ASCII space
 @space_loop:
    sta VERA_data0
