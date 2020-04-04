@@ -9,16 +9,16 @@
 # "        V"
 
 # Inventory layout
-inv_dim 9 2
-inv_item_dim 1 1
-inv_empty 1
-inv_left_margin 1
-inv_right_margin 1
-inv_quant 1 4
-inv_quant_margin 1 # won't be used unless inv_item_dim height > 1
-inv_scroll 94 1 86 # middle value won't be used unless inv_dim height > 2
-inv_scroll_margin 1
+inv_dim 20 2
+inv_item_dim 2 2
+inv_empty 11 11 11 11
+inv_left_margin 12
+inv_right_margin 11
+inv_quant 1 5
+inv_quant_margin 11
+inv_scroll 14 11 14V
+inv_scroll_margin 13
 
 # Item list
-inv_item money 100 9999 0 36 # may be modified/replaced
+inv_item money 38655 50000 0 15 16 16HV 15HV
 # up to 126 more items may be defined
