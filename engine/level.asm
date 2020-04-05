@@ -469,14 +469,14 @@ level_tick:
    ldy #1
    lda (ZP_PTR_2),y
    cmp __level_quant+1
-   bmi @debit
+   bcc @debit
    beq @check_low_quant
    jmp @next
 @check_low_quant:
    dey
    lda (ZP_PTR_2),y
    cmp __level_quant
-   bmi @debit
+   bcc @debit
    beq @debit
    jmp @next
 @debit:
