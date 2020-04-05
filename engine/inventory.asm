@@ -642,6 +642,26 @@ inv_add_item:  ; A: item index
    lda (ZP_PTR_1),y
    adc __inv_quant+1
    sta (ZP_PTR_1),y
+   bvs @max ; reset to maximum value if overflow
+   ldy #(INV_ITEM_MAX+1)
+   cmp (ZP_PTR_1),y
+   bmi @check_inv_ctrl
+   bne @max
+   ldy #INV_ITEM_QUANT
+   lda (ZP_PTR_1),y
+   ldy #INV_ITEM_MAX
+   cmp (ZP_PTR_1),y
+   bmi @check_inv_ctrl
+@max:
+   ldy #INV_ITEM_MAX
+   lda (ZP_PTR_1),y
+   ldy #INV_ITEM_QUANT
+   sta (ZP_PTR_1),y
+   ldy #(INV_ITEM_MAX+1)
+   lda (ZP_PTR_1),y
+   ldy #(INV_ITEM_QUANT+1)
+   sta (ZP_PTR_1),y
+@check_inv_ctrl:
    ldx #0
 @loop:
    cpx __inv_num_items
