@@ -10,6 +10,34 @@ end_anim
 
 first
 # Put first-time-only animation here
+text 1 Buy something, will ya?
+tiles 0 5 5  20 21
+tiles 0 5 6  22 23
+sprite_frames 1 0  5
+sprite 1  96 40
 end_anim
 
 # Put triggers here
+tool_trigger use  5 5  6 6
+text 1 Bananas are 3 for $1
+end_anim
+
+tool_trigger use  12 5  13 6
+if_not got_grail
+   text 1 Grails are one easy payment of $9,999.
+end_if
+end_anim
+
+item_trigger money 1 1  5 5  6 6
+text 1 Enjoy your bananas!
+get_item banana 3
+end_anim
+
+item_trigger money 9999 9999 12 5  13 6
+if_not got_grail
+   get_item grail 1
+   set_state got_grail
+   sprite_hide 1
+   text 1 You got the grail!
+end_if
+end_anim
