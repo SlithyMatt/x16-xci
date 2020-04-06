@@ -6,6 +6,6 @@
 
 init
 text 1 Hello, World!
-wait 240
+wait 120
 go_level 0 1
 end_anim
