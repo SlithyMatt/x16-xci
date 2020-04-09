@@ -72,7 +72,7 @@ int hex2bin_file_addr(const char* hex_fn, const char* bin_fn, int address) {
       printf("Error opening %s for reading\n", hex_fn);
       return -1;
    }
-   ofp = fopen(bin_fn, "w");
+   ofp = fopen(bin_fn, "wb");
    if (ofp == NULL) {
       printf("Error opening %s for writing\n", bin_fn);
       return - 1;
