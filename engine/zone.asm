@@ -8,7 +8,7 @@ ZONE_INC = 1
 .include "bin2dec.asm"
 .include "level.asm"
 
-__zone_filename: .asciiz "000L0.00.BIN"
+__zone_filename: .asciiz "000L0_00.BIN"
 __zone_bank: .byte 0
 ZONE_FN_LENGTH = __zone_bank - __zone_filename - 1
 

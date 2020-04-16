@@ -13,8 +13,8 @@ main_fn_end:
 sprites_fn:    .asciiz "SPRITES.BIN"
 tiles_fn:      .asciiz "TILES.BIN"
 palette_fn:    .asciiz "PAL.BIN"
-ttl_bm_fn:     .asciiz "TTL.BM.BIN"
-ttl_mus_fn:    .asciiz "TTL.MUS.BIN"
+ttl_bm_fn:     .asciiz "TTL_BM.BIN"
+ttl_mus_fn:    .asciiz "TTL_MUS.BIN"
 end_filenames:
 FILES_TO_LOAD = 1
 bankparams:
