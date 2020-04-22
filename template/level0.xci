@@ -6,6 +6,48 @@
 
 init
 text 1 Hello, World!
-wait 120
+sprite_frames 1 0  6
+sprite 1  152 100
+sprite_move 1  3  23  0 4
+wait 72
+sprite_frames 1 0  7 6 8
+sprite 1  152 196
+sprite_move 1  3  4  0 -4
+wait 12
+sprite_frames 1 0  6
+sprite_move 1  3  43  0 -4
+wait 132
+sprite_frames 1 0  7 6 8
+sprite_move 1  3  4  3 3
+wait 12
+sprite_frames 1 0  6
+sprite_move 1  3  47  3 3
+wait 144
+sprite_frames 1 0  8 6 7
+sprite 1  308 160
+sprite_move 1  3  4  -4 0
+wait 12
+sprite_frames 1 0  6
+sprite_move 1  3  73  -4 0
+wait 219
+sprite_frames 1 0  8 6 7
+sprite_move 1  3  4  4 0
+wait 12
+sprite_frames 1 0  6
+sprite_move 1  3  11  3 3
+wait 36
+sprite_frames 1 0  7
+sprite 1  36 196
+wait 3
+sprite_frames 1 0  6
+sprite 1  42 195
+sprite_move 1  3  10  3 0
+wait 30
+sprite_move 1  3  5  2 0
+wait 15
+sprite_move 1  3  5  1 0
+end_anim
+
+tool_trigger use 11 24 12 25
 go_level 0 1
 end_anim
