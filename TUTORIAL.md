@@ -54,9 +54,9 @@ Slides: [XCI_animation_basics.odp](slides/XCI_animation_basics.odp)
 
 ## Episode 7: Sprite Animation
 
-[![XCI Tutorial, Episode 7: Sprite Animation](http://img.youtube.com/vi/pu_FcYyH1qg/0.jpg)](https://youtu.be/pu_FcYyH1qg)
+[![XCI Tutorial, Episode 7: Sprite Animation](http://img.youtube.com/vi/ijojG4l7DtY/0.jpg)](https://youtu.be/ijojG4l7DtY)
 
-Video Link: https://youtu.be/pu_FcYyH1qg
+Video Link: https://youtu.be/ijojG4l7DtY
 
 Slides: [XCI_sprite_animation.odp](slides/XCI_animation_basics.odp)
 
