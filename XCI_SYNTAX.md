@@ -1037,6 +1037,7 @@ sprite_hide index
 | index | Integer | 1-127 | Sprite index |
 
 Found in:
+* [Title Screen File](README.md#title-screen-file)
 * [Level Files](README.md#level-files)
 
 ### init

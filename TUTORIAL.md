@@ -36,4 +36,28 @@ Video Link: https://youtu.be/ZOaXebsw7Tk
 
 Slides: [XCI_help_files.odp](slides/XCI_help_files.odp)
 
-## Episode 5: Coming Soon!
+## Episode 5: Inventories
+
+[![XCI Tutorial, Episode 5: Inventories](http://img.youtube.com/vi/zVZchPs1t2g/0.jpg)](https://youtu.be/zVZchPs1t2g)
+
+Video Link: https://youtu.be/zVZchPs1t2g
+
+Slides: [XCI_inventories.odp](slides/XCI_inventories.odp)
+
+## Episode 6: Animation Basics
+
+[![XCI Tutorial, Episode 6: Animation Basics](http://img.youtube.com/vi/pu_FcYyH1qg/0.jpg)](https://youtu.be/pu_FcYyH1qg)
+
+Video Link: https://youtu.be/pu_FcYyH1qg
+
+Slides: [XCI_animation_basics.odp](slides/XCI_animation_basics.odp)
+
+## Episode 7: Sprite Animation
+
+[![XCI Tutorial, Episode 7: Sprite Animation](http://img.youtube.com/vi/pu_FcYyH1qg/0.jpg)](https://youtu.be/pu_FcYyH1qg)
+
+Video Link: https://youtu.be/pu_FcYyH1qg
+
+Slides: [XCI_sprite_animation.odp](slides/XCI_animation_basics.odp)
+
+## Episode 8: Coming Soon!
