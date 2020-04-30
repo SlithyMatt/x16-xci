@@ -62,9 +62,9 @@ Slides: [XCI_sprite_animation.odp](slides/XCI_animation_basics.odp)
 
 ## Episode 8: Boolean States
 
-[![XCI Tutorial, Episode 8: Boolean States](http://img.youtube.com/vi/ijojG4l7DtY/0.jpg)](https://youtu.be/ijojG4l7DtY)
+[![XCI Tutorial, Episode 8: Boolean States](http://img.youtube.com/vi/gYkoMBs4si4/0.jpg)](https://youtu.be/gYkoMBs4si4)
 
-Video Link: https://youtu.be/ijojG4l7DtY
+Video Link: https://youtu.be/gYkoMBs4si4
 
 Slides: [XCI_boolean_states.odp](slides/XCI_boolean_states.odp)
 
