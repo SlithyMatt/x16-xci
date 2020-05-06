@@ -68,4 +68,12 @@ Video Link: https://youtu.be/gYkoMBs4si4
 
 Slides: [XCI_boolean_states.odp](slides/XCI_boolean_states.odp)
 
-## Episode 9: Coming Soon!
+## Episode 9: Text Animation
+
+[![XCI Tutorial, Episode 9: Text Animation](http://img.youtube.com/vi/tHaCBNJs6IE/0.jpg)](https://youtu.be/tHaCBNJs6IE)
+
+Video Link: https://youtu.be/tHaCBNJs6IE
+
+Slides: [XCI_text_animation.odp](slides/XCI_animation_basics.odp)
+
+## Episode 10: Coming Soon!
