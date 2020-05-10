@@ -88,7 +88,7 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
 
    delete_config(&cfg);
 
-   bin[size++] += END_ANIM;
+   bin[size++] = END_ANIM;
 
    return size;
 }
