@@ -54,10 +54,26 @@ Slides: [XCI_animation_basics.odp](slides/XCI_animation_basics.odp)
 
 ## Episode 7: Sprite Animation
 
-[![XCI Tutorial, Episode 7: Sprite Animation](http://img.youtube.com/vi/pu_FcYyH1qg/0.jpg)](https://youtu.be/pu_FcYyH1qg)
+[![XCI Tutorial, Episode 7: Sprite Animation](http://img.youtube.com/vi/ijojG4l7DtY/0.jpg)](https://youtu.be/ijojG4l7DtY)
 
-Video Link: https://youtu.be/pu_FcYyH1qg
+Video Link: https://youtu.be/ijojG4l7DtY
 
 Slides: [XCI_sprite_animation.odp](slides/XCI_animation_basics.odp)
 
-## Episode 8: Coming Soon!
+## Episode 8: Boolean States
+
+[![XCI Tutorial, Episode 8: Boolean States](http://img.youtube.com/vi/gYkoMBs4si4/0.jpg)](https://youtu.be/gYkoMBs4si4)
+
+Video Link: https://youtu.be/gYkoMBs4si4
+
+Slides: [XCI_boolean_states.odp](slides/XCI_boolean_states.odp)
+
+## Episode 9: Text Animation
+
+[![XCI Tutorial, Episode 9: Text Animation](http://img.youtube.com/vi/tHaCBNJs6IE/0.jpg)](https://youtu.be/tHaCBNJs6IE)
+
+Video Link: https://youtu.be/tHaCBNJs6IE
+
+Slides: [XCI_text_animation.odp](slides/XCI_animation_basics.odp)
+
+## Episode 10: Coming Soon!
