@@ -58,7 +58,7 @@ Slides: [XCI_animation_basics.odp](slides/XCI_animation_basics.odp)
 
 Video Link: https://youtu.be/ijojG4l7DtY
 
-Slides: [XCI_sprite_animation.odp](slides/XCI_animation_basics.odp)
+Slides: [XCI_sprite_animation.odp](slides/XCI_sprite_animation.odp)
 
 ## Episode 8: Boolean States
 
@@ -74,6 +74,14 @@ Slides: [XCI_boolean_states.odp](slides/XCI_boolean_states.odp)
 
 Video Link: https://youtu.be/tHaCBNJs6IE
 
-Slides: [XCI_text_animation.odp](slides/XCI_animation_basics.odp)
+Slides: [XCI_text_animation.odp](slides/XCI_text_animation.odp)
 
-## Episode 10: Coming Soon!
+## Episode 10: Text Animation
+
+[![XCI Tutorial, Episode 10: Music](http://img.youtube.com/vi/tHaCBNJs6IE/0.jpg)](https://youtu.be/tHaCBNJs6IE)
+
+Video Link: https://youtu.be/tHaCBNJs6IE
+
+Slides: [XCI_music.odp](slides/XCI_music.odp)
+
+## Episode 11: Coming Soon!
