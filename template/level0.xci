@@ -2,7 +2,7 @@
 
 # Uncomment below when/if you have level bitmap and/or music
 #bitmap bitmap.data
-#music music.vgm
+music MaryHadALittleLamb.vgm
 
 init
 sprite_frames 1 0  6
