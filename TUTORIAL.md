@@ -76,11 +76,11 @@ Video Link: https://youtu.be/tHaCBNJs6IE
 
 Slides: [XCI_text_animation.odp](slides/XCI_text_animation.odp)
 
-## Episode 10: Text Animation
+## Episode 10: Music
 
-[![XCI Tutorial, Episode 10: Music](http://img.youtube.com/vi/tHaCBNJs6IE/0.jpg)](https://youtu.be/tHaCBNJs6IE)
+[![XCI Tutorial, Episode 10: Music](http://img.youtube.com/vi/ruyeZovkGDg/0.jpg)](https://youtu.be/ruyeZovkGDg)
 
-Video Link: https://youtu.be/tHaCBNJs6IE
+Video Link: https://youtu.be/ruyeZovkGDg
 
 Slides: [XCI_music.odp](slides/XCI_music.odp)
 
