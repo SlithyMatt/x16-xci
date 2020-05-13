@@ -1313,3 +1313,6 @@ play id
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
 | id | Identifier | Sound effect ID defined for the level with a [**sound**](#sound) instruction | ID of sound effect to play |
+
+Found in:
+* [Level Files](README.md#level-files)
