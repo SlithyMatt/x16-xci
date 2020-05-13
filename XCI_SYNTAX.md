@@ -80,6 +80,7 @@ Skip to [Level File](README.md#level-files) keys:
 | [**scroll**](#scroll) | [**line**](#line) | [**clear**](#clear) | [**go_level**](#go_level) |
 | [**tool_trigger**](#tool_trigger) | [**item_trigger**](#item_trigger) | [**if**](#if) | [**if_not**](#if_not) |
 | [**end_if**](#end_if) | [**set_state**](#set_state) | [**clear_state**](#clear_state) | [**get_item**](#get_item) |
+| [**sound**](#sound) | [**play**](#play) |
 
 ### title
 
@@ -1282,3 +1283,33 @@ get_item item quantity
 
 Found in:
 * [Level Files](README.md#level-files)
+
+### sound
+
+Defines an indentifier for a sound effect file to be used in [**play**](#play) instructions.
+
+Usage:
+```
+sound id filename
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| id | Identifier | Unique sound effect ID for the level | ID to be used in [**play**](#play) instructions |
+| filename | String | Valid filename | Filename of 4578 Hz 8-bit PCM mono sound effect |
+
+Found in:
+* [Level Files](README.md#level-files)
+
+### play
+
+Plays a sound effect.
+
+Usage:
+```
+play id
+```
+
+| Argument | Type | Range | Meaning |
+|--|--|--|--|
+| id | Identifier | Sound effect ID defined for the level with a [**sound**](#sound) instruction | ID of sound effect to play |
