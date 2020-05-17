@@ -3,6 +3,7 @@
 # Uncomment below when/if you have level bitmap and/or music
 #bitmap bitmap.data
 music MaryHadALittleLamb.vgm
+sound bounce Dodge_Ball_Bounce.raw
 
 init
 sprite_frames 1 0  6
@@ -13,6 +14,7 @@ sprite_frames 1 0  7 6 8 6
 sprite 1  152 196
 sprite_move 1  3  4  0 -4
 text 1 Bounce!
+play bounce
 wait 12
 clear
 sprite_frames 1 0  6
@@ -21,6 +23,7 @@ wait 132
 sprite_frames 1 0  7 6 8 6
 sprite_move 1  3  4  3 3
 text 1 Bounce!
+play bounce
 wait 12
 clear
 sprite_frames 1 0  6
@@ -30,6 +33,7 @@ sprite_frames 1 0  8 6 7 6
 sprite 1  308 160
 sprite_move 1  3  4  -4 0
 text 1 Bounce!
+play bounce
 wait 12
 clear
 sprite_frames 1 0  6
@@ -38,6 +42,7 @@ wait 219
 sprite_frames 1 0  8 6 7 6
 sprite_move 1  3  4  4 0
 text 1 Bounce!
+play bounce
 wait 12
 clear
 sprite_frames 1 0  6
