@@ -86,9 +86,9 @@ Slides: [XCI_music.odp](slides/XCI_music.odp)
 
 ## Episode 11: Sound Effects
 
-[![XCI Tutorial, Episode 11: Sound Effects](http://img.youtube.com/vi/ruyeZovkGDg/0.jpg)](https://youtu.be/ruyeZovkGDg)
+[![XCI Tutorial, Episode 11: Sound Effects](http://img.youtube.com/vi/V6bJgMJuT0k/0.jpg)](https://youtu.be/V6bJgMJuT0k)
 
-Video Link: https://youtu.be/ruyeZovkGDg
+Video Link: https://youtu.be/V6bJgMJuT0k
 
 Slides: [XCI_sound_effects.odp](slides/XCI_sound_effects.odp)
 
