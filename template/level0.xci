@@ -1,7 +1,7 @@
 # XCI Level Template
 
 # Uncomment below when/if you have level bitmap and/or music
-#bitmap bitmap.data
+bitmap gym.data
 music MaryHadALittleLamb.vgm
 sound bounce Dodge_Ball_Bounce.raw
 
