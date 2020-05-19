@@ -1,6 +1,3 @@
-tiles_hex mygame_z1_tiles.hex
-sprites_hex mygame_z1_sprites.hex
-
 # Zone 1 levels
 level mygame_z1_level0.xci
 level mygame_z1_level1.xci

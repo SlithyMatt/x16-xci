@@ -1,7 +1,7 @@
 # Menu bar definition
 menu_bg 1 # background color = white
 menu_fg 0 # foreground color = black
-menu_lc 256
+menu_lc 2H
 menu_sp 1
 menu_rc 2
 menu_div 4

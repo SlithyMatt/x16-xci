@@ -6,7 +6,7 @@ tiles_hex mygame_tiles.hex
 sprites_hex mygame_sprites.hex
 menu_xci mygame_menu.xci
 title_screen mygame_start.xci
-init_cursor 256 # sprite frame index
+init_cursor 0 # sprite frame index
 zone mygame_zone0.xci # the first zone defined will be loaded first,
                       # with its first level the start of the game
 zone mygame_zone1.xci

@@ -7,10 +7,13 @@ ZONE_INC = 1
 .include "state.asm"
 .include "bin2dec.asm"
 .include "level.asm"
+.include "mouse.asm"
 
-__zone_filename: .asciiz "000L0_00.BIN"
+__zone_filename:     .asciiz "000L0B00.BIN"
+__zone_tiles_fn:     .asciiz "000TILES.BIN"
+__zone_sprites_fn:   .asciiz "000SPRTS.BIN"
 __zone_bank: .byte 0
-ZONE_FN_LENGTH = __zone_bank - __zone_filename - 1
+ZONE_FN_LENGTH = __zone_tiles_fn - __zone_filename - 1
 
 __zone_num_string: .byte 0,0,0
 
@@ -73,12 +76,53 @@ load_zone:
    ldx #DISK_DEVICE
    ldy #0
    jsr SETLFS                 ; SetFileParams(LogNum=1,DevNum=DISK_DEVICE,SA=0)
-   lda #<(__zone_filename)    ; overwrite zone number in filename
+   lda #<(__zone_filename)    ; overwrite zone number in filenames
    sta ZP_PTR_2
    lda #>(__zone_filename)
    sta ZP_PTR_2+1
    lda zone
    jsr byte2ascii
+   lda #<(__zone_tiles_fn)
+   sta ZP_PTR_2
+   lda #>(__zone_tiles_fn)
+   sta ZP_PTR_2+1
+   lda zone
+   jsr byte2ascii
+   lda #<(__zone_sprites_fn)
+   sta ZP_PTR_2
+   lda #>(__zone_sprites_fn)
+   sta ZP_PTR_2+1
+   lda zone
+   jsr byte2ascii
+   ; load custom tiles
+   lda #ZONE_FN_LENGTH
+   ldx #<__zone_tiles_fn
+   ldy #>__zone_tiles_fn
+   jsr SETNAM                 ; SetFileName(__zone_tiles_fn)
+   lda __zone_bank
+   sta RAM_BANK
+   jsr reset_bank
+   lda #^VRAM_TILES_UPPER
+   clc
+   adc #2
+   ldx #<VRAM_TILES_UPPER
+   ldy #>VRAM_TILES_UPPER
+   jsr LOAD                   ; LoadFile(Verify=VRAM_TILES_UPPER.bank+2,Address=VRAM_TILES_UPPER.addr)
+   ; load custom sprites
+   lda #ZONE_FN_LENGTH
+   ldx #<__zone_sprites_fn
+   ldy #>__zone_sprites_fn
+   jsr SETNAM                 ; SetFileName(__zone_sprites_fn)
+   lda __zone_bank
+   sta RAM_BANK
+   jsr reset_bank
+   lda #^VRAM_SPRITES_UPPER
+   clc
+   adc #2
+   ldx #<VRAM_SPRITES_UPPER
+   ldy #>VRAM_SPRITES_UPPER
+   jsr LOAD                   ; LoadFile(Verify=VRAM_SPRITES_UPPER.bank+2,Address=VRAM_SPRITES_UPPER.addr)
+   jsr init_mouse
    ldx #0
 @level_loop:
    lda #<__zone_num_string    ; overwrite level number in filename

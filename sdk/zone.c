@@ -18,6 +18,7 @@ int parse_zone_config(int zone, const char *cfg_fn) {
    int buf_size;
    FILE *ifp;
    FILE *ofp;
+   uint8_t address[2] = {0,0};
 
    if (parse_config(cfg_fn, &cfg) < 0) {
       printf("parse_zone_config: error parsing config source (%s)\n", cfg_fn);
@@ -66,11 +67,12 @@ int parse_zone_config(int zone, const char *cfg_fn) {
    if (!tiles_found) {
       // copy default upper tiles
       ifp = fopen("TILES.BIN", "rb");
-      fseek(ifp,256*32,SEEK_SET);
+      fseek(ifp,2+256*32,SEEK_SET);
       sprintf(bin_fn,"%03dTILES.BIN", zone);
       ofp = fopen(bin_fn, "wb");
       buf_size = fread(buffer, sizeof(uint8_t), UPPER_FILE_MAX, ifp);
       fclose(ifp);
+      fwrite(address, sizeof(uint8_t), 2, ofp);
       fwrite(buffer, sizeof(uint8_t), buf_size, ofp);
       fclose(ofp);
    }
@@ -78,11 +80,12 @@ int parse_zone_config(int zone, const char *cfg_fn) {
    if (!sprites_found) {
       // copy default upper sprites
       ifp = fopen("SPRITES.BIN", "rb");
-      fseek(ifp,256*128,SEEK_SET);
+      fseek(ifp,2+256*128,SEEK_SET);
       sprintf(bin_fn,"%03dSPRTS.BIN", zone);
       ofp = fopen(bin_fn, "wb");
       buf_size = fread(buffer, sizeof(uint8_t), UPPER_FILE_MAX, ifp);
       fclose(ifp);
+      fwrite(address, sizeof(uint8_t), 2, ofp);
       fwrite(buffer, sizeof(uint8_t), buf_size, ofp);
       fclose(ofp);
    }
