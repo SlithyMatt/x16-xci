@@ -69,7 +69,7 @@ Skip to [Inventory File](README.md#inventory-file) keys:
 
 Skip to [Zone File](README.md#zone-files) key:
 
-[**level**](#level)
+| [**level**](#level) | [**tiles_hex**](#tiles_hex) | [**sprites_hex**](#sprites_hex) |
 
 Skip to [Level File](README.md#level-files) keys:
 
@@ -146,6 +146,7 @@ tiles_hex filename
 
 Found in:
 * [Main File](README.md#main-file)
+* [Zone Files](README.md#zone-files)
 
 ### sprites_hex
 
@@ -162,6 +163,7 @@ sprites_hex filename
 
 Found in:
 * [Main File](README.md#main-file)
+* [Zone Files](README.md#zone-files)
 
 ### menu_xci
 
@@ -271,7 +273,7 @@ menu_lc tile
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tile | Tile | Any | Tile for left corner of the menu bar |
+| tile | Tile | Any [<sup>\[1\]</sup>](#note-1) | Tile for left corner of the menu bar |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -287,7 +289,7 @@ menu_sp tile
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tile | Tile | Any | Tile for blank spaces in the menu. |
+| tile | Tile | Any [<sup>\[1\]</sup>](#note-1) | Tile for blank spaces in the menu. |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -303,7 +305,7 @@ menu_rc tile
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tile | Tile | Any | Tile for right corner of the menu bar |
+| tile | Tile | Any [<sup>\[1\]</sup>](#note-1) | Tile for right corner of the menu bar |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -319,7 +321,7 @@ menu_div tile
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tile | Tile | Any | Tile for dividers in the menu. |
+| tile | Tile | Any [<sup>\[1\]</sup>](#note-1) | Tile for dividers in the menu. |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -335,7 +337,7 @@ menu_check tile
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tile | Tile | Any | Tile for checked checkboxes in the menu. |
+| tile | Tile | Any [<sup>\[1\]</sup>](#note-1) | Tile for checked checkboxes in the menu. |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -351,7 +353,7 @@ menu_uncheck tile
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tile | Tile | Any | Tile for unchecked checkboxes in the menu. |
+| tile | Tile | Any [<sup>\[1\]</sup>](#note-1) | Tile for unchecked checkboxes in the menu. |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -560,7 +562,7 @@ tool_tiles [tiles]
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tiles | Tile | 1-160 tiles | Tile map for toolbar button |
+| tiles | Tile | 1-160 tiles[<sup>\[1\]</sup>](#note-1) | Tile map for toolbar button |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -592,7 +594,7 @@ walk index
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+| index | Integer | 0-255[<sup>\[1\]</sup>](#note-1) | Sprite frame index for mouse cursor |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -608,7 +610,7 @@ run index
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+| index | Integer | 0-255[<sup>\[1\]</sup>](#note-1) | Sprite frame index for mouse cursor |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -624,7 +626,7 @@ look index
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+| index | Integer | 0-255[<sup>\[1\]</sup>](#note-1) | Sprite frame index for mouse cursor |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -640,7 +642,7 @@ use index
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+| index | Integer | 0-255[<sup>\[1\]</sup>](#note-1) | Sprite frame index for mouse cursor |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -656,7 +658,7 @@ talk index
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+| index | Integer | 0-255[<sup>\[1\]</sup>](#note-1) | Sprite frame index for mouse cursor |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -672,7 +674,7 @@ strike index
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| index | Integer | 0-511 | Sprite frame index for mouse cursor |
+| index | Integer | 0-255[<sup>\[1\]</sup>](#note-1) | Sprite frame index for mouse cursor |
 
 Found in:
 * [Menu File](README.md#menu-file)
@@ -869,7 +871,7 @@ inv_empty [tiles]
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tiles | Tile | Number of tiles specified by [**inv_item_dim**](#inv_item_dim) | Tilemap for empty item button, rows going down |
+| tiles | Tile | Number of tiles specified by [**inv_item_dim**](#inv_item_dim)[<sup>\[1\]</sup>](#note-1) | Tilemap for empty item button, rows going down |
 
 Found in:
 * [Inventory File](README.md#inventory-file)
@@ -885,7 +887,7 @@ inv_empty [tiles]
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tiles | Tile | 1-38 | Tiles to display, from left to right |
+| tiles | Tile | 1-38[<sup>\[1\]</sup>](#note-1) | Tiles to display, from left to right |
 
 Found in:
 * [Inventory File](README.md#inventory-file)
@@ -901,7 +903,7 @@ inv_empty [tiles]
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tiles | Tile | 1-38 tiles | Tiles to display, from left to right |
+| tiles | Tile | 1-38 tiles[<sup>\[1\]</sup>](#note-1) | Tiles to display, from left to right |
 
 Found in:
 * [Inventory File](README.md#inventory-file)
@@ -934,7 +936,7 @@ inv_quant_margin [tiles]
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tiles | Tile | 1-5 tiles | Tiles to display, from left to right |
+| tiles | Tile | 1-5 tiles[<sup>\[1\]</sup>](#note-1) | Tiles to display, from left to right |
 
 Found in:
 * [Inventory File](README.md#inventory-file)
@@ -950,9 +952,9 @@ inv_scroll up middle down
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| up | Tile | Any | Tile for scroll-up button |
-| middle | Tile | Any | Tile to fill in column between scroll buttons |
-| down | Tile | Any | Tile for scroll-down button |
+| up | Tile | Any [<sup>\[1\]</sup>](#note-1) | Tile for scroll-up button |
+| middle | Tile | Any [<sup>\[1\]</sup>](#note-1) | Tile to fill in column between scroll buttons |
+| down | Tile | Any [<sup>\[1\]</sup>](#note-1) | Tile for scroll-down button |
 
 Found in:
 * [Inventory File](README.md#inventory-file)
@@ -968,7 +970,7 @@ inv_scroll_margin [tiles]
 
 | Argument | Type | Range | Meaning |
 |--|--|--|--|
-| tiles | Tile | 1-38 tiles | Tiles to display, from left to right |
+| tiles | Tile | 1-38 tiles[<sup>\[1\]</sup>](#note-1) | Tiles to display, from left to right |
 
 Found in:
 * [Inventory File](README.md#inventory-file)
@@ -987,8 +989,8 @@ inv_item name init max cursor [tiles]
 | name | Identifier | Unique item name | Name of item to be used in [**item_trigger**](#item_trigger) and [**get_item**](#get_item) arguments |
 | init | Integer | 0-65535 | Initial quantity of item |
 | max | Integer | 1-65535 | Maximum quantity of item |
-| cursor | Integer | 0-511 | Item cursor frame |
-| tiles | Tile | Number of tiles specified by [**inv_item_dim**](#inv_item_dim) | Tilemap for item button, rows going down |
+| cursor | Integer | 0-255[<sup>\[1\]</sup>](#note-1) | Item cursor frame |
+| tiles | Tile | Number of tiles specified by [**inv_item_dim**](#inv_item_dim)[<sup>\[1\]</sup>](#note-1) | Tilemap for item button, rows going down |
 
 
 Found in:
@@ -1316,3 +1318,8 @@ play id
 
 Found in:
 * [Level Files](README.md#level-files)
+
+## Notes
+
+### Note 1
+Tile and sprite indices higher than 255 are not guaranteed to be the same in every zone, so it is strongly recommended to use only indices 0 to 255 for any of these values. However, higher indices may be used (up to 703 for tiles or 498 for sprites) if the elements are interchangeable between zones, either by being identical or cleanly replaced (perhaps defining a user interface "theme" for a zone).
