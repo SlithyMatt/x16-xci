@@ -87,6 +87,7 @@ int parse_game_config(const char *cfg_fn) {
             if (hex2bin_file(node->values->val, "TILES.BIN") < 0) {
                printf("parse_game_config: error parsing tiles file %s\n",
                       node->values->val);
+               return -1;
             }
             break;
          case SPRITES_HEX:
@@ -97,6 +98,7 @@ int parse_game_config(const char *cfg_fn) {
             if (hex2bin_file(node->values->val, "SPRITES.BIN") < 0) {
                printf("parse_game_config: error parsing sprites file %s\n",
                       node->values->val);
+               return -1;
             }
             break;
          case MENU_XCI:
