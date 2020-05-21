@@ -1,0 +1,6 @@
+#bitmap
+#music
+
+init
+text 1 You Win!
+end_anim

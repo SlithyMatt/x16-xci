@@ -1,7 +1,7 @@
 # XCI Level Template
 
 # Uncomment below when/if you have level bitmap and/or music
-#bitmap bitmap.data
+bitmap store.data
 #music music.vgm
 
 init
@@ -13,8 +13,17 @@ first
 text 1 Buy something, will ya?
 tiles 0 5 5  20 21
 tiles 0 5 6  22 23
-sprite_frames 1 0  5
+sprite_frames 1 0  5 # grail (init)
 sprite 1  96 40
+sprite_frames 2 2  11 # mask
+sprite 2  247 127
+sprite_frames 3 0  5 # grail (return)
+sprite_frames 4 2  9 # left cover
+sprite 4  239 118
+sprite_frames 5 2  9H # right cover
+sprite 5  255 118
+sprite_frames 6 2  10 # hole
+sprite 6  247 123
 end_anim
 
 # Put triggers here
@@ -40,4 +49,16 @@ if_not got_grail
    sprite_hide 1
    text 1 You got the grail!
 end_if
+end_anim
+
+tool_trigger use  28 24  34 24
+clear
+text 1 It's a plaque that reads
+text 2 "Place Grail Here to Win"
+end_anim
+
+item_trigger grail 1 1  30 14  32 16
+sprite 3  247 112
+wait 180
+go_level 0 2
 end_anim
