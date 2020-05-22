@@ -94,8 +94,8 @@ Slides: [XCI_sound_effects.odp](slides/XCI_sound_effects.odp)
 
 ## Episode 12: Putting It Together
 
-[![XCI Tutorial, Episode 12: Putting It Together](http://img.youtube.com/vi/V6bJgMJuT0k/0.jpg)](https://youtu.be/V6bJgMJuT0k)
+[![XCI Tutorial, Episode 12: Putting It Together](http://img.youtube.com/vi/vCCIPsHzu5s/0.jpg)](https://youtu.be/vCCIPsHzu5s)
 
-Video Link: https://youtu.be/V6bJgMJuT0k
+Video Link: https://youtu.be/vCCIPsHzu5s
 
-Slides: [XCI_putting_it_together.odp](slides/XCI_sound_effects.odp)
+Slides: [XCI_putting_it_together.odp](slides/XCI_putting_it_together.odp)
