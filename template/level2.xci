@@ -1,5 +1,5 @@
-#bitmap
-#music
+bitmap fireworks.data
+music ChaseVaultWin.vgm
 
 init
 text 1 You Win!

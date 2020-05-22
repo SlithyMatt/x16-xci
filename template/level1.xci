@@ -3,6 +3,9 @@
 # Uncomment below when/if you have level bitmap and/or music
 bitmap store.data
 #music music.vgm
+sound close close.raw
+sound drop drop.raw
+sound open open.raw
 
 init
 text 1 We're here!
@@ -57,8 +60,20 @@ text 1 It's a plaque that reads
 text 2 "Place Grail Here to Win"
 end_anim
 
-item_trigger grail 1 1  30 14  32 16
+item_trigger grail 1 1  30 13  32 16
 sprite 3  247 112
-wait 180
+wait 60
+play open
+sprite_move 4  2 8  -1 0
+sprite_move 5  2 8  1 0
+wait 15
+sprite_move 3  2 16 0 1
+wait 40
+play drop
+wait 30
+play close
+sprite_move 4  4 8  1 0
+sprite_move 5  4 8  -1 0
+wait 60
 go_level 0 2
 end_anim
