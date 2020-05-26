@@ -405,7 +405,7 @@ __anim_sprite_hide:
    sta ZP_PTR_1+1
    lda #SPRITE_MOVEMENT_BANK
    sta RAM_BANK
-   lda #0
+   lda #SPRITE_STOPPED
    sta (ZP_PTR_1)
    jmp __anim_tick_play
 
