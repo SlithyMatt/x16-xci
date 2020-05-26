@@ -37,6 +37,7 @@ FRAME_FLIP_MASK      = $3F
 SPRITE_Z             = $0C
 SPRITE_Z_MASK        = $F3
 SPRITE_DIM           = $50
+SPRITE_STOPPED       = $FF
 
 anim_seq_done:    .byte 0
 __anim_playing:   .byte 0
@@ -121,6 +122,7 @@ anim_reset:
    jsr reset_bank
    lda #SPRITE_MOVEMENT_BANK
    jsr reset_bank
+   jsr __anim_stop_all_sprites
    stz anim_seq_done
    stz __anim_waiting
    stz __anim_text_line
@@ -1027,6 +1029,32 @@ __anim_gif_frame:
    sta GIF_ctrl
    jmp __anim_tick_play
 
+__anim_stop_all_sprites:
+   lda #SPRITE_MOVEMENT_BANK
+   sta RAM_BANK
+   lda #<RAM_WIN
+   sta ZP_PTR_2
+   lda #>RAM_WIN
+   sta ZP_PTR_2+1
+   stz __sprite_idx
+@loop:
+   inc __sprite_idx
+   lda __sprite_idx
+   cmp #NUM_SPRITES
+   beq @return
+   lda ZP_PTR_2   ; increment ZP_PTR_2 to next sprite movement
+   clc
+   adc #8
+   sta ZP_PTR_2
+   lda ZP_PTR_2+1
+   adc #0
+   sta ZP_PTR_2+1
+   lda #SPRITE_STOPPED
+   sta (ZP_PTR_2)
+   bra @loop
+@return:
+   rts
+
 __anim_move_sprites:
    bra @start
 @frame_idx: .byte 0
@@ -1054,6 +1082,7 @@ __anim_move_sprites:
    adc #0
    sta ZP_PTR_2+1
    lda (ZP_PTR_2)
+   cmp #SPRITE_STOPPED
    bne @check_delay
    jmp @loop
 @check_delay:
@@ -1071,7 +1100,7 @@ __anim_move_sprites:
    dec
    sta (ZP_PTR_2),y
    bne @load
-   lda #0
+   lda #SPRITE_STOPPED
    sta (ZP_PTR_2)    ; this will be the last frame
 @load:
    iny

@@ -1,5 +1,5 @@
 # XCI Tutorial
-
+![XCI](xci_logo.png)<br>
 This is a brief guide to the [XCI Tutorial on YouTube](https://www.youtube.com/playlist?list=PLPSrOWYluVLJFDQUeNzy50hRb_dh9T8nS). This series (still in production) goes over all of the aspects of creating games using the XCI adventure game engine. For a more detailed written explanation of how the engine and its software development kit (SDK) work, see the [main documentation](README.md).
 
 For each episode below there is a link to the video and to the slides shown in the video. These slides were created using [LibreOffice Impress](https://www.libreoffice.org/discover/impress/), which is recommended for viewing them locally.
@@ -92,4 +92,10 @@ Video Link: https://youtu.be/V6bJgMJuT0k
 
 Slides: [XCI_sound_effects.odp](slides/XCI_sound_effects.odp)
 
-## Episode 12: Coming Soon!
+## Episode 12: Putting It Together
+
+[![XCI Tutorial, Episode 12: Putting It Together](http://img.youtube.com/vi/vCCIPsHzu5s/0.jpg)](https://youtu.be/vCCIPsHzu5s)
+
+Video Link: https://youtu.be/vCCIPsHzu5s
+
+Slides: [XCI_putting_it_together.odp](slides/XCI_putting_it_together.odp)

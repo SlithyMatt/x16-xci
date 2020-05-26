@@ -1,5 +1,6 @@
 # XCI Configuration File Syntax
-This doucment describes, key by key, the overall syntax of XCI configuration files. There are six kinds of configuration files, as described in the [main documentation](README.md):
+![XCI](xci_logo.png)<br>
+This document describes, [key by key](#keys), the overall syntax of XCI configuration files. There are six kinds of configuration files, as described in the [main documentation](README.md):
 
 * [Main File](README.md#main-file)
 * [Menu File](README.md#menu-file)
@@ -17,7 +18,7 @@ This document is intended to be a concise guide to the language and not a compre
 There are five basic types for arguments:
 
 * Integer: Simple decimal number value, with no decimal point. May be negative, depending on range.
-* String: Literal characters and escape codes. String values are whitespace-delimited. Keys that take a variable number of strings, like [**text**](#text), may be reconsituting a concatentated string, using single spaces between the string tokens. Certain characters require escape codes, mainly the pound/hash (as ```\#```) and the backslash (as ```\\```). Quotes are not required around string arguments, so they will be part of the value sent to the engine as literal quote characters. At this time, only standard ASCII printable characters are supported, namely exclamation point (x21, '!') through tilde (x7E, '~').
+* String: Literal characters and escape codes. String values are whitespace-delimited. Keys that take a variable number of strings, like [**text**](#text), may be reconstituting a concatenated string, using single spaces between the string tokens. Certain characters require escape codes, mainly the pound/hash (as ```\#```) and the backslash (as ```\\```). Quotes are not required around string arguments, so they will be part of the value sent to the engine as literal quote characters. At this time, only standard ASCII printable characters are supported, namely exclamation point (x21, '!') through tilde (x7E, '~').
 * Tile: Positive integer from 0 to 719. May be followed immediately (no spaces in between) by an ```H```, a ```V``` or both. The letters indicated how the tile is to be flipped. Examples: ```1``` is tile 1 with no flipping; ```2H``` is tile 2 flipped horizontally; ```3V``` is tile 3 flipped vertically; ```4HV``` is tile 4 flipped both horizontally and vertically.
 * Sprite: Like a Tile, but is based on sprite frame indices, which range from 0 to 511. May also be suffixed with ```H``` and/or ```V``` for flipping.
 * Identifier: String (with no whitespace) that identifies an entity in the game, such as a menu, tool, inventory item or state variable. May contain letters, numbers and special characters other than pound/hash (```#```).

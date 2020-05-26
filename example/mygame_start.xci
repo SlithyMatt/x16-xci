@@ -12,7 +12,7 @@ tiles 11  27 29  32 98 121 32 74 111 104 110 32 68 111 101 32 # byline
 
 # define animation timeline
 wait 2
-sprite_move 1  2  68  2 0
+sprite_move 1  1  136  1 0
 wait 136 # preceding sprite_move will be just finished
 tiles 0  19 24  3 3
 tiles 0  18 25  3 0 0 3

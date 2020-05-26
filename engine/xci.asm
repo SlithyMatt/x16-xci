@@ -169,6 +169,7 @@ start:
    ; start title screen
    jsr init_music
    jsr start_music
+   jsr anim_reset
    jsr start_anim
 
 mainloop:
@@ -182,9 +183,9 @@ mainloop:
    sta VERA_ctrl
 
    ; Return to BASIC
-   lda #BASIC_ROM_BANK
+   lda #KERNAL_ROM_BANK
    sta ROM_BANK
-   rts
+   jsr SCINIT
 
 ; ---- Save game file staging
 
