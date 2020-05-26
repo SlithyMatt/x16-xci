@@ -1,5 +1,18 @@
 # XCI: eXtremely Compact Interpreter
+![XCI](xci_logo.png)<br>
 An adventure game engine for the Commander X16
+
+## About This Document
+This is a general overview of the XCI game engine, explaining in detail how each
+component works and how to use the software development kit to create a game.
+
+If you are looking for a quick programming reference, check out the
+[XCI configuration language syntax guide](XCI_SYNTAX.md).
+
+If you want to explore the video tutorial, check out the [tutorial guide](TUTORIAL.md).
+
+Finally, if you want to read a complete, in-depth look at how the example game
+was created, see the [configuration walkthrough appendix to this document](example/APPENDIX.md).
 
 ## Contents
 
@@ -124,8 +137,8 @@ If it finishes without errors, the game is built! Let's assume that zone 0 has 2
 * **PAL.BIN** - This is the initial palette for the game, as specified by the filename after the **palette** key (**mygame_pal.hex**) and other configuration data. It will be loaded by the XCI program into VRAM (1:FA00) prior to displaying the title screen. Note that the palette beyond index 15 will be modified as different parts of the game are loaded.
 * **TILES.BIN** - This is the binary version of **mygame_tiles.hex**, which contains the tile set for the game, as specified by the **tiles_hex** key. It will be loaded by the XCI program into VRAM (0:A600) prior to displaying the title screen.
 * **SPRITES.BIN** - This is the binary version of **mygame_sprites.hex**, which contains the sprite frames for the game, as specified by the **sprites_hex** key. It will be loaded by the XCI program into VRAM (1:0000) prior to displaying the title screen.
-* **TTL_BM.BIN** - This is the background bitmap for the title screen, specified by the contents of **mygame_start.xci**, which will be explained later. It will be loaded into VRAM (0:0000) once the palette, tiles and sprites are all loaded. Unlike the background bitmaps of the game levels, this bitmap can take up the full screen (320x240). This will remain in VRAM and on screen until the player starts a new game or loads a saved game. It is never stored in base or banked RAM.
-* **TTL_MUS.BIN** - This is the music for the title screen, specified by the contents of **mygame_start.xci**. It will be loaded into bank 1 of banked RAM for only the duration of the start screen. Once the first game zone is loaded, it will not be in memory again.
+* **TTLBM.BIN** - This is the background bitmap for the title screen, specified by the contents of **mygame_start.xci**, which will be explained later. It will be loaded into VRAM (0:0000) once the palette, tiles and sprites are all loaded. Unlike the background bitmaps of the game levels, this bitmap can take up the full screen (320x240). This will remain in VRAM and on screen until the player starts a new game or loads a saved game. It is never stored in base or banked RAM.
+* **TTLMUS.BIN** - This is the music for the title screen, specified by the contents of **mygame_start.xci**. It will be loaded into bank 1 of banked RAM for only the duration of the start screen. Once the first game zone is loaded, it will not be in memory again.
 * **000L0B01.BIN** - This is the configuration data for level 0 of zone 0. This is the first level that will be loaded after starting a new game. It is defined by the contents of **mygame_zone0.xci**, as specified by the first instance of the **zone** key. It will be loaded into bank 1 of banked RAM whenever the game enters level 0 (as it does when starting a new game, but a saved game may have also left off in level 0).
 * **000L0B02.BIN** - This is the background bitmap for level 0 of zone 0, specified by the contents of **mygame_zone0.xci**, which will be explained later. It will be loaded into banks 2-5 of banked RAM whenever the game enters zone 0, and into VRAM when the game enters level 0. Because of the in-game screen layout, this bitmap will start 8 pixel9s from the top, and therefore starting at VRAM address 0:0500. From 0:0000 to 0:04FF will be zero-filled, as it lies behind the menu bar. From 0:7D00 to 0:95FF will be zero-filled, as it lies behind the text field/toolbar.
 * **000L0B06.BIN** - The music and sound effects for level 0 of zone 0. The length of the music and addresses for each sound effect are defined in the level configuration data. This file will be loaded into bank 6 when the game enters zone 0. They data will be played directly from banked RAM when the game enters level 0.
@@ -603,8 +616,8 @@ The only required key for the title screen file is **duration**. The simplest po
 #### Title Screen File: Optional Keys
 All of these keys are used identically for game levels, so see the [Level Files](#level-files) section. However, there is some special handling for two of them:
 
-* **bitmap** - Filename of the title screen background bitmap, which should be a raw data bitmap file with only 16 indexed colors, and for this screen should be a full 320x240 pixels. It should have a raw 24-bit palette file that has the same filename appended with ```.pal```, which in this example would be ```mygame_start.data.pal```. If that file is not available, the bitmap will use the default palette, offset 0. If the image was exported to raw data by [GIMP](https://www.gimp.org), both of the files should be present. See the [Raw Image Files](#raw-image-files) section for more information. The bitmap will be converted to X16 format as **TTL_BM.BIN** and loaded directly into the very top of VRAM (0:0000), and the palette (if available) will be stored in 12-bit format at palette offset zero in VRAM (F:1020). Both will be replaced in VRAM after the title sequence is done and are never longer loaded again during the game.
-* **music** - Filename of the title screen music VGM file. It is converted to a more X16-friendly format as **TTL_MUS.BIN** and loaded into bank 1 of banked RAM. It will play in a continous loop until the title sequence ends. At that point, it will be replaced with game level data and never loaded again during the game.
+* **bitmap** - Filename of the title screen background bitmap, which should be a raw data bitmap file with only 16 indexed colors, and for this screen should be a full 320x240 pixels. It should have a raw 24-bit palette file that has the same filename appended with ```.pal```, which in this example would be ```mygame_start.data.pal```. If that file is not available, the bitmap will use the default palette, offset 0. If the image was exported to raw data by [GIMP](https://www.gimp.org), both of the files should be present. See the [Raw Image Files](#raw-image-files) section for more information. The bitmap will be converted to X16 format as **TTLBM.BIN** and loaded directly into the very top of VRAM (0:0000), and the palette (if available) will be stored in 12-bit format at palette offset zero in VRAM (F:1020). Both will be replaced in VRAM after the title sequence is done and are never longer loaded again during the game.
+* **music** - Filename of the title screen music VGM file. It is converted to a more X16-friendly format as **TTLMUS.BIN** and loaded into bank 1 of banked RAM. It will play in a continous loop until the title sequence ends. At that point, it will be replaced with game level data and never loaded again during the game.
 
 The following keys are handled the same as they are in game levels.  The title screen can only make use of the default tiles and sprites.  Any other keys that can be found in game level files will be ignored in title screen files.
 

@@ -11,7 +11,7 @@
 
 #define BITMAP_PAL_OFFSET (16*2)
 
-#define TITLE_BITMAP_FN "TTL_BM.BIN"
+#define TITLE_BITMAP_FN "TTLBM.BIN"
 
 int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin) {
    uint8_t *bin = (uint8_t *)cfg_bin;
@@ -55,7 +55,7 @@ int parse_title_screen_config(const char *cfg_fn, title_screen_config_t *cfg_bin
                printf("parse_title_screen_config: no filename specified for music\n");
                return -1;
             }
-            if (vgm2x16opm_f(node->values->val, "TTL_MUS.BIN") < 0) {
+            if (vgm2x16opm_f(node->values->val, "TTLMUS.BIN") < 0) {
                printf("parse_title_screen_config: error converting music VGM file (%s)\n",
                       node->values->val);
                return -1;

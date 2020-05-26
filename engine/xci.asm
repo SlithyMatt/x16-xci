@@ -169,6 +169,7 @@ start:
    ; start title screen
    jsr init_music
    jsr start_music
+   jsr anim_reset
    jsr start_anim
 
 mainloop:
