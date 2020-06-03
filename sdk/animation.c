@@ -84,7 +84,7 @@ int parse_animation_node(const xci_config_node_t *node, uint8_t *bin) {
          break;
       case SPRITE_HIDE:
          if (node->num_values < 1) {
-            printf("parse_animation_node: no value specified for sprite_hide");
+            printf("parse_animation_node: no value specified for sprite_hide\n");
             return -1;
          }
          sprite_hide_bin->key = SPRITE_HIDE;
@@ -93,7 +93,7 @@ int parse_animation_node(const xci_config_node_t *node, uint8_t *bin) {
          break;
       case SPRITE_DEBUG:
          if (node->num_values < 1) {
-            printf("parse_animation_node: no value specified for sprite_debug");
+            printf("parse_animation_node: no value specified for sprite_debug\n");
             return -1;
          }
          sprite_debug_bin->key = SPRITE_DEBUG;

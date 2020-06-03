@@ -110,7 +110,7 @@ int concat_string_val(const xci_val_list_t *vals, uint8_t *str, int max) {
          i++;
       }
       if (i > max) {
-         printf("concat_string_val: string too long");
+         printf("concat_string_val: string too long\n");
          return -1;
       }
       val = val->next;
