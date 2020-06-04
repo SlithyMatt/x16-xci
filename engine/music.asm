@@ -94,6 +94,9 @@ music_tick:
    beq @delay
    cmp #OPM_DONE_REG
    beq @reinit
+@check_ready:
+   bit YM_data
+   bmi @check_ready
    bra @write
 @delay:
    lda (MUSIC_PTR),y
