@@ -5,13 +5,17 @@
 
 #define DELAY_REG 2
 #define DONE_REG  4
-#define VGM_DO    0x34
+
+#define VGM_LOOP_OFFSET 0x1C
+#define VGM_DO          0x34
 
 int vgm2x16opm(const char *vgm_fn, uint8_t *x16_data) {
    FILE *ifp;
    int delay;
    uint8_t idata[4];
-   int data_offset;
+   uint8_t odata[2];
+   long int data_offset;
+   long int loop_offset;
    int done = 0;
    int size = 0;
 
@@ -32,6 +36,11 @@ int vgm2x16opm(const char *vgm_fn, uint8_t *x16_data) {
       return -1;
    }
 
+   fseek(ifp,VGM_LOOP_OFFSET,SEEK_SET);
+   fread(idata,1,4,ifp);
+   loop_offset = VGM_LOOP_OFFSET + (int)idata[0] + (((int)idata[1]) << 8) +
+                  (((int)idata[2]) << 16) + (((int)idata[3]) << 24);
+
    fseek(ifp,VGM_DO,SEEK_SET);
    fread(idata,1,4,ifp);
    data_offset = VGM_DO + (int)idata[0] + (((int)idata[1]) << 8) +
@@ -39,6 +48,10 @@ int vgm2x16opm(const char *vgm_fn, uint8_t *x16_data) {
    fseek(ifp,data_offset,SEEK_SET);
 
    while (!feof(ifp) && !done) {
+      if (ftell(ifp) == loop_offset) {
+         x16_data[size++] = DONE_REG;
+         x16_data[size++] = 0;
+      }
       fread(idata,1,1,ifp);
       switch (idata[0]) {
          case 0x54: // YM2151 - just dump right to output
@@ -59,6 +72,14 @@ int vgm2x16opm(const char *vgm_fn, uint8_t *x16_data) {
             x16_data[size++] = DONE_REG;
             x16_data[size++] = 0;
             done = 1;
+            break;
+         case 0x67: // data block - just skip over it
+            fread(idata, 1, 2, ifp); // ignore fake end byte, data type
+            fread(idata, 1, 4, ifp); // read block length
+            data_offset = (int)idata[0] + (((int)idata[1]) << 8) +
+            	(((int)idata[2]) << 16) + (((int)idata[3]) << 24);
+            printf("Skipping %ld byte data block\n",data_offset);
+            fseek(ifp, data_offset, SEEK_CUR);
             break;
          case 0xc0: // Sega PCM (expected from Deflemask)
             fread(idata,1,3,ifp); // ignore data

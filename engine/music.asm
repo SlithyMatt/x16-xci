@@ -11,8 +11,13 @@ OPM_DONE_REG    = 4
 MUSIC_AVAILABLE = RAM_WIN
 MUSIC_START_PTR = RAM_WIN+1
 
-__music_delay:    .byte 0
-__music_playing:  .byte 0
+__music_delay: .byte 0
+
+__music_playing: .byte 1
+
+__music_looping: .byte 0
+
+__music_loop_start: .word 0
 
 .macro INC_MUSIC_PTR
    clc
@@ -35,7 +40,19 @@ init_music:
    lda MUSIC_START_PTR+1
    adc #>RAM_WIN
    sta MUSIC_PTR+1
+   stz __music_looping
    rts
+
+__loop_music:
+   stz __music_delay
+   lda __music_loop_start
+   sta MUSIC_PTR
+   lda __music_loop_start+1
+   sta MUSIC_PTR+1
+   lda #1
+   sta __music_looping
+   rts
+
 
 stop_music:
    stz __music_playing
@@ -47,7 +64,6 @@ stop_music:
    YM_SET_REG YM_KEY_ON, YM_CH_6
    YM_SET_REG YM_KEY_ON, YM_CH_7
    YM_SET_REG YM_KEY_ON, YM_CH_8
-   jsr init_music
    rts
 
 enable_music:
@@ -69,9 +85,13 @@ start_music:
    sta RAM_BANK
    lda MUSIC_AVAILABLE
    beq @return
+   jsr play_music
+@return:
+   rts
+
+play_music:
    lda #1
    sta __music_playing
-@return:
    rts
 
 music_tick:
@@ -80,38 +100,46 @@ music_tick:
    jmp @return
 @check_delay:
    lda __music_delay
-   beq @load
+   beq @loop
    dec __music_delay
-   bra @return
-@load:
+   jmp @return
+@loop:
    lda music_bank
    sta RAM_BANK
-@loop:
    ldy #0
    lda (MUSIC_PTR),y
    iny
    cmp #OPM_DELAY_REG
    beq @delay
    cmp #OPM_DONE_REG
-   beq @reinit
-@check_ready:
-   bit YM_data
-   bmi @check_ready
+   beq @done
    bra @write
 @delay:
    lda (MUSIC_PTR),y
    sta __music_delay
    INC_MUSIC_PTR
    bra @return
-@reinit:
-   jsr init_music
+@done:
+   lda __music_looping
+   bne @loop_again
+   jsr stop_music
+   INC_MUSIC_PTR
+   lda MUSIC_PTR
+   sta __music_loop_start
+   lda MUSIC_PTR+1
+   sta __music_loop_start+1
+   jsr play_music
+@loop_again:
+   jsr __loop_music
    bra @return
 @write:
+   bit YM_data
+   bmi @write
    sta YM_reg
    lda (MUSIC_PTR),y
    sta YM_data
    INC_MUSIC_PTR
-   bra @loop
+   jmp @loop
 @return:
    rts
 
