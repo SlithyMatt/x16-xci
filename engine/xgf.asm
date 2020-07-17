@@ -334,6 +334,13 @@ save_game_as:
    lda #1
    sta saveas_visible
    stz __xgf_fn_length
+   jsr flush_keyboard
+   rts
+
+flush_keyboard:
+   jsr GETIN
+   cmp #0
+   bne flush_keyboard
    rts
 
 xgf_tick:
@@ -360,6 +367,8 @@ __xgf_saveas_tick:
    sta VERA_addr_bank
    stx VERA_addr_low
    sty VERA_addr_high
+   lda #KERNAL_ROM_BANK
+   sta ROM_BANK
    jsr GETIN
    cmp #0
    beq @cursor

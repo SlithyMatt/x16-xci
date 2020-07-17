@@ -1,7 +1,9 @@
 .ifndef X16_INC
 X16_INC  = 1
 
+.ifndef __CX16__
 __CX16__ = 1
+.endif
 
 SD_DEVICE   = 1
 HOST_DEVICE = 8
@@ -142,10 +144,15 @@ GRAPH_LL_set_8_pixels_opaque  := $FF14
 GRAPH_LL_fill_pixels          := $FF17
 GRAPH_LL_filter_pixels        := $FF1A
 GRAPH_LL_move_pixels          := $FF1D
+MONITOR								:= $FF44
+ENTER_BASIC							:= $FF47
 CLOCK_SET_DATE_TIME           := $FF4D
 CLOCK_GET_DATE_TIME           := $FF50
 JOYSTICK_SCAN                 := $FF53
 JOYSTICK_GET                  := $FF56
+SCREEN_SET_MODE					:= $FF5F
+SCREEN_SET_CHARSET				:= $FF62
+
 MOUSE_CONFIG                  := $FF68
 MOUSE_GET			            := $FF6B
 MOUSE_SCAN                    := $FF71
@@ -168,6 +175,11 @@ SETTIM                        := $FFDB
 RDTIM                         := $FFDE
 STOP                          := $FFE1
 GETIN                         := $FFE4
+CLALL									:= $FFE7
+UDTIM									:= $FFEA
+SCREEN								:= $FFED
+PLOT									:= $FFF0
+IOBASE								:= $FFF3
 
 ; BASIC Vectors
 BASIC_PANIC       := $C000
