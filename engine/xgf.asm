@@ -334,6 +334,9 @@ save_game_as:
    lda #1
    sta saveas_visible
    stz __xgf_fn_length
+   lda #KERNAL_ROM_BANK
+   sta ROM_BANK
+   jsr CLRCHN
    jsr flush_keyboard
    rts
 

@@ -99,9 +99,6 @@ load_zone:
    ldx #<__zone_tiles_fn
    ldy #>__zone_tiles_fn
    jsr SETNAM                 ; SetFileName(__zone_tiles_fn)
-   lda __zone_bank
-   sta RAM_BANK
-   jsr reset_bank
    lda #^VRAM_TILES_UPPER
    clc
    adc #2
@@ -113,9 +110,6 @@ load_zone:
    ldx #<__zone_sprites_fn
    ldy #>__zone_sprites_fn
    jsr SETNAM                 ; SetFileName(__zone_sprites_fn)
-   lda __zone_bank
-   sta RAM_BANK
-   jsr reset_bank
    lda #^VRAM_SPRITES_UPPER
    clc
    adc #2
