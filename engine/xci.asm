@@ -178,6 +178,9 @@ mainloop:
    lda exit_req
    beq mainloop
 
+   ; Restore IRQ vector
+   jsr restore_irq
+
    ; Reset VERA
    lda #$80
    sta VERA_ctrl

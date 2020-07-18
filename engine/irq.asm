@@ -6,6 +6,7 @@ IRQ_INC = 1
 def_irq: .word $0000
 
 init_irq:
+   sei
    lda IRQVec
    sta def_irq
    lda IRQVec+1
@@ -14,9 +15,17 @@ init_irq:
    sta IRQVec
    lda #>handle_irq
    sta IRQVec+1
+   cli
    rts
 
-
+restore_irq:
+   sei
+   lda def_irq
+   sta IRQVec
+   lda def_irq+1
+   sta IRQVec+1
+   cli
+   rts
 
 handle_irq:
    ; check for VSYNC
