@@ -95,6 +95,7 @@ __xgf_row:        .byte 0
 __xgf_cursor_x:   .byte 0
 
 load_game:
+   jsr clear_bitmap
    lda #XGF_LOAD_Y
    sta __xgf_row
 @row_loop:

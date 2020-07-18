@@ -84,6 +84,34 @@ load_main_cfg:
    jsr LOAD          ; LoadFile(Verify=0,Address=RAM_CONFIG)
    rts
 
+clear_bitmap:
+   ; clear background header and footer
+   stz VERA_ctrl
+   VERA_SET_ADDR VRAM_BITMAP, 1
+   ldx #<LEVEL_BITMAP_OFFSET
+   ldy #>LEVEL_BITMAP_OFFSET
+@header_loop:
+   stz VERA_data0
+   dex
+   bne @header_loop
+   dey
+   bne @header_loop
+   cpx #0
+   bne @header_loop
+   stz VERA_ctrl
+   VERA_SET_ADDR VRAM_TEXTFIELD_BITMAP_BG, 1
+   ldx #<TEXTFIELD_BITMAP_BG_SIZE
+   ldy #>TEXTFIELD_BITMAP_BG_SIZE
+@footer_loop:
+   stz VERA_data0
+   dex
+   bne @footer_loop
+   dey
+   bne @footer_loop
+   cpx #0
+   bne @footer_loop
+   rts
+
 ; ---------- Build Options ----------
 
 ; ------------ Constants ------------
