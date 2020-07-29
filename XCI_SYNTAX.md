@@ -71,6 +71,7 @@ Skip to [Inventory File](README.md#inventory-file) keys:
 Skip to [Zone File](README.md#zone-files) key:
 
 | [**level**](#level) | [**tiles_hex**](#tiles_hex) | [**sprites_hex**](#sprites_hex) |
+|--|--|--|
 
 Skip to [Level File](README.md#level-files) keys:
 
