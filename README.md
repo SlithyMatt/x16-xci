@@ -11,6 +11,8 @@ If you are looking for a quick programming reference, check out the
 
 If you want to explore the video tutorial, check out the [tutorial guide](TUTORIAL.md).
 
+For development, the recommended IDE is [Atom](https://atom.io) with the [language-xci](https://atom.io/packages/language-xci) package installed.
+
 Finally, if you want to read a complete, in-depth look at how the example game
 was created, see the [configuration walkthrough appendix to this document](example/APPENDIX.md).
 
