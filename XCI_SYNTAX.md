@@ -13,7 +13,7 @@ For each key, the value format will be described by a set of argument names. Arg
 
 This document is intended to be a concise guide to the language and not a comprehensive programmer's guide. For that, please see the [main documentation](README.md) and the example game [appendix](example/APPENDIX.md).
 
-For development, the recommended IDE is [Atom](https://atom.io) with the [language-xci](https://atom.io/packages/language-xci) package installed.
+For development, the recommended IDE is [Atom](https://atom.io) with the [language-xci](https://atom.io/packages/language-xci) package installed.  There is also [vim](https://www.vim.org) syntax support with the [vim-xci](https://github.com/jestin/vim-xci) syntax plugin.
 
 ## Types
 
