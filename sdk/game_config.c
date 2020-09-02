@@ -19,10 +19,10 @@
 
 uint8_t init_pal[OUT_PAL_SIZE];
 
-void fill_pal() {
+void fill_pal(int pal_size) {
    int i;
    // copy palette offset 0 to offsets 1-14
-   for (i = 32; i < 480; i += 32) {
+   for (i = pal_size; i < 480; i += 32) {
       memcpy(&init_pal[i], init_pal, 32);
    }
    memset(&init_pal[480], 0, 32); // offset 15 all black
@@ -41,6 +41,7 @@ int parse_game_config(const char *cfg_fn) {
    int title_screen_size = 0;
    int title_screen_offset = sizeof(game_config_t) - sizeof(title_screen_config_t);
    int num;
+   int pal_size;
    FILE *ofp;
 
    cfg_bin->menu[0] = 0;
@@ -73,11 +74,12 @@ int parse_game_config(const char *cfg_fn) {
                printf("parse_game_config: no filename specified for palette\n");
                return -1;
             }
-            if (hex2bin(node->values->val, init_pal, IN_PAL_SIZE) < IN_PAL_SIZE) {
+            pal_size = hex2bin(node->values->val, init_pal, OUT_PAL_SIZE);
+            if (pal_size < IN_PAL_SIZE) {
                printf("parse_game_config: %s has insufficient data (%d bytes required)\n",
                       node->values->val, IN_PAL_SIZE);
             }
-            fill_pal();
+            fill_pal(pal_size);
             break;
          case TILES_HEX:
             if (node->num_values < 1) {
