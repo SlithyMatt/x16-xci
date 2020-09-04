@@ -190,6 +190,30 @@ mainloop:
    sta ROM_BANK
    jsr SCINIT
 
+; ----- Configuration
+
+.org RAM_CONFIG
+
+cfg_title:  .dword 0,0,0,0,0,0,0,0
+cfg_author: .dword 0,0,0,0,0,0,0,0
+cfg_cursor: .word 0
+cfg_zones:  .byte 0
+cfg_zone_levels:
+   .dword 0,0,0,0,0,0,0,0 ; 0-31
+   .dword 0,0,0,0,0,0,0,0 ; 32-63
+   .dword 0,0,0,0,0,0,0,0 ; 64-95
+   .dword 0,0,0,0,0,0,0,0 ; 96-127
+   .dword 0,0,0,0,0,0,0,0 ; 128-159
+   .dword 0,0,0,0,0,0,0,0 ; 160-191
+   .dword 0,0,0,0,0,0,0,0 ; 192-223
+   .dword 0,0,0,0,0,0,0,0 ; 224-255
+cfg_menu:   .word 0
+cfg_tb:     .word 0
+cfg_inv:    .word 0
+cfg_ts_dur: .word 0
+cfg_ts_anim:
+   .byte 0
+
 ; ---- Save game file staging
 
 .org XGF_STAGE
@@ -228,28 +252,3 @@ xgf_filenames:
    .byte 0
    .byte "            "
    .word 0
-
-
-; ----- Configuration
-
-.org RAM_CONFIG
-
-cfg_title:  .dword 0,0,0,0,0,0,0,0
-cfg_author: .dword 0,0,0,0,0,0,0,0
-cfg_cursor: .word 0
-cfg_zones:  .byte 0
-cfg_zone_levels:
-   .dword 0,0,0,0,0,0,0,0 ; 0-31
-   .dword 0,0,0,0,0,0,0,0 ; 32-63
-   .dword 0,0,0,0,0,0,0,0 ; 64-95
-   .dword 0,0,0,0,0,0,0,0 ; 96-127
-   .dword 0,0,0,0,0,0,0,0 ; 128-159
-   .dword 0,0,0,0,0,0,0,0 ; 160-191
-   .dword 0,0,0,0,0,0,0,0 ; 192-223
-   .dword 0,0,0,0,0,0,0,0 ; 224-255
-cfg_menu:   .word 0
-cfg_tb:     .word 0
-cfg_inv:    .word 0
-cfg_ts_dur: .word 0
-cfg_ts_anim:
-   .byte 0

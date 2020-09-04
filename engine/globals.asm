@@ -64,8 +64,8 @@ reset_bank: ; A: bank to set to all zeros
 @return:
    rts
 
-XGF_STAGE      = $5000
-RAM_CONFIG     = $7000
+XGF_STAGE      = $6000
+RAM_CONFIG     = $5000
 
 load_main_cfg:
    lda #0
