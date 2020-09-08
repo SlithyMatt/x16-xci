@@ -28,14 +28,14 @@ void main(int argc, char **argv) {
 
    width = atoi(argv[2]);
 
-   if ((width % 8) != 0) {
-      printf("Width of input bitmap must be multiple of 8 pixels\n");
+   if ((width % 16) != 0) {
+      printf("Width of input bitmap must be multiple of 16 pixels\n");
       return;
    }
 
-   tiles = width / 8;
-   jump = (long)(width - 8);
-   rewind = -7L * (long)width;
+   tiles = width / 16;
+   jump = (long)(width - 16);
+   rewind = -15L * (long)width;
 
    ifp = fopen(argv[1], "rb");
    sprintf(fn,"%s.hex", argv[1]);
@@ -43,20 +43,20 @@ void main(int argc, char **argv) {
 
    row = 0;
    done = 0;
-   fprintf(ofp, "# Tiles from %s\n", argv[1]);
+   fprintf(ofp, "# Sprites from %s\n", argv[1]);
    while (!feof(ifp) && !done) {
       for (i = 0; i < tiles; i++) {
-         fprintf(ofp, "\n# tile %d\n", row * tiles + i);
-         for (j = 0; j < 8; j++) {
-            if (fread(idata,1,8,ifp) < 8) {
+         fprintf(ofp, "\n# sprite %d\n", row * tiles + i);
+         for (j = 0; j < 16; j++) {
+            if (fread(idata,1,16,ifp) < 16) {
                done = 1;
                break;
             }
-            for (k = 0; k < 8; k++) {
+            for (k = 0; k < 16; k++) {
                fprintf(ofp, "%x", idata[k]);
             }
             fprintf(ofp,"\n");
-            if (j < 7) {
+            if (j < 15) {
                fseek(ifp,jump,SEEK_CUR);
             }
          }
