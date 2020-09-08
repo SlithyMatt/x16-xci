@@ -11,7 +11,6 @@
 .include "loadbank.asm"
 .include "loadvram.asm"
 .include "irq.asm"
-.include "vsync.asm"
 .include "globals.asm"
 .include "menu.asm"
 .include "music.asm"
@@ -174,7 +173,6 @@ start:
 
 mainloop:
    wai
-   jsr check_vsync
    lda exit_req
    beq mainloop
 

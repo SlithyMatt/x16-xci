@@ -2,6 +2,7 @@
 IRQ_INC = 1
 
 .include "globals.asm"
+.include "game.asm"
 
 def_irq: .word $0000
 
@@ -28,14 +29,6 @@ restore_irq:
    rts
 
 handle_irq:
-   ; check for VSYNC
-   lda VERA_isr
-   and #$01
-   beq @done_vsync
-   sta vsync_trig
-   ; clear vera irq flag
-   sta VERA_isr
-@done_vsync:
 
    ; check for AFLOW
    lda VERA_isr
@@ -43,6 +36,17 @@ handle_irq:
    beq @done_aflow
    sta aflow_trig
 @done_aflow:
+
+   ; check for VSYNC
+   lda VERA_isr
+   and #$01
+   beq @done_vsync
+   jsr game_tick
+
+   ; clear vera irq flag
+   lda #1
+   sta VERA_isr
+@done_vsync:
 
    ; TODO check other IRQs
 
