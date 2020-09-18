@@ -103,16 +103,19 @@ int vgm2x16opm_f(const char *vgm_fn, const char *x16_fn) {
 
 int vgm2x16opm_f_addr(const char *vgm_fn, const char *x16_fn, int address) {
    FILE *ofp;
-   uint8_t *x16_data;
+   static uint8_t x16_data[8192];
    uint8_t odata[3];
    int size;
-
-   x16_data = malloc(8192);
 
    size = vgm2x16opm(vgm_fn, x16_data);
 
    if (size < 0) {
       // error message should already be printed
+      return -1;
+   }
+
+   if (size > 8192) {
+      printf("VGM file %s is too large, converted size = %d\n", vgm_fn, size);
       return -1;
    }
 
@@ -136,7 +139,6 @@ int vgm2x16opm_f_addr(const char *vgm_fn, const char *x16_fn, int address) {
    // write music data
    fwrite(x16_data,1,size,ofp);
 
-   free(x16_data);
    fclose(ofp);
 
    return 0;
