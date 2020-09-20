@@ -217,7 +217,7 @@ To be loadable by the X16, binary files require a two-byte header, which is effe
 Now, we will see what each of the hex files should contain.
 
 #### Palette Hex File
-The initial palette hex file may contain all 256 colors, but only the first 16 colors will be read, as the rest will be modified by the configuration and during runtime.  This is in the format specified by the VERA documentation: two bytes for each color, with 4 bits for each of red, green and blue and four unused bits.  This means that a single hex character represents each color component from 0 to F (15 decimal). In binary, the two-byte field is formatted as ```bbbbgggg 0000rrrr```. So, pure white would be ```11111111 00001111``` in binary, or ```FF 0F``` in hex. So, 16 colors would be simply 64 hex characters.
+The initial palette hex file may contain all 256 colors, but only the first 16 colors will be persistent, as the rest will be modified by the configuration and during runtime.  This is in the format specified by the VERA documentation: two bytes for each color, with 4 bits for each of red, green and blue and four unused bits.  This means that a single hex character represents each color component from 0 to F (15 decimal). In binary, the two-byte field is formatted as ```bbbbgggg 0000rrrr```. So, pure white would be ```11111111 00001111``` in binary, or ```FF 0F``` in hex. So, 16 colors would be simply 64 hex characters.
 
 The following example shows how a hex file would specify the first 16 colors of the default X16 palette.
 
@@ -227,6 +227,31 @@ The following example shows how a hex file would specify the first 16 colors of 
 ```
 
 When VERA elements are using 16 colors (as all elements in XCI game do), the color is specified by a four-bit value, or a single hex digit, representing 0 through 15. Despite how the palette may be configured, color 0 of every palette offset is transparent, so it might as well be black, as shown above. As we can see, the next color value is white, which is color index 1. So, a bitmap where each byte is hex ```01``` would have alternating transparent and white pixels. Looking down the palette, we can see that color index 2 is a medium red, as the blue and green values are set to zero, but the red value is set to 8, which is the middle intensity between 1 and 15. Making each byte of a bitmap hex ```12``` would have alternating white and red pixels, with no transparency. We will see more concrete examples of hex-encoded bitmaps in the next two sections, which will assume the default palette.
+
+The initial palette will be defined when the game is built, with some offsets retained from the hex file and the rest defined programmatically. Also, at run time, 10 of the offsets will be modified for each zone. The following table shows how the full palette is structured at build time and subsequently in place during the title screen.
+
+| Offset | Index 0 | Indices 1-15 Use and Source |
+|--|--|--|
+| 0 | Black/Transparent | Persistent default palette, from palette hex file |
+| 1 | Black/Transparent | Title screen bitmap palette, from bitmap palette |
+| 2-10 | Black/Transparent | Custom tile & sprite palettes, from palette hex file |
+| 11 | Black/Transparent | Menu text (aka Text Style 0) palette, based on offset 0, with up to 2 colors switched |
+| 12-14 | Black/Transparent | Text Style 1-3 palettes, based on offset 0, with up to 2 colors switched |
+| 15 | Black/Transparent | Opaque Black |
+
+As you can see from this table, only palette offsets 0 and 2-10 will be retained as defined in this file. Therefore, it does not matter what values are put into this file for offset 1, and anything after offset 10 will be completely ignored.
+
+But this means that palette offsets 2-10 can be defined in this file and used for any elements during the title screen animation. However, all of these offsets will be overwritten when the game starts. At that point, offsets 1-10 are changed for each zone, providing a dedicated offset for the bitmap background of each level in that zone. This changes the palette map to the following.
+
+| Offset | Index 0 | Indices 1-15 Use and Source |
+|--|--|--|
+| 0 | Black/Transparent | Persistent default palette, from palette hex file |
+| 1-10 | Black/Transparent | Bitmap palettes for levels 0-9, from each level bitmap |
+| 11 | Black/Transparent | Menu text (aka Text Style 0) palette, based on offset 0, with up to 2 colors switched |
+| 12-14 | Black/Transparent | Text Style 1-3 palettes, based on offset 0, with up to 2 colors switched |
+| 15 | Black/Transparent | Opaque Black |
+
+As you can see, during the game, only offset 1 remains from this file for the rest of execution.
 
 #### Tiles Hex File
 The tiles for XCI games are 8x8 pixels, with 4 bits per pixel. So, for the hex file, each hex character will represent a pixel of a tile, and 64 characters (32 bytes) are required to define one tile. XCI allows for up to 720 different tiles to be defined in this file, but at least 177 need to be defined. This is because tile indices 32 (space) through 176 (tilde) will be an ASCII character font. Included with the XCI development kit is an example tile set that defines a default character font and some other basic tiles that are needed for the menu and toolbar. But, you are completely free to redefine all of them, just remember the usage of those ASCII character tiles for the menu and text field is fixed. Also, the characters should use color 1 for their foreground and 6 for their background, just like the initial X16 BASIC screen, so that the configuration can effectively switch out those colors in other palette offsets. If colors other than those are used in ASCII tiles, they will not change their color values from palette offset 0.
@@ -282,9 +307,17 @@ Using these tiles, we can build a little tile map that defines a rounded white b
 
 And here's what you get: ![tile map example](example/tilebox.png)
 
-The tiles hex file referenced in the [main file](#main-file) is the default tile set, and indices 0 through 255 will be available in all zones. When used in a [zone file](#zone-files), the first tile defined will be given the index 256, then this and the rest will be used rather than the default tiles for those higher indices.
+The tiles hex file referenced in the [main file](#main-file) is the default tile set, and indices 0 through 255 will be available in all zones. When used in a [zone file](#zone-files), the first tile defined will be given the index 256, then this and the rest will be used rather than the default tiles for those higher indices. If a zone does not define its own tiles, then it will have access to the entire main tile set.
 
 Later on, we'll see how tiles are used to define the menu and toolbar, and how they can be added to game levels.
+
+If you have a color-indexed bitmap defined for a set of tiles, rather than writing that part of the hex file by hand, you can use the **hextiles** tool to generate ASCII hex from a raw data and palette file pair, the same as [background bitmaps](#raw-image-files). For instance, if you have a bitmap called **tiles.data** that is 8 tiles (64 pixels) wide, you can generate a hex file with this command:
+
+```
+$ hextiles.exe tiles.data 64
+```
+
+This will generate a hex file containing each tile as 8 rows of 8 hex characters with the filename **tiles.data.hex**, simply appending **.hex** to the input filename. This also assumes that the bitmap palette is found in **tiles.data.pal**, as it would if generated by using GIMP. If you need to include this in your palette hex file, you can get an ASCII hex 12-bit version of this palette in a file generated that will be called **tiles.data.pal.hex**, again simply appending **.hex** to the source filename.
 
 #### Sprites Hex File
 All sprites for XCI games are 16x16 pixels, but since there are up to 128 sprites available for rendering at any time, larger sprites can be accomplished by synchronizing the movements of adjacent sprites. Each sprite can have 16 colors, and use any palette offset at any time.  Like tiles, sprites can add to the color depth of an image, with the added capability of being able to be placed at any position on screen.  The only required sprite is the mouse cursor, which must be sprite index 0. However, any sprite frame may be used for the mouse cursor, but its initial frame is determined my the **init_cursor** key in the main file.  Generally this should be a simple pointer cursor, but during game play the cursor can be context-sensitive, changing its frame based on its position and game state. Many games have a player avatar sprite, but that is not required for XCI. Sprite movements may be pre-programmed to happen once or loop through a level, or they could respond to mouse actions. Each frame of each sprite's potential movement needs to be defined, but like tiles, sprite frames can change their appearance through changing the palette offset or flipping horizontally, vertically or both.
@@ -402,7 +435,15 @@ With a [simple BASIC program](example/sprite.bas), we can test both the mouse sp
 
 Notice that the mouse pointer has its point in the upper left corner of the frame. This is because that corner pixel is the actual mouse position. This goes for all sprites, where the position specified will be its upper-left corner, so make sure that there is room below and to the right of the position to display the portion of the sprite you want visible.  We'll see how to do this later when configuring game levels.
 
-The sprites hex file referenced in the [main file](#main-file) is the default sprite frame set, and indices 0 through 255 will be available in all zones. When used in a [zone file](#zone-files), the first frame defined will be given the index 256, then this and the rest will be used rather than the default frames for those higher indices.
+The sprites hex file referenced in the [main file](#main-file) is the default sprite frame set, and indices 0 through 255 will be available in all zones. When used in a [zone file](#zone-files), the first frame defined will be given the index 256, then this and the rest will be used rather than the default frames for those higher indices. If a zone does not define its own sprites, then it will have access to the entire main sprite set.
+
+Just like with tiles, if you have a color-indexed bitmap defined for a set of tiles, rather than writing that part of the hex file by hand, you can use the **hexsprites** tool to generate ASCII hex from a raw data and palette file pair, the same as [background bitmaps](#raw-image-files). For instance, if you have a bitmap called **sprites.data** that is 8 sprites (128 pixels) wide, you can generate a hex file with this command:
+
+```
+$ hexsprites.exe sprites.data 64
+```
+
+This will generate a hex file containing each sprite as 16 rows of 16 hex characters with the filename **sprites.data.hex**, simply appending **.hex** to the input filename. This also assumes that the bitmap palette is found in **sprites.data.pal**, as it would if generated by using GIMP. If you need to include this in your palette hex file, you can get an ASCII hex 12-bit version of this palette in a file generated that will be called **sprites.data.pal.hex**, again simply appending **.hex** to the source filename.
 
 ### Menu File
 The menu file is a key-value configuration text file, just like the main file.  This one defines the appearance and behavior of the menu bar, which occupies the top 8 pixel rows of the screen, as well as the toolbar, which can appear at the bottom of the screen. It is also used to define how text is rendered during the game. These elements are all rendered completely with tiles and using only palette offset 0 to maintain consistency throughout the game. The example menu file and tiles provide the basis for any game, but you can customize them however you want for your own game. The example menu file (**mygame_menu.xci**) is shown below.
