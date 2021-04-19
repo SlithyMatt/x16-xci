@@ -174,6 +174,7 @@ SCREEN_SET_CHARSET				:= $FF62
 
 MOUSE_CONFIG                  := $FF68
 MOUSE_GET			            := $FF6B
+JSRFAR_kernal_addr				:= $FF6E
 MOUSE_SCAN                    := $FF71
 SCINIT                        := $FF81
 IOINIT                        := $FF84
@@ -236,5 +237,10 @@ NMIVec         := $0318
 	sta VERA_addr_low
 .endmacro
 
+.macro JSRFAR far_sr_addr, bank
+	jsr JSRFAR_kernal_addr
+	.addr far_sr_addr
+	.byte bank
+.endmacro
 
 .endif
