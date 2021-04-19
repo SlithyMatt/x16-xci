@@ -181,13 +181,8 @@ SCREEN_SET_MODE               := $FF5F
 SCREEN_SET_CHARSET            := $FF62
 PFKEY                         := $FF65
 MOUSE_CONFIG                  := $FF68
-<<<<<<< HEAD
 MOUSE_GET			            := $FF6B
 JSRFAR_kernal_addr				:= $FF6E
-=======
-MOUSE_GET                     := $FF6B
-JSRFAR                        := $FF6E
->>>>>>> 3490228e98aa094386bf7ce1617120a4d627b259
 MOUSE_SCAN                    := $FF71
 FETCH                         := $FF74
 STASH                         := $FF77
