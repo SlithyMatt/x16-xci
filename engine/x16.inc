@@ -5,14 +5,16 @@ X16_INC  = 1
 __CX16__ = 1
 .endif
 
+__REVDEFAULT__ = 38
+
 .ifdef REV
-	.if REV = 38
-		VERSION := 38
+	.if REV = 39
+		X16_VERSION := 39
 	.else
-		VERSION := 39
+		X16_VERSION := __REVDEFAULT__
 	.endif
 .else
-	VERSION := 39
+	X16_VERSION := __REVDEFAULT__
 .endif
 
 
@@ -119,7 +121,7 @@ VERA_audio_data   = $9F3D
 VERA_spi_data     = $9F3E
 VERA_spi_ctrl     = $9F3F
 
-.if VERSION = 38
+.if X16_VERSION = 38
 	ROM_BANK          = $9F60
 	RAM_BANK          = $9F61
 
