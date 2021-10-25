@@ -38,7 +38,7 @@ typedef struct sprite_move {
    uint8_t y;
 } sprite_move_t;
 
-typedef struct wait {
+typedef struct xci_wait {
    uint8_t key; // must be xci_key_t::WAIT
    uint8_t jiffys;
 } wait_t;
