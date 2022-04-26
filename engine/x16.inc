@@ -5,7 +5,7 @@ X16_INC  = 1
 __CX16__ = 1
 .endif
 
-__REVDEFAULT__ = 38
+__REVDEFAULT__ = 39
 
 .ifdef REV
 	.if REV = 39
@@ -198,7 +198,7 @@ CLOCK_SET_DATE_TIME           := $FF4D
 CLOCK_GET_DATE_TIME           := $FF50
 JOYSTICK_SCAN                 := $FF53
 JOYSTICK_GET                  := $FF56
-SCREEN_SET_MODE               := $FF5F
+SCREEN_MODE               		:= $FF5F
 SCREEN_SET_CHARSET            := $FF62
 PFKEY                         := $FF65
 MOUSE_CONFIG                  := $FF68

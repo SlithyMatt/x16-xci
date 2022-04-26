@@ -8,8 +8,9 @@ __mouse_last_left_button: .byte 0
 init_mouse:
    lda #0
    sta ROM_BANK
+   sec
+   jsr SCREEN_MODE ; setup X and Y with screen size
    lda #$FF ; custom cursor
-   ldx #2   ; scale x 2
    jsr MOUSE_CONFIG
    stz VERA_ctrl
    VERA_SET_ADDR VRAM_sprattr, 1
