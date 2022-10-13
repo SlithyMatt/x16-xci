@@ -44,7 +44,7 @@ mouse_tick:
    stz mouse_left_click
 @get_tiles:
    sta __mouse_last_left_button
-   lda MOUSE_X       ; divide screen X by 16 to get tile X
+   lda MOUSE_X       ; divide screen X by 8 to get tile X
    sta mouse_tile_x
    lda MOUSE_X+1
    lsr
@@ -53,14 +53,10 @@ mouse_tick:
    ror mouse_tile_x
    lsr
    ror mouse_tile_x
-   lsr
-   ror mouse_tile_x
    sta mouse_tile_x+1
-   lda MOUSE_Y       ; divide screen Y by 16 to get tile X
+   lda MOUSE_Y       ; divide screen Y by 8 to get tile Y
    sta mouse_tile_y
    lda MOUSE_Y+1
-   lsr
-   ror mouse_tile_y
    lsr
    ror mouse_tile_y
    lsr
