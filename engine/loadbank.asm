@@ -76,14 +76,14 @@ getramaddr: ; A = Offset into RAM bank >> 5
    asl
    asl
    asl
-   ora #<RAM_WIN
+   adc #<RAM_WIN
    tax
    pla
    and #$F8
    lsr
    lsr
    lsr
-   ora #>RAM_WIN
+   adc #>RAM_WIN
    tay
    rts
 

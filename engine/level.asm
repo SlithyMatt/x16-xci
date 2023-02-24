@@ -217,7 +217,7 @@ load_level:
    pla
    inc
    ldx #0
-   ldy #0
+   ldy #232 ; remaining bytes >> 5
    jsr bank2vram
    lda level
    clc
